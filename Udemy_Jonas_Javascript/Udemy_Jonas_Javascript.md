@@ -15,6 +15,9 @@ Every function has its own Execution Context. However, *Arrow Function* does not
 
 The order of call stack/execution context is the order of function's call. This order does not affect scope chain, which is determined by where function located.
 
+* *this* keyword behavior is the same under function declaration and function expression
+* *scope chain* works the same as function declaration and function expression
+
 ```js
 const age = 18;
 
@@ -81,8 +84,14 @@ function calcAge(birthYear){
 ```js
 
 "use strict";
-function someFeature () {
-    return this.age;
+function someFeature() {
+    console.log(this);
+    function inside() {
+        const temp = this;
+        console.log(this);
+        return temp;
+    }
+    return inside();
 };
 const lei = {
     age: 34,
@@ -155,4 +164,21 @@ btnClose.addEventListener("click", great);
 ```js
 counter.inc.bind(someOtherObject);
 ```
+## Functions Accepting Callback Functions
 
+```js
+"use strict;"
+
+const upperFirstWord = function (str) {
+    const [first, ...other] = str.split(" ");
+    return [first.toUpperCase(), ...other].join(" ");
+}
+
+const transformStr = function (str, fn) {
+    console.log(`Original String: ${str}`);
+    console.log(`Transformed String: ${fn(str)}`);
+    console.log(`Transformed By: ${fn.name}`);
+}
+
+transformStr("lei likes McDonald's", upperFirstWord)
+```
