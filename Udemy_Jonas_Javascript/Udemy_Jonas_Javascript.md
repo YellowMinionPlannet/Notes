@@ -257,7 +257,8 @@ document.getElementById("button").addEventListener("click", lufthansa.buyPlanes.
 
 ## Closures
 
-* Put it in simple way, closure means the child function(created inside another function) can visit parent function's scope variables, even if parent function is returned.
+* Put it in simple way: closure means the child function(created inside another function) can visit parent function's *variable environment*, even if parent function is returned.
+* We can access [[scopes]] property of a function by using ```console.dir(fn)``` and spy this property in browser's console. This property contains the *variable environment* of a function.
 
 ```js
 "use strict;"
