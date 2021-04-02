@@ -206,14 +206,71 @@ const lufthansa = {
     iataCode: "LH",
     bookings: [],
     book(flightNum, name) {
-        console.log(`${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}`);
+        console.log(
+            `${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}`
+        );
         this.bookings.push({
             flight: `${this.iataCode}${flightNum}`,
-            name
+            name,
         });
+    }
+};
+
+const book = lufthansa.book;
+
+
+
+const eurowings = {
+    airline: "Eurowings",
+    iataCode: "EW",
+    bookings: [],
+}
+
+book.call(lufthansa, 239, "Jonas Schmedtmann");
+book.call(eurowings, 123, "Jone Smith");
+console.log(lufthansa);
+console.log(eurowings);
+
+const flightData = [456, "George Sams"];
+book.apply(lufthansa, flightData);
+book.call(eurowings,...flightData)
+
+lufthansa.planes = 300;
+lufthansa.buyPlanes = function(){
+    console.log(`${this.aireline} bought a plane.`);
+    this.planes++;
+}
+
+document.getElementById("button").addEventListener("click", lufthansa.buyPlanes);//ERROR, this is that "button"
+document.getElementById("button").addEventListener("click", lufthansa.buyPlanes.bind(lufthansa));// CORRECT, because it returns a new function which this keyword bind to the lufthansa
+```
+
+## Immediately Invoked Function Expressions(IIFE)
+```js
+"use strict;"
+(function () {
+    console.log("This will never run again!");
+})();
+
+(() => console.log("This will ALSO never run again!"))();
+```
+
+## Closures
+
+* Put it in simple way, closure means the child function(created inside another function) can visit parent function's scope variables, even if parent function is returned.
+
+```js
+"use strict;"
+function secureBooking() {
+    let passengerCount = 0;
+    return function () {
+        passengerCount++;
+        console.log(`${passengerCount} passengers!`);
     }
 }
 
-lufthansa.book(239, "Jonas Schmedtmann");
-console.log(lufthansa);
+const booker = secureBooking();
+booker();
+booker();
+booker();
 ```
