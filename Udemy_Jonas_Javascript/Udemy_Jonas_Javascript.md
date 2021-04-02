@@ -182,3 +182,38 @@ const transformStr = function (str, fn) {
 
 transformStr("lei likes McDonald's", upperFirstWord)
 ```
+
+## Functions Returning Functions
+```js
+const greet = function (greeting) {
+    return function (name) {
+        console.log(`${greeting} ${name}`);
+    }
+}
+
+greet("Hello World")("By Lei")
+
+const move = action => target => console.log(`${action} ${target}`);
+move("Eat")("Food");
+
+```
+
+## The Call and Apply Methods
+```js
+"use strict;"
+const lufthansa = {
+    airline: "Lufthansa",
+    iataCode: "LH",
+    bookings: [],
+    book(flightNum, name) {
+        console.log(`${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}`);
+        this.bookings.push({
+            flight: `${this.iataCode}${flightNum}`,
+            name
+        });
+    }
+}
+
+lufthansa.book(239, "Jonas Schmedtmann");
+console.log(lufthansa);
+```
