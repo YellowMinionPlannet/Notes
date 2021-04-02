@@ -138,7 +138,6 @@ now in ES6 with *Default Parameters*
 ```
 
 ## First-Class Functions vs. Higher-Order Functions
-
 >**Terminology Clarification**
 >* First-Class Functions is a feature of javascript, means js treat function as values.
 >* Higher-Order Functions are functions that receive another function(callback function) as argument, or return another function.
@@ -164,8 +163,8 @@ btnClose.addEventListener("click", great);
 ```js
 counter.inc.bind(someOtherObject);
 ```
-## Functions Accepting Callback Functions
 
+## Functions Accepting Callback Functions
 ```js
 "use strict;"
 
