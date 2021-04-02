@@ -114,7 +114,7 @@ class App extends React.Component {
     }
     
     render(){
-        const components = this.state.data.map((d)=>{return (<Component number={d}););
+        const components = this.state.data.map((d)=> (<Component number={d}/>););
         return (
         <div>{components}</div>
         );
