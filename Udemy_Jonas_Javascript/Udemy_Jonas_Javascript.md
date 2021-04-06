@@ -274,3 +274,132 @@ booker();
 booker();
 booker();
 ```
+
+
+# Working With Arrays
+## Simple Array Methods
+```js
+let arr = ["a", "b", "c", "d", "e"];
+
+//SLICE
+console.log(arr.slice(2)); // [c, d, e]
+console.log(arr.slice(2, 4)); // [c, d] start from 2 to (not include) 4
+console.log(arr.slice(-1));//[e] last 1
+console.log(arr.slice(1, -2));//[b, c] start from 1 except last two
+console.log(arr.slice());//shallow copy
+console.log([...arr]));//shallow copy
+
+//SPLICE(MUTATE)
+//console.log(arr.splice(2));//[c, d, e]
+//console.log(arr);//[a, b]
+//console.log(arr.splice(-1));//[e]
+//console.log(arr);//[a,b,c,d]
+
+//REVERSE(MUTATE)
+console.log(arr.reverse());
+
+//CONCAT
+let arr2 = ["h","i","j","k","l","m"];
+const letters = arr.concat(arr2);
+console.log(letters);
+console.log([...arr, ...arr2]);
+
+//JOIN
+console.log(letters.join("-"));
+```
+
+## Looping Arrays: forEach
+```js
+const movements = [200, 450, -400, 3000, -650, -120, 70, 1300];
+
+for(const [i, mov] of movements.entries()){
+    if(mov > 0 ){
+        console.log(`You deposited ${mov} in Move ${i}`);
+    }else{
+        console.log(`You withdraw ${Math.abs(mov)} in Move ${i}`);
+    }
+}
+//NOTE: break and continue does not work in here!!!
+movements.forEach((mov, index, arr)=> {
+    if(mov > 0 ){
+        console.log(`You deposited ${mov} in Move ${index}`);
+    }else{
+        console.log(`You withdraw ${Math.abs(mov)} in Move ${index}`);
+    }
+})
+```
+## forEach with Maps and Sets
+```js
+//MAP
+var currencies = new Map([
+    ["USD", "United States dollar"],
+    ["EUR", "Euro"],
+    ["GBP", "Pound sterling"]
+]);
+
+currencies.forEach((value, key, map) => {
+    console.log(value, key);
+});
+
+//Set
+const currenciesUnique = new Set(["USD", "GBP", "USD", "EUR"]);
+currenciesUnique.forEach((value, key, map) => {
+    console.log(value);
+});
+```
+
+## The map method
+```js
+const movements = [200, -400, 100, 50, -200];
+console.log(movements.map((value, index, arr) => value * 1.1));
+```
+
+## The filter method
+```js
+const movements = [200, -400, 100, 50, -200];
+console.log(movements.filter(value => value>0));
+```
+## The reduce method
+```js
+const movements = [200, -400, 100, 50, -200];
+console.log(movements.reduce((acc, value, index, arr) => { return acc + value; },0));
+```
+
+## The find method
+```js
+const movements = [200, -400, 100, 50, -200];
+console.log(movements.find(value => value < 0));//only find the first element matches the condition
+```
+
+## The findIndex method
+```js
+const movements = [200, -200, -400, 100, 50, -200];
+console.log(movements.find(value => value === -200));//-1
+```
+
+## some every
+```js
+const movements = [200, -200, -400, 100, 50, -200];
+console.log(movements.includes(-200));//only for equality
+console.log(movements.some(value => value > 100)); //for conditions
+
+console.log(movements.every(value => value > -500));
+```
+
+## flat and flatMap
+```js
+const complexArr = [[[1, 2], 3], [4, 5, 6], 7];
+console.log(complexArr.flat(1));//0 return original array
+
+const movements = [200, -200, -400, 100, 50, -200];
+console.log(movements.flatMap(move => [move, move * 2]));
+```
+
+## Sorting Arrays
+```js
+const movements = [200, -200, -400, 100, 50, -200];
+console.log(movements.sort((a, b) => return a > b ? 1 : -1));
+```
+
+
+
