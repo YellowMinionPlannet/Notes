@@ -395,7 +395,7 @@ const movements = [200, -200, -400, 100, 50, -200];
 console.log(movements.flatMap(move => [move, move * 2]));
 ```
 
-## Sorting Arrays
+## Sorting Arrays(Mutate)
 ```js
 const movements = [200, -200, -400, 100, 50, -200];
 console.log(movements.sort((a, b) => a > b ? 1 : -1));
@@ -403,5 +403,14 @@ console.log(movements.sort((a, b) => a > b ? 1 : -1));
 console.log(movements.sort((a, b) => a - b)); 
 ```
 
+## More ways of Creating and Filling Arrays
+```js
+const arr = new Array(7);
+arr.fill(4);
+console.log(arr);
+
+const arr1 = Array.from({ length: 8 }, (value, i) => i);
+console.log(arr1);
+```
 
 
