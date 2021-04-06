@@ -399,8 +399,8 @@ console.log(movements.flatMap(move => [move, move * 2]));
 ```js
 const movements = [200, -200, -400, 100, 50, -200];
 console.log(movements.sort((a, b) => a > b ? 1 : -1));
-
-console.log(movements.sort((a, b) => a - b));
+// Greater than 0 (switch order); Less than 0 (keep order)
+console.log(movements.sort((a, b) => a - b)); 
 ```
 
 
