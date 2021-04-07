@@ -679,3 +679,48 @@ h1.previousSibling
 h1.nextSibling
 h1.parentElement.children
 ```
+
+## Passing Arguments to Event Handlers
+```js
+const fn = function(e, opacity){
+    if(opacity === 0.5){
+        //true
+    }
+}
+const fn1 = function(e){
+    if(this === 0.5){
+        //true
+    }
+}
+
+nav.addEventListener("mouseover", function(e){
+    fn(e, 0.5);
+});
+
+nav.addEventListener("mouseover", fn1.bind(0.5));
+```
+
+## Lifecycle DOM Events
+```js
+document.addEventListener("DOMContentLoaded", function(e){
+    console.log("JS and HTML Tree is built!");
+    //if we do not place script tag at the end of body, we need to wrap all of our code here.
+});
+
+document.addEventListener("load", function(e){
+    e.preventDefault();
+    e.returnValue = "";//show popup before leaving, DON'T Abuse this
+});
+```
+DOMContentLoaded: JS and HTML Tree is built
+load: all resources are downloaded
+unload: before user leave 
+
+## Efficient Script Loading: defer and async
+
+![Udemy_Jonas_Javascript_4.jpg](Udemy_Jonas_Javascript_4.jpg?raw=true)
+
+Scripts In the head
+* using async does not guarantee DOMContentLoaded fires after scrips are all executed
+* ussing async does not guarantee the order of scripts
+* defer make sure all scripts are executed and executed in order
