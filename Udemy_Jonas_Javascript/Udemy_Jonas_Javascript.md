@@ -590,3 +590,92 @@ btn.addEventListener("click", function(){
 ```
 ![Udemy_Jonas_Javascript_3](Udemy_Jonas_Javascript_3.png?raw=true)
 
+## Types of Events and Event Handlers
+```js
+const h1 = document.querySelector("h1");
+h1.addEventListener("mouseenter", function(e){
+    alert("Hello World!");
+});//allow multiple listener
+
+h1.onmouseenter = function(e){
+    alert("Hello Lei!");
+}//override when call multiple times
+
+const fn = function(){
+    alert("Hellooooo!");
+}
+
+h1.addEventListener("mouseenter", fn);
+h1.removeEventListener("mouseenter", fn);
+```
+
+## Event Propagation: Bubbling and Capturing
+
+Capturing:
+    Document => EventTarget
+Bubbling:
+    EventTarget => Document
+Propagation = Capturing + Bubbling
+
+## Event Propagation in Practice
+```js
+/*Random Number between MAX and MIN*/
+const random = function(min, max){
+    return Math.random() * (max - min + 1) + min;
+}
+
+const randomColor = function () {
+    return `rgb(${random(0,255)}, ${random(0,255)},${random(0,255)}`;
+}
+```
+
+* ```e.target``` of callback function is always the same, which would be the eventtarget who actually received the event.
+* ```e.currentTarget``` of callback function is always the same as this.
+* ```e.stopPropagation``` at the end of callback function will prevent propagation happens.
+* The third arguments of ```addEventListener``` set to true, then the callback happens in the capturing phase.
+
+## Event Delegation: Implementing Page Navigation
+Event Delegation: When we need to add callback function to hundreds of elements' eventlisteners, we simply find elements' common parent element, and use propagation concept to trigger that callback.
+
+```js
+const parent = document.querySelector(".parent");
+parent.addEventListener("click", function(e){
+    e.preventDefault();
+    if(e.target.classList.contains("child")){
+        //do something
+    }
+});
+```
+
+## DOM Traversing
+Traversing: Select element based on other element
+
+### Downwards
+```js
+//find descendants
+const h1 = document.querySelector("h1");
+console.log(h1.querySelectorAll(".highlight"));
+
+//find child only
+h1.childNodes;//Element, text, comment Live
+h1.children;//Element only Live
+h1.firstElementChild;
+h1.lastElementChild
+```
+### Upwards
+```js
+h1.parentNode
+h1.parentElement
+
+//find ancestor
+h1.closest(".parent")
+```
+
+### Sideways
+```js
+h1.previousElementSibling
+h1.nextElementSibling
+h1.previousSibling
+h1.nextSibling
+h1.parentElement.children
+```
