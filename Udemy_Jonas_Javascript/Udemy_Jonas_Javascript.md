@@ -1,4 +1,4 @@
-# Section 8: How JavaScript Works Behind the Scenes
+# How JavaScript Works Behind the Scenes
 ## The JavaScript Engine and Runtime
 ![Udemy_Jonas_Javascript_1](Udemy_Jonas_Javascript_1.png?raw=true)
 
