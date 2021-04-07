@@ -466,7 +466,7 @@ const sums = accounts
 ## What's the DOM and DOM Manipulation
 * DOM is short for 'Document Object Model'
 * It is tree structured model of HTML content 
-* It is the link point between Javascript and Html file
+* It is the link point between Javascript code and Html file
 * It is created when HTML file is loaded
 * *Document* is the entry point of the DOM, it is at top of the tree structure
 * *HTML Element* is the root element of DOM
@@ -565,3 +565,28 @@ logo.classList.contains();
 ```
 
 ## Implementing Smooth Scrolling
+```js
+const btn = document.querySelector(".btn");
+const section = document.querySelector("#section1");
+
+btn.addEventListener("click", function(){
+    console.log(section.getBoundingClientRect());//properties relavent to VIEWPORT
+
+    console.log(window.pageXOffset, window.pageYOffset);//window properties relavent to HTML PAGE
+
+    console.log(document.documentElement.clientHeight, document.documentElement.clientWidth);//properties relavent to VIEWPORT
+
+    const s1coords = section.getBoundingClientRect();
+    window.scrollTo(s1coords.left + window.pageXOffset, s1coords.top + window.pageYOffset);
+
+    window.scrollTo({
+        left: s1coords.left + window.pageXOffset,
+        top: s1coords.top + window.pageYOffset,
+        behavior: "smooth"
+    });
+    //Only mordern browsers
+    section1.scrollIntoView({behavior:"smooth"});
+});
+```
+![Udemy_Jonas_Javascript_3](Udemy_Jonas_Javascript_3.png?raw=true)
+
