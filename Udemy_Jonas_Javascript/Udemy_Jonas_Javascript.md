@@ -479,3 +479,89 @@ const sums = accounts
 
 ![Udemy_Jonas_Javascript_2](Udemy_Jonas_Javascript_2.png?raw=true)
 
+
+## Selecting, Creating, and Deleting Elements
+
+### Selecting
+```js
+//Realtime means if you delete a element from dom, it will reflect the changes
+
+//NodeList Non-Realtime 
+const allSections = document.querySelectorAll(".section");
+//HTMLCollection Realtime
+const allButtons = document.getElementsByTagName("button");
+//HTMLCollection Realtime
+const buttons = document.getElementsByClassName("btn");
+
+```
+### Creating & Insertings
+```js
+/*
+    NOTE:   1. please watch out for unscaped user input when using this function.
+            2. please use insertAdjacentText()/textContent for text insert
+    Position: beforebegin; afterbegin; beforeend; afterend;
+*/
+var d1 = document.getElementById("one");
+d1.insertAdjacentHTML("afterend", "<div id='two'>two</div>");
+
+const message = document.createElement("div");
+message.classList.add("cookie-message");
+message.textContent = "Hello World";
+d1.prepend(message);
+d1.append(message);//only move message to the last place
+
+d1.append(message.cloneNode(true));//insert message twice
+d1.before(message);
+d1.after(message);
+```
+
+### Deleting
+```js
+    document.querySelector(".btn--close-cookie")
+            .addEventListener("click", function(){
+                message.remove();
+                message.parentElement.removeChild(message)
+            });
+```
+
+## Styles, Attributes and Classes
+
+### Styles
+```js
+    // By using style property, we can only read and write inline style
+    message.style.backgroundColor = '#37383d';
+    message.style.width = "120%";
+
+    //use getComputedStyle to get real css style
+    console.log(getComputedStyle(message).color);
+    message.style.height = Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+    document.documentElement.style.setProperty("--color-primary", "orangered");
+
+```
+
+### Attributes
+```js
+const logo = document.querySelector(".nav");
+console.log(logo.alt);
+console.log(logo.className);
+console.log(logo.src);//return absolute url of src
+console.log(logo.getAttribute("src"));//return real value of attribute src
+console.log(logo.getAttribute("designer"));//non-standard attribute
+
+console.log(logo.setAttribute("company", "Bankist"));
+
+/*Data Attribute*/
+console.log(logo.dataset.versionNumber);//data-version-number
+
+
+```
+
+### Classes
+```js
+logo.classList.add();
+logo.classList.remove();
+logo.classList.toggle();
+logo.classList.contains();
+```
+
+## Implementing Smooth Scrolling
