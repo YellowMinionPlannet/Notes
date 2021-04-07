@@ -406,11 +406,76 @@ console.log(movements.sort((a, b) => a - b));
 ## More ways of Creating and Filling Arrays
 ```js
 const arr = new Array(7);
-arr.fill(4);
+arr.fill(4);//(MUTATE)
 console.log(arr);
 
 const arr1 = Array.from({ length: 8 }, (value, i) => i);
 console.log(arr1);
 ```
 
+## Summary: Which Array Method to Use?
+|To mutate original array|A new array|An array index|An array element|Know if array includes|A new string|To transform to value|To just loop array|
+|-|-|-|-|-|-|-|-|
+|push|map|indexOf|find|includes|join|reduce|forEach|
+|unshift|filter|findIndex||some||||
+|pop|slice|||every||||
+|shift|concat|||||||
+|splice|flat|||||||
+|reverse|flatMap|||||||
+|sort||||||||
+|fill||||||||
+
+## Array Methods Practice
+```js
+const accounts = [
+    {
+        Id: 1,
+        movements: [200, -400, 300, 50, 100, -500]
+    },
+    {
+        id: 2,
+        movements: [100, 400, -299, 299]
+    },
+    {
+        id: 3,
+        movements: [3000, 2000, -1000, 1999]
+    },
+]
+
+const bankDepositSum = accounts
+                            .flatMap(acc => acc.movements)
+                            .flilter(move => move > 0)
+                            .reduce((sum, cur) => sum + cur, 0);
+
+const numDepositGreater1000 = accounts
+                                    .flatMap(acc => acc.movements)
+                                    .reduce((count, cur) => (
+                                        cur >= 1000 ? ++count: count
+                                    ), 0);
+
+const sums = accounts
+        .flatMap((acc) => acc.movements)
+        .reduce(
+            (sums, curr) => { curr > 0 ? sums.deposits += curr : sums.withdrawals += curr; return sums },
+            { deposits: 0, withdrawals: 0 }
+        )
+```
+
+# Javascript in the Browser DOM and Events Fundamentals
+
+## What's the DOM and DOM Manipulation
+* DOM is short for 'Document Object Model'
+* It is tree structured model of HTML content 
+* It is the link point between Javascript and Html file
+* It is created when HTML file is loaded
+* *Document* is the entry point of the DOM, it is at top of the tree structure
+* *HTML Element* is the root element of DOM
+* DOM is not part of Javascript. It is API in Browser which are libraries writen in Javascript
+
+# Advanced DOM and Events
+## How the DOM Really Works
+* Every node in Tree structure is of Type *Node*
+* *EventTarget* type is abstract and includes *addEventListener()* and *removeEventListener()* methods. That's why all the types inherit this get access to these two methods.
+
+![Udemy_Jonas_Javascript_2](Udemy_Jonas_Javascript_2.png?raw=true)
 
