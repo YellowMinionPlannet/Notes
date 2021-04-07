@@ -692,11 +692,11 @@ const fn1 = function(e){
         //true
     }
 }
-
+//method1
 nav.addEventListener("mouseover", function(e){
     fn(e, 0.5);
 });
-
+//method2
 nav.addEventListener("mouseover", fn1.bind(0.5));
 ```
 
