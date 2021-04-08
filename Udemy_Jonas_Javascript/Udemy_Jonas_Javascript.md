@@ -907,8 +907,8 @@ class PersonCL {
     }
 }
 ```
-NOTE: Setter Function Name can NOT collapse with Property Name
 
+NOTE: Setter Function Name can NOT collapse with Property Name
 ```js
 class PersonCL {
     constructor(firstName, birthYear){
