@@ -724,3 +724,209 @@ Scripts In the head
 * using async does not guarantee DOMContentLoaded fires after scrips are all executed
 * ussing async does not guarantee the order of scripts
 * defer make sure all scripts are executed and executed in order
+
+# Object-Oriented Programming (OOP) with Javascript
+## OOP in Javascript
+### Classical OOP: Classes
+* Behavior is copied from class to all instances
+* Objects are instantiated from a class, which functions like a blueprint
+
+### OOP in JS: Prototypes
+* Objects are linked to a prototype object
+* The prototype contains methods that are accessible to all objects linked to that prototype (Prototypal inheritance)
+
+### Ways of creating objects
+1. Constructor functions
+    * Technique to create objects from a function
+    * This is how built-in objects like Arrays, Maps, or Sets are actually implemented
+2. ES6 Classes
+    * Modern alternative to constructor function syntax
+    * "Syntactic sugar", ES6 classes work exactly like constructor functions
+    * ES6 classes do NOT behave like "Classical OOP"
+3. Object.create()
+    * Easiest and most straightforward way of linking an object to a prototype object
+
+## Constructor Functions and the New Operator
+* Arrow function does NOT work as constructor function because this keyword does NOT work
+* Both function declaration and function expression works
+
+```js
+const Person = function(firstName, birthYear){
+    console.log(this);// Person {}
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+
+    /*Never do this*/
+    //Because we will create new function copy each time when new object is created
+    this.calAge = function(){
+        console.log(2037 - this.birthYear);
+    }
+}
+
+const jonas = new Person("Jonas", 1991);
+console.log(jonas);
+```
+
+### new keyword procedure
+1. new object {} is created
+2. function is called, this keyword = {}
+3. {} linked to prototype 
+4. function automatically return {}
+
+## Prototypes
+```js
+Person.prototype.calAge = function(){
+    console.log(2037 - this. birthYear);//here we have this point to the object which calls calAge()
+}
+const jonas = new Person("Jonas", 1986);
+jonas.calAge();//51
+
+console.log(jonas.__proto__);//jonas' prototype object
+console.log(jonas.__proto__ === Person.prototype);//true; instance's __proto__ always points to Constructor Function's prototype property
+
+console.log(Person.prototype.isPrototypeOf(jonas));//true
+/*isPrototypeOf is called by this name is misleading, should be called as isPrototypeOfLinkedObject or something*/
+console.log(Person.prototype.isPrototypeOf(Person));//false
+Person.prototype.species = "Homo Sepiant";
+
+console.log(jonas.species);
+console.log(jonas.hasOwnProperty("firstName"));//true
+console.log(jonas.hasOwnProperty("species"));//false; since species is the prototype property
+```
+* calAge's function only creates once.
+* calAge is not a method attached to jonas
+* jonas get access to calAge
+* calAge is attached to jonas.__proto__
+
+```js
+console.log(jonas);
+//which will give us an object like below
+/*
+Person{firstName:"Jonas", birthYear:1986}
+*/
+//we can also see that jonas has a property which is called "__proto__" and constructor is Person function
+//In this "_proto__", there's another property called "__proto__" and constructor is Object function
+```
+
+* Every object has a __proto__ property
+* __proto__'s constructor is the construction function of __proto__'s owner
+* since __proto__ itself is a object, __proto__'s __proto__ is the Object function
+
+
+
+![Udemy_Jonas_Javascript_5.png](Udemy_Jonas_Javascript_5.png?raw=true)
+
+### Terminology: Prototypal Inheritance/ Delegation
+When access instance property or method, if the target is not found, will look for property or method in instance's prototype which points to Constructor Function's prototype property.
+If still not found, it will look up untill find the Object Constructor Function's prototype property which is null.
+
+
+### Multiple Inheritance
+```js
+const SubType = function (name) {
+    this.name = name;
+};
+
+const SuperType = function () {
+    this.privateThing = "can't access from inherited instance"
+};
+SuperType.prototype.speed = 100;
+SubType.prototype = new SuperType();
+
+const sub = new SubType("Lei");
+const sup = new SuperType(100);
+
+console.log(sub.privateThing);//undefined
+console.log(sub.speed);//100
+console.log(sup);
+console.log(sub);
+```
+
+## ES6 Classes
+```js
+//Class Expression
+const PersonCL = class{
+
+}
+
+//Class Declaration
+class PersonCL {
+    constructor(firstName, birthYear){
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+
+    calAge(){//In prototype
+        console.log(2037 - this.birthYear);
+    }
+}
+
+const lei = new PersonCL("Lei", 1986);
+console.log(lei);
+lei.calAge();
+
+console.log(lei.__proto__ === PersonCL.prototype);//true
+```
+
+1. Class are not hoisted
+2. Class can be first-class citizen (just special function)
+3. Within class we can only use strict mode
+
+## Setters and Getters
+```js
+const account = {
+    owner: "Jonas",
+    movements:[200, 300, 530, 120],
+    get latest(){
+        return this.movements.splice(-1).pop();
+    }
+    set latest(move){
+        this.movements.push(move);
+    }
+}
+
+console.log(account.latest);
+account.latest = 50;
+consoel.log(account.movements);
+
+class PersonCL {
+    constructor(firstName, birthYear){
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+
+    calAge(){//In prototype
+        console.log(2037 - this.birthYear);
+    }
+
+    get age(){
+        return 2037 - this.birthYear;
+    }
+    set fullName(name){
+        this.firstName = name;
+    }
+}
+```
+NOTE: Setter Function Name can NOT collapse with Property Name
+
+```js
+class PersonCL {
+    constructor(firstName, birthYear){
+        this.fullName = firstName;
+        this.birthYear = birthYear;
+    }
+
+    calAge(){//In prototype
+        console.log(2037 - this.birthYear);
+    }
+
+    get age(){
+        return 2037 - this.birthYear;
+    }
+    set fullName(name){
+        this.fullName = name;
+    }
+}
+const p = new PersonCL("Lei", 1986);
+p.fullName = "Qiu";//ERROR
+```
