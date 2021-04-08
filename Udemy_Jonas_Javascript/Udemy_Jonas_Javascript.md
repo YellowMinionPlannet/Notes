@@ -930,3 +930,127 @@ class PersonCL {
 const p = new PersonCL("Lei", 1986);
 p.fullName = "Qiu";//ERROR
 ```
+
+## Static Method
+```js
+class PersonCL {
+    constructor(firstName, birthYear){
+        this.fullName = firstName;
+        this.birthYear = birthYear;
+    }
+
+    calAge(){//In prototype
+        console.log(2037 - this.birthYear);
+    }
+
+    get age(){
+        return 2037 - this.birthYear;
+    }
+    set fullName(name){
+        this.fullName = name;
+    }
+    static hey(){
+        console.log("Hey, Static Method!");
+    }
+}
+PersonCL.Ho = function(){
+    console.log("Ho, Static Method!");
+}
+PersonCL.Ho();
+PersonCL.hey();
+const p = new PersonCL("Lei", 1986);
+p.hey();//hey is not a function
+```
+
+## Object.create()
+```js
+const playerProto = {
+    calAge() {//prototype
+        console.log(2037 - this.birthYear);
+   }
+}
+const p1 = Object.create(playerProto);
+p1.birthYear = 1986;
+p1.calAge();//51
+```
+
+## Inheritance between classes: Constructor Functions
+```js
+const Person = function (fullName, birthYear) {
+    this.fullName = fullName;
+    this.birthYear = birthYear;
+};
+
+const Student = function (fullName, birthYear, course) {
+    Person.call(this, fullName, birthYear);
+    this.course = course;
+};
+
+Person.prototype.calAge = function () {
+    console.log(2037- this.birthYear);
+}
+Student.prototype = Object.create(Person.prototype);//Object.create only receive prototype object
+Student.prototype.constructor = Student;
+
+const s = new Student("Lei Zhong", 1986, "Computing Science");
+
+
+s.calAge()
+console.log(s);
+```
+
+## Inheritance between classes: ES6 Functions
+```js
+class PersonCL {
+    constructor(firstName, birthYear) {
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+
+    calAge() {
+        //In prototype
+        console.log(2037 - this.birthYear);
+    }
+
+    get age() {
+        return 2037 - this.birthYear;
+    }
+    set fullName(name) {
+        this.firstName = name;
+    }
+    static hey() {
+        console.log("Hey, Static Method!");
+    }
+}
+
+class StudentCL extends PersonCL {
+    constructor(firstName, birthYear, course) {
+        super(firstName, birthYear);
+        this.course = course;
+    }
+    calAge(){//Override parent method; We can even override Parent Static Method
+        console.log("Heart Breaks!");
+    }
+}
+
+const s = new StudentCL("Lei", 1986, "CS");
+s.calAge();
+console.log(s.age);
+
+StudentCL.hey();//Static method is inherited
+```
+
+## Inheritance between classes: Object.create()
+```js
+const SuperType = function(){
+
+}
+SuperType.prototype.speed = 100;
+
+const newSup = Object.create(SuperType.prototype);
+newSup.init = function () {//instance method
+    console.log("Am I instance or prototype");
+}
+
+console.log(newSup);
+```
