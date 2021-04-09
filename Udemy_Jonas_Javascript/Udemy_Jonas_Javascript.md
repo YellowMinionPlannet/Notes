@@ -1054,3 +1054,4 @@ newSup.init = function () {//instance method
 
 console.log(newSup);
 ```
+

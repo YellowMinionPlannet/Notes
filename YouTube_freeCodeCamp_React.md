@@ -122,3 +122,36 @@ class App extends React.Component {
 }
 export default App
 ```
+
+```jsx
+import React from "react"
+import ReactDOM from "react-dom"
+
+class App extends React.Component{
+    constructor(){
+        super();
+        this.state = {
+            count: 1
+        }
+        this.handleChange = this.handleChange.bind(this);
+    }
+    
+    handleChange(){
+        this.setState((prevState) => {
+            return {
+                count: prevState.count + 1;
+            }
+        });
+    }
+
+    render(){
+        <div>
+            <h1>{this.state.count}</h1>
+            <input type="button" onclick={this.handleChange}>
+        </div>
+    }
+}
+
+export default App
+```
+
