@@ -154,4 +154,59 @@ class App extends React.Component{
 
 export default App
 ```
+# Form
 
+```jsx
+import React from "react"
+class Form extends React.Component{
+    constructor() {
+        super();
+        this.state = {
+            firstName: "",
+            lastName: "",
+            age: 0,
+            sex: "",
+            isAdult: false
+        };
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    handleChange(event) {
+        let { name, value } = event.target;
+        value = event.target.type == "checkbox" ? event.target.checked : event.target.value;
+        this.setState({
+            [name]: value
+        });
+    }
+
+    render() {
+        return (
+            <form>
+                <div className="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" onChange={this.handleChange} />
+                </div>
+                <div className="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" onChange={this.handleChange} />
+                </div>
+                <div className="form-group">
+                    <lable>Age</lable>
+                    <input type="number" name="age" onChange={this.handleChange} />
+                </div>
+                <div className="form-group">
+                    <label>Sex</label>
+                    <input type="radio" name="sex" value="male" onChange={ this.handleChange}/>
+                    <input type="radio" name="sex" value="female" onChange={ this.handleChange}/>
+                </div>
+                <div className="form-group">
+                    <label>Adult</label>
+                    <input type="checkbox" name="isAdult" onChange={ this.handleChange}/>
+                </div>
+                <div>{this.state.firstName} {this.state.lastName} is {this.state.age} years old who is {this.state.sex} and is { this.state.isAdult? "Adult": "Teenager"}</div>
+                <button>Submit</button>
+            </form>);
+    }
+}
+export default Form
+```
