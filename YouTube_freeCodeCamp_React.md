@@ -145,10 +145,10 @@ class App extends React.Component{
     }
 
     render(){
-        <div>
+        return (<div>
             <h1>{this.state.count}</h1>
             <input type="button" onclick={this.handleChange}>
-        </div>
+        </div>);
     }
 }
 
