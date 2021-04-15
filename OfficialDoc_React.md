@@ -141,7 +141,7 @@ function withdraw(account, amount){
     account.total -= amount;
 }
 ```
-# State and Lifecycle
+## State and Lifecycle
 Following code demonstrate a sample with a time ticker who works with the page. ComponentDidMount trigger every time Compoenent is updated to DOM.
 ```jsx
 class Clock extends React.Component{
@@ -225,7 +225,7 @@ componentDidMount(){
 ```
 These two setState() method will updates the State completely, although they are called seperately.
 
-# The Data Flows Down
+### The Data Flows Down
 State only can be fully controlled by the component itself, it cannot be shared. However it can be passed to child component as props.
 ```jsx
 <FormattedDate dae={this.state.date} />
@@ -262,3 +262,68 @@ function multipleClock() {
 const element = (<div>{ multipleClock()}</div>);
 ReactDOM.render(element, document.getElementById("root"));
 ```
+
+## Handling Events
+* React events are named using camelCase, rather than lowercase
+* With JSX you pass a function as the event handler, rather than a string
+For example:
+* You can't return false to prevent default behavior in React
+```jsx
+//onClick rather than onclick in DOM api
+<button onClick={activateLasers}>
+    Activate Lasers
+</button>
+function handleClick(e){
+    e.preventDefault();
+    console.log("The link was clicked");
+}
+```
+
+```jsx
+class Toggle extends React.Component{
+    constructor(props){
+        super(props)
+        this.state = {isToggleOn: true};
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(){
+        this.setState(state => {
+            isToggleOn: !state.isToggleOn
+        });
+    }
+
+    render(){
+        return(
+            <button onClick={this.handleClick}>
+                {this.state.isToggleOn?"ON":"OFF"}
+            </button>
+        );
+    }
+}
+
+ReactDOM.render(<Toggle/>, document.getElementById("root"));
+```
+Watch out for this in event handler. If you don't use bind, this in handleclick will be *undefined*. This is because, handleClick is called as function declaration.
+
+You can get arround with this by two ways, and both ways are related to arrow function.
+```jsx
+handleClick = () =>{
+    console.log(this);
+}
+
+handleClick1 (){
+    console.log(this);
+}
+<button onClick={() => this.handleClick1}>
+    Click ME!
+</button>
+```
+
+### Passing Arguments to Event Handlers
+```jsx
+<button onClick={(e)=>this.deleteRow(id, e)}>Delete Row</button>
+<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+```
+
+## Conditional Rendering
