@@ -131,5 +131,5 @@ ReactDOM.render(element, document.getElementById("root"));
 What happens in example above?
 1. Call ReactDOM.render()
 2. call Component Welcome with object {name: "Sara"} as the props
-3. Welcome return a <h1> element as result
+3. Welcome return a h1 element as result
 4. ReactDOM compares the previous one and current one, and updates the DOM efficiently.
