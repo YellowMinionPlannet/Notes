@@ -133,3 +133,120 @@ What happens in example above?
 2. call Component Welcome with object {name: "Sara"} as the props
 3. Welcome return a h1 element as result
 4. ReactDOM compares the previous one and current one, and updates the DOM efficiently.
+
+### Props are Read-Only
+Props are Read-Only, so do not try to change props directly.
+```jsx
+function withdraw(account, amount){
+    account.total -= amount;
+}
+```
+# State and Lifecycle
+Following code demonstrate a sample with a time ticker who works with the page. ComponentDidMount trigger every time Compoenent is updated to DOM.
+```jsx
+class Clock extends React.Component{
+    constructor(){
+        super();
+        this.state = {
+            date: new Date().
+        }
+    }
+
+
+    componentDidMount(){
+        this.timerId = setInterval(() => this.tick(), 1000);
+    }
+    componentWillMount(){
+        clearInterval(this.timerId);
+    }
+    render(){
+        return(
+            <div>
+                <h1>Hello, world!</h1>
+                <h2>It is {this.state.date.toLocaleTimeString()}</h2>
+            </div>
+        );
+    }
+
+    ReactDOM.render(<Clock/>, document.getDocumentById);
+}
+
+```
+
+### Using State Correctly
+#### Do Not Modify State Directly
+You cannot do this:
+```jsx
+this.state.comment = "Hello";
+```
+Instead, we can use this:
+```jsx
+this.setState({Comment: "Hello"});
+```
+
+#### State Updates May Be Asynchronous
+We can't do this:
+```jsx
+this.setState({
+    counter: this.state.counter + this.props.increment
+});
+```
+We should do this:
+```jsx
+this.setState((state, props)=>({
+    counter: state.counter + props.increment
+}));
+```
+Here, we receive state as previous state and props as the props at the time this update is applied.
+
+
+#### State Updates are Merged
+```jsx
+constructor(props){
+    super(props);
+    this.state = {
+        posts: [],
+        comments: []
+    }
+}
+
+componentDidMount(){
+    fetchPosts().then(response => {
+        this.setState({
+            posts: response.posts
+        });
+    });
+    fetchComments().then(response => {
+        this.setState({
+            comments: response.comments
+        });
+    });
+}
+```
+These two setState() method will updates the State completely, although they are called seperately.
+
+# The Data Flows Down
+State only can be fully controlled by the component itself, it cannot be shared. However it can be passed to child component as props.
+```jsx
+<FormattedDate dae={this.state.date} />
+function FormattedDate(props){
+    return <h2>It is {props.date.toLocaleTimeString()}</h2>
+}
+```
+Each component's state is isolated.
+```jsx
+funciton App(){
+    return(
+        <div>
+            <Clock />
+            <Clock />
+            <Clock />
+        </div>
+    );
+}
+
+ReactDOM.render(
+    <App />,
+    document.getElementById("root");
+);
+```
