@@ -460,3 +460,86 @@ ReactDOM.render(
   document.getElementById('root')
 );
 ```
+## Lists and Keys
+### Rendering Multiple Components
+You can use Array function and return list of components, and put this list into JSX curly braces to render multiple components.
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+const listItems = numbers.map((number)=><li>{number}</li>);
+
+ReactDOM.render(<ul>{listItems}</ul>, document.getElementById("root"));
+```
+
+### Keys
+* The best way to set keys in a list of components is to use ids of string.
+* It is not recommanded to use array index to be the keys.
+* keys must be maitained unique among siblings
+```jsx
+const todoItems = todos.map((todo, index) =>
+  // Only do this if items have no stable IDs
+  <li key={index}>
+    {todo.text}
+  </li>
+);
+```
+
+### Extracting Components with Keys
+Correct key usage
+```jsx
+function ListItem(props) {
+  // Correct! There is no need to specify the key here:
+  return <li>{props.value}</li>;
+}
+
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    // Correct! Key should be specified inside the array.
+    <ListItem key={number.toString()} value={number} />
+  );
+  return (
+    <ul>
+      {listItems}
+    </ul>
+  );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+```
+Incorrect Key Usage
+```jsx
+function ListItem(props) {
+  const value = props.value;
+  return (
+    // Wrong! There is no need to specify the key here:
+    <li key={value.toString()}>
+      {value}
+    </li>
+  );
+}
+
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    // Wrong! The key should have been specified here:
+    <ListItem value={number} />
+  );
+  return (
+    <ul>
+      {listItems}
+    </ul>
+  );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+```
+
+## Forms
