@@ -250,3 +250,15 @@ ReactDOM.render(
     document.getElementById("root");
 );
 ```
+```jsx
+//THIS WILL JAM THE BROWSER :D
+function multipleClock() {
+    const children = []
+    for (let i = 0; i < 1000; i++){
+        children.push(<Clock key={ i}/>);
+    }
+    return children;
+}
+const element = (<div>{ multipleClock()}</div>);
+ReactDOM.render(element, document.getElementById("root"));
+```
