@@ -543,3 +543,46 @@ ReactDOM.render(
 ```
 
 ## Forms
+The element's value attribute is always ```this.state.value```. Once element is changed, it will trigger ```this.handleChange``` method. That method will update state, so as element's value attribute.
+
+```jsx
+class NameForm extends React.Component{
+  constructor(props){
+    super(props)
+    this.state = {value: ""};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleChange(event){
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event){
+    alert("A name was submitted: " + this.state.value);
+    event.preventDefault();
+  }
+
+  render(){
+    return(
+      <form>
+        <label>
+          Name:
+          <input type="text" name="name"/>
+        </label>
+        <input type="submit" value="Submit"/>
+      </form>
+    );
+  } 
+}
+```
+
+### Controlled Input Null Value
+If you specify value attribute, then that element is not editable. But if you set value attribute to **undefined** or **null**.
+```jsx
+ReactDOM.render(<input value="hi"/>, mountNode);
+setTimeout(
+  ReatDOM.render(<input value={null} />, mountNode);
+  , 1000);
+```
