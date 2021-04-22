@@ -586,3 +586,93 @@ setTimeout(
   ReatDOM.render(<input value={null} />, mountNode);
   , 1000);
 ```
+## Composition vs. Inheritance
+### Containment
+```props.children``` is a special property, it contains parent's children elements, and the parent can pass its children elements to child component.
+
+```jsx
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  );
+}
+
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+```
+
+When the parent component wants to pass multiple components to child component, then it can use curly braces + component syntax.
+
+```jsx
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <SplitPane
+      left={
+        <Contacts />
+      }
+      right={
+        <Chat />
+      } />
+  );
+}
+```
+
+### Specialization
+Sometimes we think about components as being “special cases” of other components. For example, we might say that a WelcomeDialog is a special case of Dialog.
+In React, this is also achieved by composition, where a more “specific” component renders a more “generic” one and configures it with props.
+
+```jsx
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Welcome"
+      message="Thank you for visiting our spacecraft!" />
+  );
+}
+```
+
+### So What About Inheritance?
+
+At Facebook, we use React in thousands of components, and we haven’t found any use cases where we would recommend creating component inheritance hierarchies.
+
+Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way. Remember that components may accept arbitrary props, including primitive values, React elements, or functions.
+
+If you want to reuse non-UI functionality between components, we suggest extracting it into a separate JavaScript module. The components may import it and use that function, object, or a class, without extending it.
