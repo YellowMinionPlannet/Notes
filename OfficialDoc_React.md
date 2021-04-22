@@ -676,3 +676,9 @@ At Facebook, we use React in thousands of components, and we haven’t found any
 Props and composition give you all the flexibility you need to customize a component’s look and behavior in an explicit and safe way. Remember that components may accept arbitrary props, including primitive values, React elements, or functions.
 
 If you want to reuse non-UI functionality between components, we suggest extracting it into a separate JavaScript module. The components may import it and use that function, object, or a class, without extending it.
+
+## Thinking in React
+* make sure each component obey single responsibility principle which means each component will only do one thing
+* Design carefully with the json data model, each piece of data corresponds to one component
+* Choose top-down or bottem-up way to build your components
+* 
