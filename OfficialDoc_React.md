@@ -681,4 +681,9 @@ If you want to reuse non-UI functionality between components, we suggest extract
 * make sure each component obey single responsibility principle which means each component will only do one thing
 * Design carefully with the json data model, each piece of data corresponds to one component
 * Choose top-down or bottem-up way to build your components
-* 
+* Find out all the data model in your page and make a list
+* Ask following question to determine which data in that list needs a state property
+  1. Is it passed in from a parent via props? If so, it probably isn’t state.
+  2. Does it remain unchanged over time? If so, it probably isn’t state.
+  3. Can you compute it based on any other state or props in your component? If so, it isn’t state.
+* Make sure the component in the hierarchy top owns the state, if there's no one, you need to create one.
