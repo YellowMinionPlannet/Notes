@@ -45,3 +45,32 @@ function ExpenseItem(props){
 # Section 4: React State & Working with Events
 ## How Component Functions are Executed
 Component function is actually a normal function as it is normally nested in an ```<App/>``` component. When page is visited, ```React.Render``` is first called and it would call every component functions nested in it. Without **state** in it and after the first calling, the components updating would be done. No matter how hard you change the **props** it would not update the components. But **state** is used to tell React to re-evaluate components' changes and get ready to update components again.
+
+## Working with "state"
+```useState``` is a special **hook** in React, it will change the component function's props into state and inform React to update that props.
+
+```jsx
+const ExpenseItem = (props) =>{
+    const [title, setTitle] = useState(props.title);
+    //always return two elements,
+    //1st is the current state value
+    //2nd is the function to change the state value 
+    
+    let title = props.title;
+    const clickHandler = () =>{
+        setTitle("Updated");
+        console.log(title);//Here we print out the original value of state value, because the change is scheduled but not executed right away.
+    };
+
+    return (
+        <Card className="expense-item">
+            <ExpenseDate date={props.date} />
+            <div classsName="expense-item__description">
+                <h2>{title}</h2>
+                <div className="expense-item__price">${props.amount}</div>
+                <button onClick={clickHandler}>Change Title</button>
+            </div>
+        </Card>
+    );
+}
+```
