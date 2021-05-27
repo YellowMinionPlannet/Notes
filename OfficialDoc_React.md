@@ -548,7 +548,7 @@ HTML form in React works, but it is convinient to use Javascript function that h
 The standard way to achieve this is called "controlled component".
 
 ### Controlled Components
-
+The element's value attribute is always ```this.state.value```. Once element is changed, it will trigger ```this.handleChange``` method. That method will update state, so as element's value attribute.
 ```jsx
 class NameForm extends Ract.Component{
   constructor(props){
@@ -558,6 +558,10 @@ class NameForm extends Ract.Component{
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
   handleChange(event){
     this.setState({value: event.target.value});
   }
