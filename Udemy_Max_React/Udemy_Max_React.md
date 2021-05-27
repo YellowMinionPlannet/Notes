@@ -238,6 +238,7 @@ const Expenses = (props) => {
   let expensesContent = <p>No expenses found.</p>;
 
   if (filteredExpenses.length > 0) {
+    //Here we use map method to extract out useful data info
     expensesContent = filteredExpenses.map((expense) => (
       <ExpenseItem
         key={expense.id}
