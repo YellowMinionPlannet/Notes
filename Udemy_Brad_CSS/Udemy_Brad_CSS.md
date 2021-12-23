@@ -103,6 +103,7 @@ To display what's covered by floated element, use overflow hidden on the parent 
 ```css
 ul {
     /*NOTE: How we display background which is covered by floated li*/
+    /*Because child li is floated, parent ul's height = 0, overflow will make ul's height fit to the overflowed content*/
     overflow: auto;/*Or hidden*/
     float: right;
 }
