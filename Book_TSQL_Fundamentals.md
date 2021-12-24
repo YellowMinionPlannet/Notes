@@ -161,3 +161,21 @@ ALTER TABLE dbo.Orders
     ADD CONSTRAINT DFT_Orders_orderts
     DEFAULT(SYSDATETMIE()) FOR orderts;
 ```
+
+# Chapter 2 Single-table queries
+
+## Elements of the SELECT statement
+
+## Predicates and operators
+
+## CASE expressions
+
+## NULLs
+
+## All-at-once operations
+
+## Working with character data
+
+## Working with date and time data
+
+## Querying metadata
