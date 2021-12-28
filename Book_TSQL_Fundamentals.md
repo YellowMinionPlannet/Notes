@@ -165,6 +165,30 @@ ALTER TABLE dbo.Orders
 # Chapter 2 Single-table queries
 
 ## Elements of the SELECT statement
+The Logic Order of query processing is the order by which standard SQL defines how a query should be processed and the final result achieved. Database engine can process query differently by rearranging processing phases.
+
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT
+    1. Expressions
+    2. DISTINCT
+6. ORDER BY
+    1. TOP/OFFSET-FETCH
+
+### Delimiting identifier names
+You need to delimit identifier when an identifier is irregular, which means it
+* is embedded spaces
+* is embedded special characters
+* starts with a digit
+* is a reserved keyword
+
+You can delimit by double quotes or square brackets(in T-SQL)
+```sql
+SELECT * FROM "Order Details"
+SELECT * FROM [Order Details]
+```
 
 ## Predicates and operators
 
