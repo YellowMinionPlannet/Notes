@@ -177,7 +177,8 @@ The Logic Order of query processing is the order by which standard SQL defines h
 6. ORDER BY
     1. TOP/OFFSET-FETCH
 
-### Delimiting identifier names
+### The *FROM* clause
+#### **Delimiting identifier names**
 You need to delimit identifier when an identifier is irregular, which means it
 * is embedded spaces
 * is embedded special characters
@@ -189,6 +190,100 @@ You can delimit by double quotes or square brackets(in T-SQL)
 SELECT * FROM "Order Details"
 SELECT * FROM [Order Details]
 ```
+### The *WHERE* clause
+T-SQL uses tree-valued predicate logic where logic expressions can evaluate to *TRUE*, *FALSE*, or *UNKNOWN*
+
+### The *GROUP BY* clause
+Elements that do not participate in the *GROUP BY* clause are allowed only as inputs to an aggregate funciton such as *COUNT*, *SUM*, *AVG*, *MIN*, or *MAX*.
+for example:
+```sql
+-- freight is not in GROUP BY, so it can only be included in SUM()
+SELECT empid, YEAR(orderdate) AS orderyear, SUM(freight) as totalfreight, COUNT(*) AS numorders 
+FROM Sales.Orders
+WHERE custid = 71
+GROUP BY empid, YEAR(orderdate);
+```
+NOTE: All aggregate funcitons ignores *NULL*, with one exception - *COUNT(*)*. *DISTINCT* can be used in other funciton as well.
+
+for example
+```sql
+SELECT qty FROM [NUM]
+--returns 30, 10, NULL, 10, 10
+SELECT COUNT(*) from [NUM]
+--returns 5
+SELECT COUNT(qty) from [NUM]
+--returns 4
+SELECT SUM(qty) FROM [NUM]
+--returns 60
+SELECT SUM(DISTINCT qty) FROM [NUM]
+--returns 40
+```
+
+### The *HAVING* clause
+
+*HAVING* clause can filter the single value result of *GROUP BY*, also, it can aggregate the group.
+```sql
+SELECT empid, YEAR(orderdate) AS orderyear
+FROM Sales.Orders
+WHERE custid = 71
+GROUP BY empid, YEAR(orderdate)
+HAVING COUNT(*) > 1;
+```
+### The *SELECT* clause
+#### **Asign alias**
+T-SQL supports 3 ways of assigning alias
+```sql
+SELECT orderyear1 = YEAR(orderdate), YEAR(orderdate) AS orderyear2, YEAR(orderdate) orderyear3 FROM Sales.Orders
+```
+#### **Using alias**
+You cannot use alias in the clause process before *SELECT* clause. You cannot use alias in *SELECT* clause either.
+```sql
+--following statements will fail
+SELECT empid, YEAR(orderdate) AS orderyear, COUNT(*) AS numorders
+FROM Sales.Orders
+WHERE custid = 71
+GROUP BY empid, YEAR(orderdate)
+HAVING numorders > 1
+
+SELECT orderid, YEAR(orderdate) AS orderyear, orderyear + 1 AS nextyear
+FROM Sales.Orders
+```
+### The *ORDER BY* clause
+After *ORDER BY*, the result is turned into a ***cursor*** rather than a table. Some operation only works on ***cursor***.
+
+*ORDER BY* only works with attibutes specified in *DISTINCT*, so following statement is failed
+```sql
+SELECT DISTINCT country
+FROM HR.Employees
+ORDER BY empid;
+```
+
+### The *TOP* and *OFFSET-FETCH* filters
+When *TOP* applies with *DISTINCT*, it is evaluated after duplicate rows have been removed.
+
+*TOP* is not standard, but *OFFSET-FETCH* is.
+```sql
+SELECT orderid, orderdate, custid, empid
+FROM Sales.Orders
+ORDER BY orderdate, orderid
+OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY;
+```
+
+#### **Window function**
+```sql
+SELECT orderid, custid, val, ROW_NUMBER() OVER(PARTITION BY custid ORDER BY val) AS rownum
+FROM Sales.OrderValues
+ORDER BY custid, val;
+```
+|orderid|custid|val|rownum|
+|--|--|--|--|
+|10702|1|330.00|1|
+|10952|1|471.00|2|
+|10643|1|814.00|3|
+|10835|1|845.00|4|
+|10692|1|878.00|5|
+|11011|1|933.00|6|
+|10308|2|88.00|1|
 
 ## Predicates and operators
 
