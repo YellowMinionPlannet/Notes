@@ -287,13 +287,157 @@ ORDER BY custid, val;
 
 ## Predicates and operators
 
+* To operate two operands with same data type, the result would be the same data type. For example:
+```sql
+SELECT col1/col2 FROM [NUM]
+--returns 2, if col1 = 5, col2 = 2 and both are integer type
+```
+You can specify result to be different data type using *CAST*
+```sql
+SELECT CAST(col1 AS NUMERIC(12,2))/CAST(col2 AS NUMERIC(12,2)) FROM [NUM]
+--returns 2.5
+```
+* To operate two operands with different data types, the one with the lower precedence is promoted to the one that is higher.
+for example:
+```sql
+SELECT col1/col2 FROM [NUM]
+--returns 2.5 as col1 is INT and col2 is NUMERIC, since NUMERIC has higher precedence than INT.
+```
+
 ## CASE expressions
 
+There are 2 major types of *CASE* clauses, *simple* and *searched*. If *CASE* does not have *ELSE* clause, it defaults to `ELSE NULL`
+
+*simple*
+```sql
+SELECT productid, productname, categoryid,
+CASE categoryid
+    WHEN 1 THEN 'Beverages'
+    WHEN 2 THEN 'Condiments'
+    WHEN 3 THEN 'Confections'
+    WHEN 4 THEN 'Dairy Products'
+    WHEN 5 THEN 'Grains/Cereals'
+    WHEN 6 THEN 'Meat/Poultry'
+    WHEN 7 THEN 'Produce'
+    WHEN 8 THEN 'Seafood'
+    ELSE 'Unknow Category'
+END AS categoryname
+FROM Production.Products
+```
+*searched*
+```sql
+SELECT orderid, custid, val,
+CASE
+    WHEN val < 1000.00                      THEN 'Less than 1000'
+    WHEN val BETWEEN 1000.00 AND 3000.00    THEN 'Between 1000 and 3000'
+    WHEN val > 3000.00                      THEN 'More than 3000'
+ELSE 'Unknown'
+END AS valuecategory
+FROM Sales.OrderValues
+```
 ## NULLs
 
+* *NOT UNKNOWN* is *UNKNOWN*
+* SQL provides you with *IS NULL* and *IS NOT NULL* which you should use instead of `= NULL` and `<> NULL`.
+
+for example:
+```sql
+SELECT * FROM Sales.Customers;
+--returns 91 lines
+
+SELECT * FROM Sales.Customers WHERE regions = N'WA';
+--returns 3 lines
+
+SELECT * FROM Sales.Customers WHERE regions <> N'WA';
+--returns 28 lines
+
+-- BUT 60 lines are missing, because NULL value
+SELECT * FROM Sales.Customers WHERE regions <> N'WA' OR regions IS NULL;
+--returns 88 lines
+
+--HOWEVER
+SELECT * FROM Sales.Customers WHERE regions = NULL;
+--returns 0 line, because compare NULL to NULL is UNKOWN
+```
+
+* NULL values would be considered in to *GROUP BY* and *ORDER BY* clause. *UNIQUE* constraint can only allow one row to be NULL
+
 ## All-at-once operations
+* *WHERE* clause is processed at once, so there's no order among predicates. Following statement will fail because col1 would be 0.
+```sql
+SELECT col1, col2
+FROM dbo.T1
+WHERE col1 <> 0 AND col2/col1 > 2;
+--SQL would not execute from left to right, and does not support short circuits.
+```
+* To makes sure predicates are processed in order, we can use *CASE* expression.
+for example:
+```sql
+SELECT col1, col2 FROM dbo.T1
+WHERE
+    CASE 
+        WHEN col1 = 0 THEN 'no'
+        WHEN col2/col1 > 2 THEN 'yes'
+        ELSE 'no'
+    END = 'yes';
+```
 
 ## Working with character data
+* CHAR vs. NCHAR
+    * Regular characters use 1 byte of storage for each character, whereas Unicode data requires 2 bytes percharacter and in cases in which a surrogate pair is needed, 4 bytes are required.
+    * N'This is a Unicode character string literal'
+* CHAR vs. VARCHAR
+    * Without VAR, server preserves space for n characters string. This is more suitable for write-focused systems.
+    * With VAR, the maximum character supported is n, actual number of character determines the amount of storage. It might cause movement outside the current page when updates.
+
+### Collation
+For example: *Latin1_General_CI_AS*
+* Latin1_General: Code page 1252 si used.
+* Dictionary sorting: (A and a < B and b)
+    BIN: (A < B < a < b)
+* CI: Data is case insensitive (a = A)
+* AS: Data is accent sensitive (a in different language is differently treated)
+
+For example:
+```sql
+SELECT empid, firstname, lastname
+FROM HR.Employees
+WHERE lastname = N'davis';
+--return 1 line which is 1 | Sara | Davis
+
+SELECT empid, firstname, lastname
+FROM HR.Employees
+WHERE lastname COLLATE Latin1_Genral_CS_AS = N'davis';
+--return 0 line cause we are using case sensitive collation
+```
+
+* To express literal abc'de, we can do `'abc''de'`
+
+### Operators and functions
+
+#### **String concatenation**
+
+* concatenation with a NULL should yield a NULL.
+```sql
+SELECT custid, country, region, city, country + N',' + region + N',' + city AS location
+FROM Sales.Cutomers;
+--location could return NULL since region is nullable
+```
+
+* We could use *COALESCE* to eliminate NULL condition
+```sql
+SELECT custid, country, region, city, coutry + COALESCE(N',' + region, N'') + N',' + city AS location
+FROM Sales.Customers
+--returns <N','region> if region is not null and <''> for region is null
+```
+
+* T-SQL supports *CONCAT* which will substitutes NULL with empty strings
+```sql
+SELECT custid, country, region, city, CONCAT(country , N',' + region, N',' + city) AS location
+FROM Sales.Customers
+```
+
+#### **SUBSTRING**
 
 ## Working with date and time data
 
