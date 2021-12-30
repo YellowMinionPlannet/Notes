@@ -203,7 +203,7 @@ FROM Sales.Orders
 WHERE custid = 71
 GROUP BY empid, YEAR(orderdate);
 ```
-NOTE: All aggregate funcitons ignores *NULL*, with one exception - *COUNT(*)*. *DISTINCT* can be used in other funciton as well.
+NOTE: All aggregate funcitons ignores *NULL*, with one exception - *COUNT(\*)*. *DISTINCT* can be used in other funciton as well.
 
 for example
 ```sql
@@ -438,6 +438,12 @@ FROM Sales.Customers
 ```
 
 #### **SUBSTRING**
+```sql
+SELECT SUBSTRING('abcde', 1, 3);
+--return 'abc'
+SELECT SUBSTRING('abcde', 1, 100);
+--return 'abcde' without spaces at the end
+```
 
 ## Working with date and time data
 
