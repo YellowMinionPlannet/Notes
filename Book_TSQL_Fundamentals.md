@@ -445,6 +445,135 @@ SELECT SUBSTRING('abcde', 1, 100);
 --return 'abcde' without spaces at the end
 ```
 
+#### **The LEFT and RIGHT functions**
+```sql
+SELECT RIGHT('abcde', 3)
+--return 'cde'
+```
+
 ## Working with date and time data
 
 ## Querying metadata
+
+
+# Chapter 4 Subqueries
+Subqueries can return:
+* single value (covered in this chapter)
+* multiple values (covered in this chapter)
+* whole table result (covered in Chapter 5)
+
+Subqueries can be classified as 
+* self-contained, which HAS NO dependency on tables from out query
+* correlated, which HAS dependency on tables from out query
+
+## Self-contained subqueries
+### Self-contained scalar subquery examples
+They appear any where a single-valued expression can appear in out query(sucha as *WHERE* and *SELECT*).
+```sql
+SELECT orderid, orderdate, empid, custid
+FROM Sales.Orders
+WHERE orderid = (SELECT MAX(O.orderid) FROM Sales.Orders AS O);
+```
+
+If subquery returns multiple values and the operator expects single value, the statment will fail. For example:
+```sql
+SELECT orderid 
+FROM Sales.Orders
+WHERE empid = 
+(SELECT E.empid
+FROM HR.Employees AS E
+WHERE E.lastname LIKE N'D%');
+--the subquery returns multiple values and = expects single value which causes statement fails
+```
+
+If subquey returns empty result, it will be converted to a *NULL*. Comparison with NULL result in *UNKNOWN*, and *WHERE* clause only returns *TRUE*, so the whole statement will be empty at the end. For example:
+```sql
+SELECT orderid
+FROM Sales.Orders
+WHERE empid = 
+(SELECT E.empid
+FROM HR.Employees AS E
+WHERE E.lastname LIKE N'A%');
+--the subquery returns empty value which will be converted to NULL causes the whole statement is empty result
+```
+
+### Self-contained multivalued subquery examples
+#### **IN predicate**
+```sql
+SELECT orderid
+FROM Sales.Orders
+WHERE empid IN
+(SELECT E.empid
+FROM HR.Employees AS E
+WHERE E.lastname LIKE N'D%')
+
+SELECT n
+FROM dbo.Nums
+WHERE n BETWEEN (SELECT MAX(orderid) FROM dbo.Orders AS O)
+        AND (SELECT MIN(orderdi) FROM dbo.Orders AS O)
+AND n NOT IN (SELECT O.orderid FROM dbo.Orders AS O)
+```
+
+## Correlated subqueries
+```sql
+SELECT custid, orderid, orderdate, empid
+FROM Sales.Orders AS O1
+WHERE orderid = 
+(SELECT MAX(O2.orderid)
+FROM Sales.Orders AS O2
+WHERE O2.custid = O1.custid);
+```
+
+### The *EXISTS* predicate
+TSQL supports *EXISTS* that accept a subquery as input and returns TRUE if the subquey returns any rows and FALSE otherwise.
+
+```sql
+SELECT custid, companyname
+FROM Sales.Customers AS C
+WHERE country = N'Spain'
+AND NOT EXISTS
+(SELECT * FROM Sales.Orders AS O
+WHERE O.custid = C.custid)
+--return spain customers who hasn't place any order
+```
+
+*EXISTS* uses two-valued logic instead of three-valued logic.
+*IN* uses three-valued logic, so you need to watch out for *NULL* values which will cause unknown and be filtered out by *IN* predicate.
+
+# Chapter 5 Table Expression
+TSQL supports 4 types of table expressions:
+* derived tables(table subqueries)
+* common table expressions(CTEs)
+* views
+* inline table-valued functions(inline TVFs)
+
+3 requirements for table expressions:
+1. No order is guaranteed, so you can't use *ORDER BY* unless you use *TOP* or *OFFSET-FETCH*
+2. All columns must have names
+3. All column names must be unique
+
+## Derived tables
+it is defined in *FROM* clause and is gone after outer query is finished.
+```sql
+SELECT * 
+FROM (SELECT custid, companyname 
+        FROM Sales.Customers
+        WHERE coutry = N'USA') AS USACusts;
+```
+
+### Assigning column aliases
+You can use derived tables to solve aliases problem.For example:
+```sql
+SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM Sales.Orders
+GROUP BY orderyear;
+--this statement will fail 'cuase orderyear is not accessible in GROUP BY since SELECT is the clause that is executed at last
+
+--We can fix this by derived table since derived table is in FROM clause which is executed at the beginning
+SELECT orderyear, numcusts
+FROM
+(SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM Sales.Orders) AS D
+GROUP BY orderyear;
+
+```
