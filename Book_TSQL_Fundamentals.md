@@ -570,10 +570,135 @@ GROUP BY orderyear;
 --this statement will fail 'cuase orderyear is not accessible in GROUP BY since SELECT is the clause that is executed at last
 
 --We can fix this by derived table since derived table is in FROM clause which is executed at the beginning
-SELECT orderyear, numcusts
+SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
 FROM
-(SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+(SELECT YEAR(orderdate) AS orderyear, custid
 FROM Sales.Orders) AS D
 GROUP BY orderyear;
 
+--ALSO we can asign alias external to the table expression
+SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM
+(SELECT YEAR(orderdate), custid
+FROM Sales.Orders) AS D(orderyear, custid)
+GROUP BY orderyear;
 ```
+### Using arguments
+### NESTING
+```sql
+SELECT orderyear, numcusts
+FROM (SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
+        FROM (SELECT YEAR(orderdate) AS orderyear, custid
+                FROM Sales.Orders) AS D1
+        GROUP BY orderyear) AS D2
+WHERE numcusts > 70;
+
+-- NO difference than
+SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM Sales.Orders
+GROUP BY YEAR(orderdate)
+HAVING COUNT(DISTINCT custid) > 70;
+```
+### Multiple references
+```sql
+SELECT Cur.orderyear, Cur.numcusts AS curnumcusts, Prv.numcusts AS prvnumcusts, Cur.numcusts - Prv.numcusts AS growth
+FROM (SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+        FROM Sales.Orders
+        GROUP BY YEAR(orderdate)) AS Cur
+LEFT OUTER JOIN
+    (SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+        FROM Sales.Orders
+        GROUP BY YEAR(orderdate)) AS Prv
+ON Cur.orderyear = Prv.orderyear + 1
+```
+
+## Common table expressions
+```sql
+WITH USACusts AS
+(
+    SELECT custid, companyname
+    FROM Sales.Customers
+    WHERE country = N'USA'
+)
+SELECT * from USACusts;
+```
+
+### Assigning column aliases in CTEs
+alias can be used after claimed in CTEs
+
+```sql
+WITH C AS(
+    SELECT YEAR(orderdate) AS orderyear, custid
+    FROM Sales.Orders
+)
+SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM C
+GROUP BY orderyear;
+
+--or we can claim aliase externally
+WITH C (orderyear, custid) AS(
+    SELECT YEAR(orderdate), custid
+    FROM Sales.Orders
+)
+SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
+FROM C
+GROUP BY orderyear;
+```
+
+### Defining multiple CTEs
+```sql
+WITH C1 AS(
+    SELECT YEAR(orderyear) AS orderyear, custid
+    FROM Sales.Orders
+),
+C2 AS(
+    SELECT orderyear, COUNT(DISTINCT custid) AS numcusts
+    FROM C1
+    GROUP BY orderyear
+)
+SELECT orderyear, numcusts
+FROM C2
+WHERE numcusts > 70;
+```
+
+### Multiple reference in CTEs
+```sql
+WITH YearlyCount AS
+(
+    SELECT YEAR(orderdate) AS orderyear, COUNT(DISTINCT custid) AS numcusts
+    FROM Sales.Orders
+    GROUP BY YEAR(orderdate)
+)
+SELECT Cur.orderyear, Cur.numcusts AS curnumcusts, Prv.numcusts AS prvnumcusts, Cur.numcusts - Prv.numcusts AS growth
+FROM YearlyCount AS Cur
+LEFT OUTER JOIN YearlyCount AS Prv
+ON Cur.orderyear = Prv.orderyear + 1;
+```
+
+### Recursive CTEs
+
+```sql
+WITH EmpsCTE AS(
+    --Anchor
+    SELECT empid, mgrid, firstname, lastname
+    FROM HR.Employees
+    WHERE empid = 2
+
+    UNION ALL
+    --Recursive
+    SELECT C.empid, C.mgrid, C.firstname, C.lastname
+    FROM EmpsCTE AS P
+    INNER JOIN HR.Employees AS C
+    ON C.mgrid = p.empid
+)
+SELECT empid, mgrid, firstname, lastname
+FROM EmpsCTE;
+```
+
+Process of Recursive CTEs
+1. Process Anchor and make anchor result = EmpsCTE
+2. Process Recursive and make result = EmpsCTE
+3. Process Recursive and make result = EmpsCTE until Recursive return empty set
+4. Union all result together
+
+## Views
