@@ -702,3 +702,83 @@ Process of Recursive CTEs
 4. Union all result together
 
 ## Views
+```sql
+CREATE VIEW Sales.USACusts
+AS
+SELECT custid, companyname, contactname, contacttitle, address, city, region, postlcode, country, phone, fax 
+FROM Sales.Customers
+WHERE country = N'USA';
+
+-- Using views
+SELECT custid, companyname
+FROM Sales.USACusts;
+```
+
+### Pitfalls
+Please avoid using * when creating views, because, even using *, views can only includes columns at the creating time. Newly added columns will not be updates to views automatically.
+
+### Views and the *ORDER BY* clause
+Views like other table expressions, needs to comply with the 3 requirements. DO NOT try to trick on *ORDER BY* clause in views, the order is not guaranteed if you do so. For example:
+```sql
+CREATE VIEW Sales.USACusts
+AS
+SELECT custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax
+FROM Sales.Customers
+WHERE country = N'USA'
+ORDER BY region
+OFFSET 0 ROWS;
+
+CREATE VIEW Sales.USACusts
+AS
+SELECT TOP (100) PERCENT
+    custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax
+FROM Sales.Customers
+WHERE country = N'USA'
+ORDER BY region;
+
+-- BOTH WORK ARROUND's ORDER is not QUARANTEED
+```
+
+### View options
+#### **The *ENCRYPTION* option**
+```sql
+--gives you definition of Sales.USACusts
+SELECT OBJECT_DEFINITION(OBJECT_ID('Sales.USACusts'));
+--gives you definition of Sales.USACusts
+EXEC sp_helptext 'Sales.USACusts';
+
+
+--following statements make the previous statements returns NULL or encrypted
+ALTER VIEW Sales.USACusts WITH ENCRYPTION
+AS
+SELECT
+    custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax
+FROM Sales.Customers
+WHERE country = N'USA';
+```
+
+#### **The *SCHEMABINDING* option**
+```sql
+-- This makes sure you cannot alter table (Sales.Customers) and columns specified in this VIEW definition
+ALTER VIEW Sales.USACusts WITH SCHEMABINDING
+AS
+SELECT
+    custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax
+FROM Sales.Customers
+WHERE country = N'USA';
+```
+
+#### **The *CHECK OPTION* option**
+```sql
+-- This makes sure you cannot alter table (Sales.Customers) and columns specified in this VIEW definition
+ALTER VIEW Sales.USACusts WITH SCHEMABINDING
+AS
+SELECT
+    custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax
+FROM Sales.Customers
+WHERE country = N'USA'
+WITH CHECK OPTION;
+-- WITH CHECK OPTION makes sure when you do modification it will comply with the filter
+```
+
+## Inline table-valued functions
