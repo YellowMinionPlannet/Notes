@@ -782,3 +782,41 @@ WITH CHECK OPTION;
 ```
 
 ## Inline table-valued functions
+You can treat inline table-valued functions as view with input parameter
+```sql
+CREATE FUNCTION dbo.GetCustOrders(@cid AS INT) RETURNS TABLE
+AS
+RETURN
+SELECT orderid, custid, empid, orderdate, requireddate, shppeddate, shipperid, freight, shipname, shipaddress, shipcity, shipregion,shippostalcode, shipcountry
+FROM Sales.Orders
+WHERE custid = @cid;
+
+SELECT orderid, custid
+FROM dbo.GetCustOrders(1) AS O;
+```
+
+## The *APPLY* operator
+*This is a not standard SQL.*
+
+First execute the left table, then do a match on the right table. Cross apply like cross join, which do not preserve empty result rows.
+
+```sql
+SElECT C.custid, A.orderid, A.orderdate
+FROM Sales.Customers AS C
+CROSS APPLY
+    (SELECT orderid, empid, orderdate, requireddate
+    FROM Sales.Orders AS O
+    WHERE O.custid = C.custid
+    ORDER BY orderdate DESC, orderid DESC
+    OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY) AS A;
+
+SElECT C.custid, A.orderid, A.orderdate
+FROM Sales.Customers AS C
+OUTER APPLY
+    (SELECT orderid, empid, orderdate, requireddate
+    FROM Sales.Orders AS O
+    WHERE O.custid = C.custid
+    ORDER BY orderdate DESC, orderid DESC
+    OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY) AS A;
+```
+
