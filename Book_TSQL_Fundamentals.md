@@ -820,3 +820,236 @@ OUTER APPLY
     OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY) AS A;
 ```
 
+# Chapter 6 Set operators
+Set operators use *distinct predicate*, which produces *TRUE* when compares two *NULL*.
+
+# Chapter 7 Beyond the fundamentals of querying
+> SKIPPED
+
+# Chapter 8 Data modification
+To demonstrate samples in this chapter, we create dbo.Orders table.
+
+```sql
+CREATE TABLE dbo.Orders(
+    orderid INT         NOT NULL
+        CONSTRAINT PK_Orders PRIMARY KEY,
+    orderdate DATE      NOT NULL
+        CONSTRAINT DFT_orderdate DEFAULT(SYSDATETIME()),
+    empid   INT         NOT NULL,
+    custid  VARCHAR(10) NOT NULL
+);
+```
+
+## The *INSERT VALUES* statement
+* To specify orders when doing INSERT, we can use parentheses after table name. If we do not specify order, SQL SERVER insert according to the CREATE TABLE statement.
+
+* To specify values when doing INSERT, we can use VALUES clause. If we do not specify values, 
+    * first, database check if default is available when INSERT
+    * Second, database check if NULL is allowed on that column
+    * Third, database will fail the statement if no value is specified and no default is available and NULL value is not allowed
+
+* T-SQL supports an enhanced standard *VALUES* clause that you can use multiple values seperated by commas. For example:
+
+```sql
+INSERT INTO dbo.Orders
+    (orderid, orderdate, empid, custid)
+VALUES
+(10003, '20160213', 4, 'B'),
+(10004, '20160214', 1, 'A'),
+(10005, '20160213', 1, 'C'),
+(10006, '20160215', 3, 'C');
+```
+* NOTE: the statement above run as a transaction, meaning that if any row fails to enter the table, none of rows in the statement enters the table.
+
+* You can use *VALUES* clause as table-value constructor to get a <u>derived table</u>.For example:
+```sql
+SELECT * FROM 
+(VALUES 
+(10003, '20160213', 4, 'B'),
+(10004, '20160214', 1, 'A'),
+(10005, '20160213', 1, 'C'),
+(10006, '20160215', 3, 'C')) AS O(orderid, orderdate, empid, custid);
+
+```
+
+## The *INSERT SELECT* statement
+*INSERT SELECT* also run as a transaction.
+
+```sql
+INSERT INTO dbo.Orders(orderid, orderdate, empid, custid)
+SELECT orderid, orderdate, empid, custid
+FROM Sales.Orders
+WHERE shipcountry = N'UK';
+```
+> NOTE: If you include *SYSDATETIME* in the query, it will only trigger once, instead of trigger per row. However, if you use *NEWID* function, it will trigger per row.
+
+## The *INSERT EXEC* statement
+```sql
+DROP PROC IF EXISTS Sales.GetOrders;
+GO
+
+CREATE PROC Sales.GetOrders
+    @country AS NVARCHAR(40)
+AS
+SELECT orderid, orderdate, empid, custid
+FROM Sales.Orders
+WHERE shipcountry = @country;
+
+INSERT INTO dbo.Orders(orderid, orderdate, empid, cutid)
+EXEC Sales.GetOrders @country = N'France';
+```
+
+## The *SELECT INTO* statement
+* nonstandard SQL. 
+```sql
+DROP TABLE IF EXISTS dbo.Orders --if dbo.Orders exists this statement will fail
+
+SELECT orderid, orderdate, empid, custid
+INTO dbo.Orders
+FROM Sales.Orders
+```
+
+* The target table's(dbo.Orders's) structure and data are based on the source table(Sales.Orders)
+* Source table structure includes
+    * column names
+    * types
+    * nullability
+    * identity property
+    * values
+* Source table structure excludes
+    * constraints
+    * indexes
+    * triggers
+    * column properties such as SPARSE and FILESTREAM
+    * permissions
+
+* You can use *Set Operator* after *FROM*, for example:
+```sql
+DROP TABLE IF EXISTS dbo.Locations;
+
+SELECT country, region, city
+INTO dbo.Locations
+FROM Sales.Customers
+
+EXCEPT
+
+SELECT country, region, city
+FROM HR.Employees;
+```
+
+## The *BULK INSERT* statement
+
+> please see "Prerequisites for Minimal Logging in Bulk Import" online books
+
+## The identity property and the sequence object
+### Identity
+* standard column property
+
+* If you do not specify the seed and increment, identity will give you 1 for both
+
+```sql
+DROP TABLE IF EXISTS dbo.T1;
+
+CREATE TABLE dbo.T1(
+    keycol  INT         NOT NULL IDENTITY(1,1)
+        CONSTRAINT PK_T1 PRIMARY KEY,
+    datacol VARCHAR(10) NOT NULL
+        CONSTRAINT CHK_T1_datacol CHECK(datacol LIKE '[ABCDEFGHIJKLMNOPQRSTUVWXYZ]%')
+);
+
+-- if you do not proivde keycol when doing INSERT, database will create one for you
+
+INSERT INTO dbo.T1 (datacol) VALUES('AAAAA'), ('CCCCC'), ('BBBBB');
+
+SELECT * FROM dbo.T1;
+```
+#### **@@identity** and **SCOPE_IDENTITY**
+
+* *@@identity* returns a identity last INSERTED by the session regardless the scopes
+* *SCOPE_IDENTITY* returns a identity last INSERTED by the current scope.
+
+```sql
+DECLARE @new_key AS INT;
+INSERT INTO dbo.T1(datacol) VALUES('AAAAA');
+SET @new_key = SCOPE_IDENTITY();
+SELECT @new_key AS new_key
+
+-- result is 4
+```
+
+#### **IDENT_CURRENT**
+* it returns current identity value of a table regardless of session.
+
+```sql
+SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY],
+@@identity AS [@@identity],
+IDENT_CURRENT(N'dbo.T1') AS [IDENT_CURRENT];
+
+-- NULL   NULL   4
+
+--if you fail one insert, identity will be skipped
+
+INSERT INTO dbo.T1 (datacol) VALUES ('EEEEE'), ('DDDDD'), ('11111') -- this will fail due to the check constraint
+
+SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY],
+@@identity AS [@@identity],
+IDENT_CURRENT(N'dbo.T1') AS [IDENT_CURRENT];
+-- NULL    NULL   7   because we skipped 3 rows due to the last INSERT
+SET IDENTITY_INSERT dbo.T1 ON
+INSERT INTO dbo.T1(keycol, datacol) VALUES(5, 'FFFFF')
+SET IDENTITY_INSERT dbo.T1 OFF
+
+SELECT SCOPE_IDENTITY() AS [SCOPE_IDENTITY],
+@@identity AS [@@identity],
+IDENT_CURRENT(N'dbo.T1') AS [IDENT_CURRENT];
+-- 5      5   7  
+-- 7 because IDENT_CURRENT not changed until we insert identity that is higher than the CURRENT one
+```
+
+### Sequence
+> search for more info about squence vs. identity
+
+## Deleting data
+## The *OUTPUT* clause
+```SQL
+UPDATE TOP(1) dbo.T1
+SET datacol = 'AAZZZ'
+	OUTPUT 
+	inserted.keycol,
+	deleted.datacol AS olddatacol,
+	inserted.datacol AS newdatacol
+WHERE datacol = 'AZZZZ';
+-- TOP(1) make sure only update 1 row
+-- OUTPUT allow you to view changed rows
+
+UPDATE O
+SET O.shipcountry = C.country,
+O.shipregion = c.region,
+O.shipcity = c.city
+OUTPUT
+inserted.orderid,
+deleted.shipcountry AS oldshipcountry,
+deleted.shipregion AS oldshipregion,
+deleted.shipcity AS oldshipcity
+FROM dbo.Orders AS O
+INNER JOIN dbo.Customers AS C
+ON O.custid = C.custid
+WHERE C.country = N'UK'
+
+
+-- Ultimate nested DML
+INSERT INTO dbo.ProductsAudits(productid, colname, oldval, newval)
+SELECT productid, N'unitprice', oldval, newval
+FROM(
+    UPDATE dbo.Products
+    SET unitprice *= 1.15
+    OUTPUT
+        inserted.productid,
+        deleted.unitprice AS oldval,
+        inserted.unitprice AS newval
+    WHERE supplierid = 1
+) AS D
+WHERE oldval < 20.0 AND newval >= 20.0;
+```
+
+# Chapter 9 Temporal tables
