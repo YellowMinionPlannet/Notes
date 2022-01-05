@@ -1053,3 +1053,114 @@ WHERE oldval < 20.0 AND newval >= 20.0;
 ```
 
 # Chapter 9 Temporal tables
+> Skipped
+
+# Chapter 10 Transactions and concurrency
+There are several principal need to be clarified before we digging in.
+1. Lock and isolation level is concept applied when there is concurrency, if there's no concurrency or all statment happens in the same transaction, there's no need to worry about these concepts.
+2. You only need to adjust isolation level whereever read operations happened.
+
+## Lock and blocking
+### Locks
+    * Exclusive Lock: When this lock applies, no other lock can exist, by default, this lock is applied when there's modification on data.
+    * Shared Lock: Only happens while reading. To change the behavior of shared lock, you need to adjust isolation level.
+
+### Troubleshooting blocking
+Example of exclusive lock:
+```sql
+-- CON1
+-- Begin transaction and do not commit, which will issue exclusive lock on the row
+BEGIN TRAN;
+UPDATE Production.Products SET unitprice += 1.00 WHERE productid = 2
+
+-- CON2
+-- By box product default, this read is under READ COMMITTED isolation level
+SELECT productid, unitprice FROM Production.Products WHERE productid = 2
+```
+
+#### **Tools can be used to identify blocking**
+1. identify status of lock
+```sql
+SELECT
+    request_session_id AS sid,
+    resoucrce_type AS restype,
+    resource_database_id AS dbid,
+    DB_NAME(resource_database_id) AS dbname,
+    resource_description AS res,
+    resource_associated_entity_id AS resid,
+    request_mode AS mode,
+    request_status AS status
+FROM sys.dm_tran_locks;
+```
+|sid|restype|dbid|dbname|res|resid|mode|status|
+|--|--|--|--|--|--|--|--|
+|53|DATABASE|8|TSQLV4||0|S|GRANT|
+|52|DATABASE|8|TSQLV4||0|S|GRANT|
+|51|DATABASE|8|TSQLV4||0|S|GRANT|
+|54|DATABASE|8|TSQLV4||0|S|GRANT|
+|53|PAGE|8|TSQLV4|1:127|72057594038845440|IS|GRANT|
+|52|PAGE|8|TSQLV4|1:127|72057594038845440|IX|GRANT|
+|53|OBJECT|8|TSQLV4||133575514|IS|GRANT|
+|52|OBJECT|8|TSQLV4||133575514|IX|GRANT|
+|52|KEY|8|TSQLV4|(020068e8b274)|72057594038845440|X|GRANT|
+|53|KEY|8|TSQLV4|(020068e8b274)|72057594038845440|S|GRANT|
+
+The status tells you the lock status.
+
+```sql
+SELECT @@SPID
+-- session id, which will be the same as number in parentheses on tab title
+```
+
+```sql
+SELECT OBJECT_NAME(133575514)
+-- return object name which will be Production.Products in this example
+```
+2. identify sql handled by session id
+```sql
+SELECT 
+    session_id AS sid,
+    connect_time,
+    last_read,
+    last_write,
+    most_recent_sql_handle
+FROM sys.dm_exec_connections
+WHERE session_id IN (52, 53)
+```
+|sid|connect_time|last_read|last_write|most_recent_sql_handle|
+|--|--|--|--|--|
+|52|2016-06-25 15:20:03.360|2016-06-25 15:20:15.750|2016-06-25 15:20:15.817|0x01000800DE2DB71FB0936F05000000000000000000000000|
+|53|2016-06-25 15:20:07.300|2016-06-25 15:20:20.950|2016-06-25 15:20:07.327|0x0200000063FC7D052E09844778CDD615CFE7A2D1FB411802|
+
+most_recent_sql_handle tells you what sql is handling by the session id right now. Because we are facing a blocking condition in this example, the sql here is the one causing the blocking.
+
+3. convert sql from binary to string
+```sql
+SELECT session_id, text 
+FROM sys.dm_exec_connections
+    CROSS APPLY sys.dm_exec_sql_text(most_recent_sql_handle) AS ST
+WHERE session_id IN(52, 53)
+
+-- OR
+
+SELECT * FROM sys.dm_exec_sql_text(CONVERT(VARBINARY(64), '0x020000008493651246BA591D25502095CCD7669F841FDFCB0000000000000000000000000000000000000000', 1)) AS ST
+```
+
+4. Find other useful information by session id
+```sql
+SELECT
+    session_id AS sid,
+    login_time,
+    host_name,
+    program_name,
+    login_name,
+    nt_user_name,
+    last_request_start_time,
+    last_request_end_time
+FROM sys.dm_exec_sessions
+WHERE session_id IN(52,53)
+```
+|sid|login_time|host_name|program_name|login_name|nt_user_name|last_request_start_time|last_request_end_time|
+|--|--|--|--|--|--|--|--|
+|52|2022-01-05 17:25:34.067|DESKTOP-N0DKTGS|Microsoft SQL Server Management Studio - Query|DESKTOP-N0DKTGS\Lei Zhong|Lei Zhong|2022-01-05 17:49:45.733|2022-01-05 17:49:45.730|
+|53|2022-01-05 17:25:34.067|DESKTOP-N0DKTGS|Microsoft SQL Server Management Studio - Query|DESKTOP-N0DKTGS\Lei Zhong|Lei Zhong|2022-01-05 17:49:45.733|2022-01-05 17:49:45.730|
