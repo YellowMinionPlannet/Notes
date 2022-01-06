@@ -1323,3 +1323,64 @@ Phantom Read:
     
 * If you want to make new rows affected by the shared lock, you need SERIALIZABLE.
 
+```sql
+--CON 1
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+BEGIN TRAN;
+    SELECT productid, productname, categoryid, unitprice
+    FROM Production.Products
+    WHERE categoryid = 1;
+--CON 2
+INSERT INTO Production.Products(productname, supplierid, categoryid, unitprice, discontinued)
+VALUES('Product ABCDE', 1, 1, 20.00, 0);
+```
+```sql
+--CON 1
+SELECT productid,, productname, categoryid, unitprice
+FROM Production.Products
+WHERE categoryid = 1;
+
+COMMIT TRAN:
+--this will release shared lock from CON1 which blocks CON2 previously, and result of this statement will be the same as first read.
+```
+
+## Isolation levels based on row versioning
+
+> see the original book for more info
+
+* SNAPSHOT and READ COMMITTED SNAPSHOT both DO NOT apply shared lock when read.
+* SNAPSHOT will always read from the snapshot before current transaction
+* READ COMITTED SNAPSHOT will read from commited snapshot at current.
+
+## Deadlocks
+sample of deadlock:
+```sql
+--CON 1
+BEGIN TRAN;
+UPDATE Production.Products
+SET unitprice += 1.00
+WHERE productid = 2;
+
+--CON 2
+BEGIN TRAN;
+UPDATE Sales.OrderDetails
+SET unitprice += 1.00
+WHERE productid = 2;
+```
+
+```sql
+--CON 1
+SELECT orderid, productid, unitprice
+FROM Sales.OrderDetails
+WHERE productid = 2;
+COMMIT TRAN;
+
+--CON2
+SELECT productid, unitprice
+FROM Production.Products
+WHERE productid = 2;
+COMMIT TRAN;
+```
+
+* Once deadlock occurs, SQL Server will show up and kill one of them after few seconds. She kills due to the lowest DEADLOCK_PRIORITY of the session, which is in range -10 through 10. If the DEADLOCK_PRIORITY is the same, she will choose amount of work in the least to kill. If same amount of work occurs, she will toss a coin.
+* If SQL Server DOES NOT shows up, deadlock exists forever...
