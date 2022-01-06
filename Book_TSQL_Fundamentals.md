@@ -1164,3 +1164,96 @@ WHERE session_id IN(52,53)
 |--|--|--|--|--|--|--|--|
 |52|2022-01-05 17:25:34.067|DESKTOP-N0DKTGS|Microsoft SQL Server Management Studio - Query|DESKTOP-N0DKTGS\Lei Zhong|Lei Zhong|2022-01-05 17:49:45.733|2022-01-05 17:49:45.730|
 |53|2022-01-05 17:25:34.067|DESKTOP-N0DKTGS|Microsoft SQL Server Management Studio - Query|DESKTOP-N0DKTGS\Lei Zhong|Lei Zhong|2022-01-05 17:49:45.733|2022-01-05 17:49:45.730|
+
+5. identify blocking sql by session id
+```sql
+SELECT
+    session_id AS sid,
+    blocking_session_id,
+    command,
+    sql_handle,
+    database_id,
+    wait_type,
+    wait_time,
+    wait_resource
+FROM sys.dm_exec_requests
+WHERE blocking_session_id > 0;
+```
+|sid|blocking_session_id|command|sql_handle|database_id|wait_type|wait_time|wait_resource|
+|--|--|--|--|--|--|--|--|
+|53|52|SELECT|0x0200000063FC7D052E09844778CDD615CFE7A2D1FB411802|8|LCK_M_S|1383760|KEY: 8:72057594038845440(020068e8b274)|
+
+6. Set timeout and kill
+```sql
+SET LOCK_TIMEOUT 5000;
+-- Set lock timeout as 5 second for current session, lock only lock for 5 seconds, after that, will print timeout message
+SELECT productid, unitprice
+FROM Production.Products
+WHERE productid = 2;
+```
+
+```sql
+SET LOCK_TIMEOUT -1;
+-- set lock timeout to none;
+```
+
+```sql
+KILL 52;
+-- kill session 52;
+```
+
+## Isolation levels
+### READ UNCOMMITED
+```sql
+--CON 1
+--Open a transaction and not closing it, and apply exclusive lock productid=2 row
+BEGIN TRAN
+    UPDATE Production.Products
+    SET unitprice += 1.00
+    WHERE productid = 2;
+
+    SELECT productid, unitprice
+    FROM Production.Products
+    WHERE productid = 2;
+
+--CON 2
+--Set isolation level to READ UNCOMMITED, because default is READ COMMITED
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SELECT productid, unitprice
+FROM Production.Products
+WHERE productid = 2;
+-- original unitprice is 19, here, result is unitprice = 20, which is an uncommited result, because CON1 is not commited yet
+```
+READ UNCOMMITED causes *dirty read*.
+
+### READ COMMITTED
+```sql
+--CON 1
+--Open a transaction and not closing it, and apply exclusive lock productid=2 row
+BEGIN TRAN
+    UPDATE Production.Products
+    SET unitprice += 1.00
+    WHERE productid = 2;
+
+    SELECT productid, unitprice
+    FROM Production.Products
+    WHERE productid = 2;
+
+--CON 2
+--Set isolation level to READ UNCOMMITED, because default is READ COMMITED
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT productid, unitprice
+FROM Production.Products
+WHERE productid = 2;
+-- original unitprice is 19, here, reading is blocked by the exclusive lock, because READ COMMITTED uses shared lock, however, it does not keep this shared lock until the end of the transaction
+```
+
+```sql
+--CON 1
+--close transaction
+
+COMMIT TRAN;
+
+--CON 2
+--result shows up
+```
