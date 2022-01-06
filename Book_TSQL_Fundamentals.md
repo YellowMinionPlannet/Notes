@@ -1245,7 +1245,7 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 SELECT productid, unitprice
 FROM Production.Products
 WHERE productid = 2;
--- original unitprice is 19, here, reading is blocked by the exclusive lock, because READ COMMITTED uses shared lock, however, it does not keep this shared lock until the end of the transaction
+-- original unitprice is 19, here, reading is blocked by the exclusive lock, because READ COMMITTED uses shared lock, however, it DOES NOT keep this shared lock until the end of the transaction
 ```
 
 ```sql
@@ -1255,5 +1255,71 @@ WHERE productid = 2;
 COMMIT TRAN;
 
 --CON 2
---result shows up
+--result shows up until CON 1 is commited, unitprice is 20 which is commited result
 ```
+
+### REPEATABLE READ
+#### **Situation #1**
+```sql
+--CON 1
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+-- begin transaction without commit by REPEATABLE READ, which will apply a shared lock wait until transaction closed
+BEGIN TRAN;
+    SELECT productid, unitprice
+    FROM Production.Products
+    WHERE productid = 2;
+-- result is unitprice = 19 which is unchanged
+
+--CON 2
+UPDATE Production.Products
+SET unitprice += 1.00
+WHERE productid = 2;
+-- apply a exclusive lock, because of the shared lock existance, this statement is blocked.
+```
+```sql
+--CON 1
+SELECT productid, unitprice
+FROM Production.Products
+WHERE productid = 2;
+
+COMMIT TRAN;
+-- result is unitprice = 19 still unchanged even there's update concurrently
+
+--CON 2
+--update proceeds after CON1 is commited
+```
+
+#### **Situation #2**
+```sql
+--CON 1
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+BEGIN TRAN;
+SELECT productid, unitprice
+FROM Production.Products
+
+UPDATE Production.Products
+SET unitprice += 1.00
+WHERE productid = 2
+
+--CON 2
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+BEGIN TRAN;
+SELECT productid, unitprice
+FROM Production.Products
+
+UPDATE Production.Products
+SET unitprice += 1.00
+WHERE productid = 2
+-- we do not get a deadlock situation here
+-- After CON1 is commited, it's ok instead of deadlock.
+```
+
+### SERIALIZABLE
+Phantom Read:
+    
+* Although we have shared lock persists until the end of the transactions, which ensures two reads in the same transaction will result the same. However, in the middle of these two reads, there might be chance of another transaction insert new row to the table which is not blocked by the shared lock and exclusive lock conflicts, because shared lock only applies for certain rows that is read by the SELECT filter. The result of the second read might be different from the first one. We call this situation *phantom read*.
+    
+* If you want to make new rows affected by the shared lock, you need SERIALIZABLE.
+
