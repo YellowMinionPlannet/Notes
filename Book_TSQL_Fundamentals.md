@@ -823,6 +823,10 @@ OUTER APPLY
 # Chapter 6 Set operators
 Set operators use *distinct predicate*, which produces *TRUE* when compares two *NULL*.
 
+* UNION
+* INTERSECT
+* EXCEPT
+
 # Chapter 7 Beyond the fundamentals of querying
 > SKIPPED
 
