@@ -1384,3 +1384,282 @@ COMMIT TRAN;
 
 * Once deadlock occurs, SQL Server will show up and kill one of them after few seconds. She kills due to the lowest DEADLOCK_PRIORITY of the session, which is in range -10 through 10. If the DEADLOCK_PRIORITY is the same, she will choose amount of work in the least to kill. If same amount of work occurs, she will toss a coin.
 * If SQL Server DOES NOT shows up, deadlock exists forever...
+
+# Chapter 11 Programmable objects
+
+## Variables
+```sql
+DECLARE @i AS INT;
+SET @i = 10;
+
+DECLARE @i AS INT = 10;
+```
+
+```sql
+DECLARE @empname AS NVARCHAR(61);
+SET @empname = (SELECT firstname + N' ' + lastname FROM HR.Employees WHERE empid = 3);
+
+SELECT @empname AS empname;
+```
+
+```sql
+DECLARE @firstname AS NVARCHAR(20), @lastname AS NVARCHAR(40);
+
+SELECT @firstname = (SELECT firstname FROM HR.Employees WHERE empid = 3);
+
+SELECT @lastname = (SELECT lastname FROM HR.Employees WHERE empid = 3);
+
+SELECT @firstname AS firstname, @lastname AS lastname
+```
+
+```sql
+--NONSTANDARD
+DECLARE @firstanme AS NVARCHAR(20), @lastname AS NVARCHAR(40);
+
+SELECT @firstname = firstname, @lastname = lastname FROM HR.Employees WHERE empid = 3;
+-- NOTE: If SELECT returns multiple row, it will set last row of value to the variable.
+-- NOTE: SET is safer, if SELECT returns multiple rows, statement will fail
+```
+
+## Batches
+A batch is one or more T-SQL statements sent by a client applcation to SQL Server for execution as a single unit.
+
+### Batches and Transactions
+A transaction can be submitted in parts as multiple batches, a batch can have multiple transactions.
+
+SSMS uses GO statment to signal the end of a batch.
+
+### A batch as a unit of parsing
+```sql
+PRINT 'First batch';
+USE TSQLV4;
+GO
+
+PRINT 'Second batch';
+SELECT custid FROM Sales.Customers;
+SELECT orderid FOM Sales.ORders;
+GO
+
+PRINT 'Third batch';
+SELECT empid FROM HR.Employees;
+
+/*OUTPUT
+First batch
+Msg 102, Level 15, State 1, Line 91
+Incorrect syntax near 'Sales'.
+Third batch
+empid
+-----------
+2
+7
+1
+5
+6
+8
+3
+9
+4
+*/
+
+```
+NOTE: Because the second batch has syntax error 'FOM',  the whole batch is not submitted to the SQL Server. But first and third still got executed.
+
+### Batches and variables
+A variable is local to the batch where it is defined.
+```sql
+DECLARE @i AS INT;
+SET @i = 10;
+PRINT @I;
+GO
+
+PRINT @i -- Fail
+/*OUTPUT
+10
+Msg 137, Level 15, State 2, Line 106
+Must declare the scalar variable "@i".
+*/
+```
+
+### Statements that cannot be combined in the same batch
+The following statements cannot be combined with other statements in the same batch:
+* *CREATE DEFAULT*
+* *CREATE FUNCTION*
+* *CREATE PROCEDURE*
+* *CREATE RULE*
+* *CREATE SCHEMA*
+* *CREATE TRIGGER*
+* *CREATE VIEW*
+
+For example:
+```sql
+DROP VIEW IF EXISTS Sales.MyView;
+
+CREATE VIEW Sales.MyView
+AS
+SELECT YEAR(orderdate) AS orderyear, COUNT(*) AS numorders
+FROM Sales.Orders
+GROUP BY YEAR(orderdate);
+GO
+
+/*OUTPUT
+Msg 111, Level 15, State 1, Line 13
+'CREATE VIEW' must be the first statement in a query batch.
+*/
+```
+
+### A batch as a unit of resolution
+A batch is a unit of resolution (also known as *binding*).
+This means that checking the existence of objects and columns happens at the batch level.
+
+For example
+```sql
+DROP TABLE IF EXISTS dbo.T1;
+CREATE TABLE dbo.T1(col1 INT);
+
+ALTER TABLE dbo.T1 ADD col2 INT;
+SELECT col1, col2 FROM dbo.T1;
+
+/*OUTPUT
+Msg 207, Level 16, State 1, Line 130
+Invalid column name 'col2'.
+*/
+```
+Try separate data-definition language(DDL) and data-manipulation language(DML) into different batches.For example:
+```sql
+DROP TABLE IF EXISTS dbo.T1;
+CREATE TABLE dbo.T1(col1 INT);
+
+ALTER TABLE dbo.T1 ADD col2 INT;
+GO
+SELECT col1, col2 FROM dbo.T1;
+```
+
+### The GO n operation
+```sql
+DROP TABLE IF EXISTS dbo.T1;
+CREATE TABLE dbo.T1(col1 INT IDENTITY);
+GO
+SET NOCOUNT ON;
+INSERT INTO dbo.T1 DEFAULT VALUES;
+GO 100
+SELECT * FROM dbo.T1;
+```
+## Cursors
+> find more info in book
+## Temporary tables
+There are 3 kinds of temporary tables:
+* Local temporary table
+* Global temporary table
+* Temporary table variable
+
+### Local temporary tables
+You create local temporary table with table name prefix with a single pound sign. It is visible only to the Session where declares it. And SQL Server will clean it right after the session is finished. If Proc 1 calls Proc 2 which calls Proc 3 which calls Proc 4, and you create local table in Proc 2, local table will be visible in Proc 2, 3, and 4, but not in Proc 1.
+
+Sample of Local temporary table:
+```sql
+DROP TABLE IF EXISTS #MyOrderTotalsByYear;
+GO
+
+CREATE TABLE #MyOrderTotalsByYear(
+    orderyear   INT         NOT NULL PRIMARY KEY,
+    qty         INT         NOT NULL
+);
+
+INSERT INTO #MyOrderTotalsByYear(orderyear, qty)
+    SELECT YEAR(O.orderyear) AS orderyear, SUM(OD.qty) AS qty
+    FROM Sales.Orders AS O
+    INNER JOIN Sales.OrderDetails AS OD
+    ON O.orderid = OD.orderid
+    GROUP BY YEAR(orderdate);
+
+SELECT Cur.orderyear, Cur.qty AS curyearqty, Prv.qty AS prvyearqty
+FROM #MyOrderTotalsByYear AS Cur
+LEFT OUTER JOIN #MyOrderTotalsByYear AS Prv
+ON Cur.Orderyear = Prv.Orderyear + 1;
+
+DROP TABLE IF EXISTS #MyOrderTotalsByYear;
+```
+
+### Global temporary tables
+Global temporary table could be created by prefix table name with double pound keys. It will be destroyed if session where declares it is disconnected. And other session can access this table. 
+
+> Global temporary table is not available in Azure SQL Database
+
+### Table variables
+Table variables only exists in batch scope.
+
+```sql
+DECLARE @MyOrderTotalsByYear TABLE
+(
+    orderyear INT           NOT NULL PRIMARY KEY,
+    qty       INT           NOT NULL
+);
+
+INSERT INTO @MyorderTotalsByYear (orderyear, qty)
+    SELECT YEAR(O.orderdate) AS orderyear,
+    SUM(OD.qty) AS qty
+    FROM Sales.Orders AS O
+    INNER JOIN Sales.OrderDetails AS OD
+    ON OD.orderid = O.orderid
+    GROUP BY YEAR(orderdate);
+
+SELECT Cur.orderyear, Cur.qty AS curyearqty, Prv.qty AS prvyearqty
+FROM @MyOrderTotalsByYear AS Cur
+LEFT OUTER JOIN @MyOrderTotalsByYear AS Prv
+ON Cur.orderyear = Prv.orderyear + 1;
+```
+
+### Table types
+You can declare a table type and reuse this table type in future.
+```sql
+DROP TYPE IF EXISTS dbo.OrderTotalsByYear;
+
+CREATE TYPE dbo.OrderTotalsByYear AS TABLE(
+    orderyear INT NOT NULL PRIMARY KEY,
+    qty INT NOT NULL
+);
+
+DECLARE @MyOrderTotalsByYear AS dbo.OrderTotalsByYear;
+
+INSERT INTO @MyorderTotalsByYear (orderyear, qty)
+    SELECT YEAR(O.orderdate) AS orderyear,
+    SUM(OD.qty) AS qty
+    FROM Sales.Orders AS O
+    INNER JOIN Sales.OrderDetails AS OD
+    ON OD.orderid = O.orderid
+    GROUP BY YEAR(orderdate);
+```
+
+## Dynamic SQL
+You can execute a string in a batch.
+You use dynamic SQL in 3 purposes:
+* Automating admin tasks
+* Improving performance
+* Constructing elements of code based on querying the actual data
+
+### The EXEC command
+Execute a string both in regular and Unicode.
+
+Sample:
+```sql
+DECLARE @sql AS VARCHAR(100); 
+SET @sql = 'PRINT ''This message was printed by a dynamic SQL batch.'';'; 
+EXEC(@sql);
+```
+
+### The sp_executesql stored procedure
+This is much safer than EXEC, but only accept Unicode string.
+
+It requires two parameters to function, @stmt is the query you wanna execute and @params is the parameter you wanna specify.
+
+```sql
+DECLARE @sql AS NVARCHAR(100);
+SET @sql = N'SELECT orderid, custid, empid, orderdate FROM Sales.Orders WHERE orderid = @orderid;'; 
+EXEC sp_executesql
+    @stmt = @sql,
+    @params = N'@orderid AS INT',
+    @orderid = 10248;
+```
+
+## Routines
+## Error handling
