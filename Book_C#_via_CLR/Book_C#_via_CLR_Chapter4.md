@@ -97,5 +97,16 @@ if(e != null){
         * Type object pointer
         * sync block index
         * instance fields
+```c#
+internal class Employee {     
+    public         Int32     GetYearsEmployed()   { ... }     
+    public virtual String    GetProgressReport()  { ... }     
+    public static  Employee  Lookup(String name)  { ... }  
+}  
+internal sealed class Manager : Employee {     
+    public override String   GetProgressReport()  { ... }  
+}
+```
+
 ![CSharp_via_CLR_Chapter4_1.png](CSharp_via_CLR_Chapter4_1.png?raw=true)
 
