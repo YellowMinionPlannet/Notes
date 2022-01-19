@@ -97,5 +97,5 @@ if(e != null){
         * Type object pointer
         * sync block index
         * instance fields
-![C#_via_CLR_Chapter4_1.png](C#_via_CLR_Chapter4_1.png?raw=true)
+![CSharp_via_CLR_Chapter4_1.png](CSharp_via_CLR_Chapter4_1.png?raw=true)
 
