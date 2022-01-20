@@ -65,7 +65,7 @@ Restrictions on static class:
 **partial** keyword tells compiler that the source code for class, structure, or interface definition may span one or more source code files.
 
 # Components, Polymorphism, and Versioning
-
+Skipped
 
 ## How the CLR Calls Virtual Methods, Properties and Events
 ## Using Type Visibility and Member Accessibility Intelligently
