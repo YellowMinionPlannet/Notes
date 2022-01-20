@@ -170,10 +170,22 @@ For defining Equals for any type, there are rules to follow:
     then x.Equals(z) must return true
 * consistent: No changes made to two values the Equal result should be the same all the time
 
-
+You can also implement IEquatable\<T\> interface to have type-safe Equals to be defined. 
+Also, Overload the == and != operator methods.
 
 # Object Hash Codes
+To make instance works in System.Collections.Hashtable and System.Collections.Generic.Dictionary, you should override GetHashCode.
+
+Guidelines for implementing GetHashCode:
+* Algorithm gives a good random distribution
+* Object's or ValueType's GetHashCode do not have high-performance
+* Algorithm should use at least one instance field
+* Instance field used in algorithm should be immutable
+* Algorithm should fast
+* Same value should return same result
+
 # The ***dynamic*** Primitive Type
+At compile time, compiler will treat dynamic as Object type.
 
 # <u>Chapter 8 Methods</u>
 # Instance Constructors and Classes(Reference Types)
