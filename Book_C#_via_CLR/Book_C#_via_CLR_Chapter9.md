@@ -39,13 +39,37 @@ Int32 x = 5;
 M(x: ref a);
 ```
 ## The DefaultParameterValue and Optional Attributes
-
+When you give a default value to a parameter, compiler applies System.Runtime.InterropServices.DefaultParameterValueAttribute and System.Runtime.InteropServices.OptionalAttribute to the parameter. The default value is constant stored in meta data and witten to the source code.
 # Implicitly Typed Local Variables
-
+Compiler will infer the type of *var* variable and you cannot use *var* for parameters.
 # Passing Parameters by Reference to a Method
-
+For the CLR, *ref* and *out* is the same thing - instead of passing the value of arguments, now passing the referenece. The difference is, for *ref*, the collee can read and write the argument since the caller already initialized the argument. 
 
 
 # Passing a variable Number of Arguments to a Method
+We can use *params* infront of the parameter to indicate there's variable number of arguments. And in the caller we assign arguments using commas intead of the array.
+For example:
+```c#
+static Int32 Add(params Int32[] values){
+    Int32 sum = 0;
+    if(values != null){
+        for(Int32 x = 0; x < values.Length; x ++>){
+            sum += values[x];
+        }
+    }
+    return sum;
+}
+//In the caller, without params we do
+public static void Main(){
+    Add(new Int32[]{1,2,3,4,5});
+}
+//With params, we can do
+public static void Main(){
+    Add(1,2,3,4,5);
+}
+```
+In the CLR, it will apply System.ParamArrayAttribute to the parameter. When compiler detects a call to a method, it checks the methods without PramamArray attribute, if cannot find out matched ones. If not existed, then Compiler will look for the methods with ParamArray attribute and executes the matched one.
 # Parameter and Return Type Guidelines
+When design methods, it is the best to assign weak(more general) type to the parameter and strong(more specific) type to the return type. There's one exception, when you want to return a collection, it is better to return weak type.
 # Const-ness
+C# does not supports Const on the parameter.
