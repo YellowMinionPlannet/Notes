@@ -104,8 +104,25 @@ Example above, the generic type is inherited from Node.
 ## Code Explosion
 
 # Generic Interfaces
+A reference or value type can implement a generic interface by specifying or unspecifying type arguments.
 
+For example:
+```c#
+//Specifying
+internal sealed class Triangle : IEnumerator<Point>{
+    private Point[] m_vertices;
+    public Point Current { get{...} }
+}
+
+//Unspecifying
+internal sealed class ArrayEnumerator<T> : IEnumerator<T>{
+    private T[] m_array;
+    public T Current { get{...} }
+}
+```
 # Generic Delegates
+
+
 # Delegate and Interface Contra-variant and Covariant Generic Type Arguments
 # Generic methods
 ## Generic methods and Type Interface
