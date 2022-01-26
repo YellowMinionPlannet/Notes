@@ -76,4 +76,23 @@ internal class MailManager{
 ```
 # How the Compiler implements an Event
 # Designing a Type that Listens for an Event
+
+```c#
+internal sealed class Fax{
+    public Fax(MailManager mm){
+        mm.NewMail += FaxMsg;
+    }
+
+    private void FaxMsg(Object sender, NewMailEventArgs e){
+        Console.Writeline("Faxing mail message:");
+    }
+
+    public void Unregister(MailManager mm){
+        mm.NewMail -= FaxMsg;
+    }
+}
+```
+
 # Explicitly Implementing an Event
+Skipped but very valuable knowledge to know about.
+
