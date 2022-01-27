@@ -121,14 +121,173 @@ internal sealed class ArrayEnumerator<T> : IEnumerator<T>{
 }
 ```
 # Generic Delegates
-
+See Chapter 17
 
 # Delegate and Interface Contra-variant and Covariant Generic Type Arguments
+
+Generic Type Parameter can be Contravariant declared by *in* keyword and Covariant declared by *out* keyword.
+
+Contravariant means type argument can change from a type to its children type.
+
+Covariant means type argument can change from a type to one of its base type.
+For example:
+```C#
+public delegate TResult Func<in T, out TResult>(T arg);
+
+//if we have following delegate
+Func<Object, ArgumentException> fn1 = null;
+//Then we can do following without explicit cast, since String is derived from Object and Exception is base class of ArgumentException
+Func<String, Exception> f2 = f1;
+Exception e = fn2("");
+
+// We have
+public interface IEnumerable<out T> : System.Collections.IEnumerable{...}
+
+//Therefore because String is drived from Object, Object is base type of String
+Int32 Count(IEnumerable<Object> collection) {...}
+Int32 c = Count(new[] {"Grant"});
+```
 # Generic methods
-## Generic methods and Type Interface
+When we declare a generic class, struct, or interface, we can use that generic parameter for their method member's parameter type, return type, and local variables. At the same time, we can also declare a method member with its own generic parameter (which will make that method generic).
+
+For example:
+```C#
+// T is the generic parameter of GenericType
+internal sealed class GenericType<T>{
+    private T m_value;
+    public GenericType(T vlaue){m_value = value;}
+
+    //TOutput is the generic paramter of method Converter, which makes converter a generic method
+    public TOutput Converter<TOutput>(){
+        TOutput result = (TOutput) Convert.ChangeType(m_value, typeof(TOutput));
+        return result;
+    }
+}
+```
+
+## Generic methods and Type Inference
+Compiler always match non-generic method first and then the generic method.
+```c#
+public static class SomeType{
+    public static void Display(String s){
+        Console.WriteLine(s);
+    }
+    public static void Display<T>(T o){
+        //If we have o (instead of o.ToString())to the argument we will have infinite loop
+        Display(o.ToString());
+    }
+}
+
+Display("Jeff")// Calls to Display(String)
+Display(123)   // Calls to Display<T>
+Display<String>("Adian"); // Calls to Display<T>
+```
+
+
 # Generics and Other Members
+
 # Verifiability and Constraints
+Without constraint of generic type parameter, you can only do what Object do to the generic type parameter.
+```C#
+private static Boolean MethodTakingAnyType<T>(T o){
+    T temp = o;
+    Console.WriteLine(o.ToString());
+    return temp.Equals(o);
+}
+```
+
+With constraint you tell compiler that the generic type is specifically implement or derived from some interface or type.
+```c#
+public static T Min<T>(T o1, T o2) where T : IComparable<T>{
+    if(o1.CompareTo(o2) < 0) return o1;
+    return o2;
+}
+```
+
+For overriding rules, here are the sample code.
+```c#
+// It is OK to define the following types:  
+internal sealed class AType {}  
+internal sealed class AType<T> {}  
+internal sealed class AType<T1, T2> {}  // Error: conflicts with AType<T> that has no constraints  
+internal sealed class AType<T> where T : IComparable<T> {}  // Error: conflicts with AType<T1, T2>  
+internal sealed class AType<T3, T4> {}  internal sealed class AnotherType {     
+    // It is OK to define the following methods:     
+private static void M() {}     
+private static void M<T>() {}     
+private static void M<T1, T2>() {}     // Error: conflicts with M<T> that has no constraints    
+private static void M<T>() where T : IComparable<T> {}     // Error: conflicts with M<T1, T2>     
+private static void M<T3, T4>() {}  }
+```
 ## Primary Constraints
+A type parameter can specify 0 / 1 primary constraint. You cannot use
+* System.Object
+* System.Array
+* System.Delegate
+* System.MulticastDelegate
+* System.ValueType
+* System.Enum
+* System.Void
+There are 2 special primary constraint
+1. class(Reference type)
+2. struct(Value Type)
+
 ## Secondary Constraints
+A type parameter can specify 0 / multiple secondary constraint where secondary constraint represents an interface type.
+Sample of generic argument relationship declaration:
+```C#
+private static List<TBase> ConvertIList<T, TBase>(IList<T> list) where T : TBase 
+{     
+    List<TBase> baseList = new List<TBase>(list.Count);     
+    for (Int32 index = 0; index < list.Count; index++) {        
+        baseList.Add(list[index]);     
+    }     
+    return baseList;  
+}
+
+private static void CallingConvertIList() {     
+    // Construct and initialize a List<String> (which implements IList<String>)     
+    IList<String> ls = new List<String>();     
+    ls.Add("A String");     
+    // Convert the IList<String> to an IList<Object>     
+    IList<Object> lo = ConvertIList<String, Object>(ls);     
+    // Convert the IList<String> to an IList<IComparable>     
+    IList<IComparable> lc = ConvertIList<String, IComparable>(ls);     
+    // Convert the IList<String> to an IList<IComparable<String>>     
+    IList<IComparable<String>> lcs =         
+    ConvertIList<String, IComparable<String>>(ls);     
+    // Convert the IList<String> to an IList<String>     
+    IList<String> ls2 = ConvertIList<String, String>(ls);     
+    // Convert the IList<String> to an IList<Exception>     
+    IList<Exception> le = ConvertIList<String, Exception>(ls);// Error  
+}
+```
 ## Constructor Constraints
+A type parameter can specify 0 / 1 constructor constraint. It must be non-abstract type with public and parameterless constructor. This constraint will require T has a public and parameterless constructor.
+```C#
+internal sealed class ConstructorConstraint<T> where T : new() 
+{     
+    public static T Factory() {        
+        // Allowed because all value types implicitly         // have a public, parameterless constructor and because        
+        // the constraint requires that any specified reference         
+        // type also have a public, parameterless constructor        
+        return new T();     
+        }  
+}
+```
 ## Other Verifiability Issues
+```c#
+private static void ERRORANDWORK<T>(T obj){
+    //ERROR
+    Int32 x = (Int32) obj;
+    String s = (String)obj;
+    //WORK
+    Int32 x = (Int32)(Object)obj;
+    String s = (String)(Object) obj;
+
+    //ERROR
+    T temp = null;
+    //WORK
+    T temp = default(T);
+}
+```
