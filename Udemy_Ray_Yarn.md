@@ -27,3 +27,14 @@ yarn info *package*
 yarn info *package section* (cehck info about this package and specified section)
 
 ## Section 3: Advanced Features
+Global config and Local config
+Global:
+    * windows, under c:\users\<username>\.yarnrc
+    * global config can be changed by following command
+        * Read: yarn config list
+        * Edit: yarn config set save-prefix '~'
+        * Delete: yarn config delete save-prefix
+Local:
+    * you can add .yarnrc in the project folder manually, and use file editor to edit that file
+    * once you delete .yarnrc in the project, there will be no local config, all config will be read globally
+
