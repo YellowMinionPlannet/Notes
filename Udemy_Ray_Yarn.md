@@ -6,7 +6,7 @@
 * Yarn - Dependency/Package manager
 * NPM - Dependency/Package manager
 * Bower - Dependency manager
-* Home brew/ Chocolatey - Package manager for IOS and Windows
+* Home Brew/ Chocolatey - Package manager for IOS and Windows
 
 ## Section 2: Yarn Basic
 * `yarn add *package*`
