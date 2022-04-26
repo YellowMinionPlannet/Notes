@@ -17,9 +17,11 @@
 * `yarn outdated` (check packages' outdated information)
 * `yarn config get registry` (check which registry is using)
 
+* `yarn install` after you update the package.json, run this command will update yarn.lock.
+
 * `yarn upgrade`
-* `yarn upgrade *package*` (upgrade specific package to the version specified in package.json)
-> this command also change yarn.lock file. If we have yarn.lock file in the project, yarn gonna lock the version according to the yarn.lock file, and ommits the version range specified in package.json
+* `yarn upgrade *package*` (upgrade specific package to the version range specified in package.json)
+> yarn gonna lock the version specified in the yarn.lock file, and ommits the version range specified in package.json. This command upgrade the version in yarn.lock file to the latest version specified in package.json.
 
 * `yarn why *package*` (check info about why this package is installed)
 
@@ -41,5 +43,18 @@
 * `yarn run *command*` (this will run the scripts section in package.json file where command is the key of scripts)
 * When you run a command that is not pre-defined in yarn, you can just do `yarn *command*`
 
-* For global package, just add global infront of the command to add, remove, list your package.
+* For global package, just add global in front of the command to add, remove, list your package.
 `yarn global add *package*`
+
+* For cache operation:
+    * `yarn cache list` gives you what packages has been stored in cache
+    * `yarn cache dir` gives you full path of storage of cached packages
+    * `yarn cache clean *package*` to clean all cache or specific package
+    * `yarn config set cache-folder` to set storage path
+
+* Migrate from npm:
+    * `yarn import` will use package.json and package.lock.json to import package tree to yan
+    * `yarn check` check the structure of tree imported
+    * `yarn upgrade` solve errors in yarn check
+    * remember to delete package.lock.json after
+ 
