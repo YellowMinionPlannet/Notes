@@ -108,3 +108,61 @@ const {coords:{lat, lng}}:{coords:{lat: number, lng: number}} = profile;//Destru
 ```
 
 # Section 5: Mastering Typed Arrays
+## Arrays in Typescript
+```ts
+const carMakers: stirng[] = ['ford', 'toyota', 'chevy'];//Type inference if we do not add annotations
+
+const carMakersInit: string[] = [];
+
+const dates = [new Date(), new Date()];
+
+const carsByMaker: string[][] = [
+    ['f150'],
+    ['corolla'],
+    ['camaro']
+];
+```
+
+## Why Typed Arrays?
+```ts
+//1. Help with inference when extracting values
+const car = carMakers[0]; // type inference make car a string
+
+//2. Prevent incompatable values
+carMakers.push(100);//error
+
+//3. Help with map
+carMakers.map((car: string): string => {
+    return car.toUpperCase();
+});
+```
+
+## Multiple Types in Arrays
+```ts
+// Flexible types
+const importantDates: (string | Date)[] = [new Date(), '2030-10-10'];
+```
+
+# Section 6: Tuples in Typescript
+## Tuples in Action
+```ts
+const drink ={
+    color: 'brown',
+    carbonated: true,
+    sugar: 40
+}
+
+const pepsi = ['brown', true, 40];//type inference will be (string|boolean|number)[]
+//However we do not want the type order to change like (boolean | string | number)[]
+
+const pepsiTuple: [string, boolean, number] = ['brown', true, 40]
+pepsiTuple[0] = true;//there will be error
+
+//We can do further by type alias
+type Drink = [string, boolean, number];
+const newDrink: Drink = ['brown', true, 40];
+```
+
+# Section 7: The All-Important Interface
+## Interfaces
+
