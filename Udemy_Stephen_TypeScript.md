@@ -164,5 +164,257 @@ const newDrink: Drink = ['brown', true, 40];
 ```
 
 # Section 7: The All-Important Interface
-## Interfaces
+## Long Type Annotations
+```ts
+const oldCivic = {
+    name: 'civic',
+    year: 2000,
+    broken: true
+};
 
+const printVehicle = (vehicle: {name: string, year: number, broken: boolean}) : void => {
+    console.log(`Name: ${vehicle.name}`);
+    console.log(`Year: ${vehicle.year}`);
+    console.log(`Broken? ${vehicle.broken}`);
+}// Long type annotation, and not good for code reuse
+
+printVehicle(oldCivic);
+```
+## Fixing Long Annotations with Interfaces
+```ts
+interface Vehicle{
+    name: string,
+    year: number,
+    broken: boolean
+}
+
+const oldCivic: Vehicle ={
+    name: 'civic',
+    year: 2000,
+    broken: true
+}
+
+const printVehicle = (vehicle: Vehicle): void => {
+    console.log(`Name: ${vehicle.name}`);
+    console.log(`Year: ${vehicle.year}`);
+    console.log(`Broken? ${vehicle.broken}`);
+}
+```
+# Section 8:Building Functionality with Classes
+```ts
+class Vehicle{
+    drive():void{
+        console.log('chugga chugga');
+    }
+    honk(): void{
+        console.log('beep');
+    }
+}
+
+const vehicle = new Vehicle();
+vehicle.drive();
+vehicle.honk();
+```
+
+## Basic Inheritance
+```ts
+class Vehicle{
+    drive():void {
+        console.log('chugga chugga');
+    }
+    honk():void{
+        console.log('beep');
+    }
+}
+
+class Car extends Vehicle{
+    drive():void{
+        console.log('vroom');
+    }
+}
+
+const car = new Car();
+car.drive();//vroom
+car.honk();//beep
+```
+
+```ts
+class Vehicle{
+    protected honk(): void{
+        console.log('beep');
+    }
+
+    constructor(public color: string){}
+}
+
+const vehicle = new Vehicle('orange'):
+console.log(vehicle.color);//orange
+
+class Car extends Vehicle{
+    constructor(public wheels: number, color: string){
+        super(color);
+    }
+    public startDriving():void{
+        this.honk():
+    }
+}
+
+const car = new Car(4, 'red'):
+car.startDriving();
+```
+
+# Section 9: Design Patterns with TypeScript
+`npm install -g parcel-bundler` to install parcel bundler. This package is to recognize html script tag that is ts file source (browser does not compile ts directly), and compile the ts to js file for browser.
+
+## Project Structure
+```html
+<html>
+    <body>
+        <div id="map" style="height:100%;">
+        <script src="./src/index.ts"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+    </body>
+</html>
+```
+```ts
+//User.ts
+import faker from 'faker';
+
+export default 'red';
+
+export class User implements Mappable{
+    name: string;
+    location:{
+        lat: number;
+        lng: number;
+    }
+
+    constructor(){
+        this.name = faker.name.firstName();
+        this.location = {
+            lat: parseFloat(faker.address.latitude()),
+            lng: parseFloat(faker.address.longitude())
+        };
+    }
+    markerContent():string{
+        return `User name is ${this.name}`;
+    }
+}
+```
+```ts
+//index.ts
+import {User} from "./User"; // if we use export <variableName> form
+
+import color from "./User"; // if we use export default <variableValue> form
+
+import {Company} from "./Company";
+
+// console.log(color);//red
+
+
+// const user = new User();
+// console.log(user);
+
+// const company = new Company();
+// console.log(company);
+
+// new google.maps.Map(document.getElementById("map"), {zoom: 1, 
+// center: {lat: 0, lng: 0}
+// });
+
+import {CustomMap} from "/CustomMap";
+const user = new User();
+const company = new Company();
+const customMap = new CustomMap('map');
+customMap.addMarker(user);
+customMap.addMarker(company);
+```
+
+```ts
+// Company.ts
+
+import faker from 'faker';
+import {Mappable} from "./Map";
+
+export class Company implements Mappable{
+    companyName: string;
+    catchPhrase: string;
+    location:{
+        lat: number;
+        lng: number;
+    }
+    constructor(){
+        this.companyName = faker.company.companyName();
+        this.catchPhrase = faker.company.catchPhrase();
+        this.location = {
+            lat: parseFloat(faker.address.latitude()),
+            lng: parseFloat(faker.address.longitude())
+        };
+    }
+    markerContent(): string{
+        return `Company name is ${this.companyName}, catchphrase is ${this.catchPhrase}`
+    }
+}
+```
+
+```ts
+// CustomMap.ts to hide functionality of google map apis
+
+export interface Mappable{
+    location:{
+        lat: number,
+        lng: number
+    }
+
+    markerContent() : string;
+}
+
+export class CustomMap{
+    private googleMap : google.maps.Map;//Hide googlemap apis
+    constructor(divId: string){
+        this.googleMap = new google.maps.Map(document.getElementById(divId), {
+            zoom: 1,
+            center: {
+                lat: 0,
+                lng: 0
+            }
+        })
+    }
+
+    // addUserMarker(user: User): void{
+    //     new google.maps.Marker({
+    //         map: this.googleMap,
+    //         position:{
+    //             lat: user.location.lat,
+    //             lng: user.location.lng
+    //         }
+    //     });
+    // }
+
+    // addCompanyMarker(company: Company): void{
+    //     new google.maps.Marker({
+    //         map: this.googleMap,
+    //         position:{
+    //             lat: company.location.lat,
+    //             lng: company.location.lng
+    //         }
+    //     });
+    // }
+    addMarker(item : Mappable):void{
+        const marker = new google.maps.Marker({
+            map: this.googleMap,
+            position:{
+                lat:item.location.lat,
+                lng:item.location.lng
+            }
+        });
+
+        marker.addListener('click', () => {
+            const infoWindow = new google.maps.InfoWindow({
+                content: item.markerContent();
+            });
+            infoWindow.open(this.googleMap, marker);
+        })
+    }
+}
+```
