@@ -626,3 +626,14 @@ export class LinkedLIst extends Sorter{
     }
 }
 ```
+
+# Section 11: Reusable Code
+## Variable Types with Generics
+```ts
+class HoldAnything<TypeOfData>{
+    data： TypeOfData;
+}
+
+const holdNumber = new HoldAnything<number>();
+holdNumber.data = 123;
+```
