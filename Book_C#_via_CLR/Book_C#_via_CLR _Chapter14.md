@@ -75,9 +75,31 @@ public static class Program{
 ```
 
 # The System.String Type
+Inherit directly from System.Object, which make it live on Heap never on Stack.
 ## Constructing Strings
+* You can only construct string through literal syntax
+* `String s = "Hi" + Environment.NewLine + "there."` is better way to declare a return and newline, which is platform sensitive.
+* To treat backlash ('\'), you can use ('@') at the front of literal syntax.
+
 ## Strings Are Immutable
+* Means you cannot change a string once created, which will give you better performance
+
 ## Comparing Strings
+* Compare with ordinal is more strict, because culture is not taking account. == is ordinal.
+
+For example:
+```c#
+public static class Program{
+    public static void Main(){
+        String s1 = "Strasse";
+        String s2 = "Straße";
+        Boolean eq;
+
+        eq = String.Compare(s1, s2, StringComparison.Ordinal) == 0;//false
+    }
+}
+```
+
 ## String Interning
 ## String Pooling
 ## Examining a String's Characters and Text Element
