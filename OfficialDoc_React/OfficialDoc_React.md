@@ -277,18 +277,43 @@ ReactDOM.render(element, document.getElementById("root"));
 * React events are named using camelCase, rather than lowercase
 * With JSX you pass a function as the event handler, rather than a string
 For example:
-* You can't return false to prevent default behavior in React
-```jsx
-//onClick rather than onclick in DOM api
-<button onClick={activateLasers}>
+```html
+<!-- onClick in DOM API -->
+<button onclick="activateLazers()">
     Activate Lasers
 </button>
-function handleClick(e){
-    e.preventDefault();
-    console.log("The link was clicked");
+```
+```jsx
+//onClick rather than onclick in DOM api
+function Button(){
+  return (<button onClick={activateLasers}>
+    Activate Lasers
+</button>);
 }
 ```
 
+* You can't return false to prevent default behavior in React
+
+```html
+<form onsubmit="console.log('You clicked submit.'); return false">
+  <button type="submit">Submit</button>
+</form>
+```
+```jsx
+function Form() {
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log('You clicked submit.');
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <button type="submit">Submit</button>
+    </form>
+  );
+}
+```
+Create event using ES6 Class
 ```jsx
 class Toggle extends React.Component{
     constructor(props){
@@ -318,10 +343,11 @@ Watch out for this in event handler. If you don't use bind, this in handleclick 
 
 You can get arround with this by two ways, and both ways are related to arrow function.
 ```jsx
+//Option 1:
 handleClick = () =>{
     console.log(this);
 }
-
+//Option 2:
 handleClick1 (){
     console.log(this);
 }
@@ -558,16 +584,14 @@ HTML form in React works, but it is convinient to use Javascript function that h
 The standard way to achieve this is called "controlled component".
 
 ### Controlled Components
-The element's value attribute is always ```this.state.value```. Once element is changed, it will trigger ```this.handleChange``` method. That method will update state, so as element's value attribute.
+An input form element whose value is controlled by React in this way is called a “controlled component”.
+
+The element's value attribute is always `this.state.value`. Once element is changed, it will trigger `this.handleChange` method. That method will update state, so as element's value attribute.
 ```jsx
 class NameForm extends Ract.Component{
   constructor(props){
     super(props);
     this.state = {value: ""};
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -602,6 +626,7 @@ When user change input, this will trigger onChange method which is handled by ha
 ### Handling Multiple Inputs
 When handling multiple inputs, you can add *name* attribute to each element based on handler function's event.target.name property.
 
+**`setState` will merge the partial state into the current state.**
 ```jsx
 class Reservation extends React.Component{
   constructor(props){
@@ -748,6 +773,9 @@ class Calculator extends React.Component {
   }
 }
 ```
+## Composition vs Inheritance
+
+
 # Advanced Guides
 ## Accessibility
   `aria-*` HTML attributes are fully supported
@@ -926,4 +954,78 @@ class BlurExample extends React.Component {
 ```
 
 ## Code-Splitting
-Please see notes on Webpack 
+Please see notes on YouTube_TraversyMedia_WebpackCrashCourse.md
+### React.lazy
+We can achieve code splitting by using `import()` and `then`.
+```jsx
+//Instead of doing
+import {add} from './math';
+console.log(add(12,56));
+
+//We can do
+import('./math').then(math => {
+  console.log(math.add(12, 56));
+})
+```
+
+To render a component whenever is needed
+```jsx
+//instead of doing
+import OtherComponent from './OtherComponent';
+
+//we can do
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+```
+
+By using Suspense, we can show something while we are loading the components
+
+```jsx
+import React, { Suspense } from 'react';
+import Tabs from './Tabs';
+import Glimmer from './Glimmer';
+
+const Comments = React.lazy(() => import('./Comments'));
+const Photos = React.lazy(() => import('./Photos'));
+
+function MyComponent() {
+  const [tab, setTab] = React.useState('photos');
+  
+  function handleTabSelect(tab) {
+    setTab(tab);
+  };
+
+  return (
+    <div>
+      <Tabs onTabSelect={handleTabSelect} />
+      <Suspense fallback={<Glimmer />}>
+        {tab === 'photos' ? <Photos /> : <Comments />}
+      </Suspense>
+    </div>
+  );
+}
+```
+
+### Route-based code splitting
+```jsx
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+const Home = lazy(() => import('./routes/Home'));
+const About = lazy(() => import('./routes/About'));
+
+const App = () => (
+  <Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Suspense>
+  </Router>
+);
+```
+
+## Context
+Context is primarily used when some data needs to be accessible by many components at different nesting levels. Apply it sparingly because it makes component reuse more difficult.
+
+### Before You Use Context
