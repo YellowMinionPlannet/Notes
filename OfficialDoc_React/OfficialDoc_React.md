@@ -924,3 +924,6 @@ class BlurExample extends React.Component {
   }
 }
 ```
+
+## Code-Splitting
+Please see notes on Webpack 
