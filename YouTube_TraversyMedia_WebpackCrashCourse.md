@@ -147,3 +147,24 @@ body{
 ```
 Now we use just `webpack` for command to bundle everything.
 
+### Using Babel
+`npm install -g babel-core babel-loader babel-preset-es2015 --save-dev`
+
+```js
+//webpack.config.js
+module.exports = {
+    entry: './src/js/source.js',//entry point updated
+    output: {
+        path: __dirname + '/dist', //current path/dist
+        file: 'bundle.js',
+    },
+    module: {
+        loaders:[
+            {
+                {test: /\.css$/, loader: "style-loader!css-loader"},
+                {test: /\.js$/, loader:"babel-loader", exclude: /node_module/, query:{presets:['es2015']}}
+            }
+        ]
+    }
+}
+```
