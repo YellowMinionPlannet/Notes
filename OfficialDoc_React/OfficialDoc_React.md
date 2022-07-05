@@ -774,6 +774,8 @@ class Calculator extends React.Component {
 }
 ```
 ## Composition vs Inheritance
+React has a powerful composition model, and we recommend using composition instead of inheritance to reuse code between components.
+
 
 
 # Advanced Guides
