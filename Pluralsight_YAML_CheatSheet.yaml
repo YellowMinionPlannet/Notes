@@ -1,0 +1,234 @@
+# YAML 1 Fundamentals by Maaike van Putten
+# sequence (block)
+- first item
+- second item
+- third item
+
+# document separator
+---
+# sequence (flow)
+[first item, second item, third item]
+---
+# sequence (mixed)
+- first item
+- second item
+- [first, second, third]
+
+---
+# mappings (block)
+key: value
+property: property value
+"data serialization available": true # do quote when using space for keys
+list:
+  - first
+  - second
+
+---
+# mapping (flow)
+{ key: value, property: property value, version: 1.2.2 }
+---
+# scalar
+name: lei
+straight: true
+age: 36
+marriage: null
+says: "I am a straight foward man."
+shout: 'she said: "nop"'
+replies: 'what I said:"I am a straight forward man."'
+again: "'lalalalla'"
+
+float: 1.2
+octal: 0123
+hex: 0xABC
+hex_1: duplicate key "hex" not allowed
+
+---
+# multiple line
+# show for folding: > and |
+# show for chomping: + - and nothing
+
+# treat new empty line as new line
+multi-line1: >
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+# treat new empty line as new line, trailing lines does NOT count
+multi-line2: >-
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+# treat new empty line as new line, trailing lines does count
+multi-line3: >+
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+
+
+# treat any line switch as new line
+multi-line4: |
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+# treat any line switch as new line, trailing lines does NOT count
+multi-line5: |-
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+# treat any line switch as new line, trailing lines does count
+multi-line6: |+
+  Some silly text across multiple lines,
+  very important to include some white space:
+
+  And some
+    more indentation
+  And some trailing newlines.
+
+
+
+---
+# Nested Sequences
+
+flow_lists:
+  - [yaml, json]
+  - [python, javascript]
+
+block_lists:
+  - - yaml
+    - json
+  - - python
+    - javascript
+
+---
+# Nested Mappings
+person:
+  name: lei
+  age: 30
+  address:
+    streetname: 2b
+    number: 2
+    zipcode: 222222
+    city: 2b city
+    country: myself
+  dog: { name: ball, breed: cross }
+
+---
+# Combining Sequences and Mappings
+persons:
+  - name: lei
+    age: 30
+    address:
+      streetname: 2b
+      number: 2
+      zipcode: 222222
+      city: 2b city
+      country: myself
+    dog: { name: ball, breed: cross }
+  - name: kathie
+    age: 34
+    address: { streetname: beauty }
+
+---
+# dates
+timestamp: 2022-03-22T22:19:56.10+02:00
+simple_date: 2022-03-02
+string: !!str 2022-03-02
+
+---
+# repeated nodes
+person: &person
+  name: lei
+  age: 30
+  address:
+    streetname: 2b
+    number: 2
+    zipcode: 222222
+    city: 2b city
+    country: myself
+  dog: { name: ball, breed: cross }
+another_person: *person
+
+# here we merge dushbag into person
+yet_another_person:
+  <<: *person
+  name: dushbag
+
+---
+# example of merge
+config: &db
+  database_name: dbname
+  password: supersecret
+config_prod:
+  <<: *db
+  password: custompassword
+
+---
+# tags
+no_date: !!str 2022-03-02
+no_number: !!str 20
+unnecessary: !!int 20
+
+---
+# Schemas:
+# - Failsafe
+# - JSON
+# - Core
+
+# Failsafe Schema tags
+# - !!str
+# - !!map
+# - !!seq
+
+# JSON Schema tags
+# - Failsafe tags
+# - !!null
+# - !!bool
+# - !!int
+# - !!float
+
+# Core Shcema tags
+# - JSON tags
+
+---
+# full sample of what we have learned
+
+persons:
+  &person
+  - name: lei
+    age: 30
+    address:
+      streetname: YAML streetname
+      number: 1
+      zipcode: 123456
+      city: Programming city
+      coutry: The Netherlands
+    phone: !!str 061234567
+  - <<: *person
+    name: fatiha
+    address: {streetname: YAML streetname, number: 1}
+    birthday: 1999-01-01
+description: <-
+  Some important description that is going to span multiple lines.
+  There are not interpreted as new lines due to the < indicator for folding.
+  Also, trailing new lines are going to be ignored due to the chomping -.
+
+
