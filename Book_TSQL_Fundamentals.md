@@ -1513,7 +1513,7 @@ Msg 111, Level 15, State 1, Line 13
 
 ### A batch as a unit of resolution
 A batch is a unit of resolution (also known as *binding*).
-This means that checking the existence of objects and columns happens at the batch level.
+This means that checking the existence of objects and columns happens at the batch level. If you try to change schema and do manipulate at same batch, sql server might not aware of the updated schema.
 
 For example
 ```sql
@@ -1528,7 +1528,7 @@ Msg 207, Level 16, State 1, Line 130
 Invalid column name 'col2'.
 */
 ```
-Try separate data-definition language(DDL) and data-manipulation language(DML) into different batches.For example:
+Therefore, try separate data-definition language(DDL) and data-manipulation language(DML) into different batches.For example:
 ```sql
 DROP TABLE IF EXISTS dbo.T1;
 CREATE TABLE dbo.T1(col1 INT);
