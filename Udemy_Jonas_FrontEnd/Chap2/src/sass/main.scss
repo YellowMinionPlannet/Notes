@@ -1,0 +1,43 @@
+@import "base/base";
+@import "base/animations";
+@import "base/typography";
+@import "base/utilities";
+
+
+@import "abstracts/functions";
+@import "abstracts/mixins";
+@import "abstracts/variables";
+
+@import "pages/home";
+
+@import "components/button";
+
+@import "layout/header";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Example for Chpater 3 inheritance */
+.grandparent {
+    line-height: 5rem;
+    width: 5rem;
+}
+
+.parent {
+    line-height: 1.5em;
+    width: 1.5em;
+}
+
+.child {
+    font-size: 2.5rem;
+}

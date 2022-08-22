@@ -1,12 +1,3 @@
-/*
-COLORS:
-
-Light green: #7ed56f
-Medium green: #55c57a
-Dark green: #28b485
-
-*/
-
 *,
 *::after,
 *::before {
@@ -14,12 +5,10 @@ Dark green: #28b485
   /*Like h1 element browser will add margin automatically*/
   padding: 0;
   box-sizing: inherit;
-  /*By default, browser will calculate borders and paddings are added to the height and width*/
-}
+  /*By default, browser will calculate borders and paddings are added to the height and width*/ }
 
-html{
-  font-size: 62.5%;
-}
+html {
+  font-size: 62.5%; }
 
 body {
   font-family: "Lato", sans-serif;
@@ -30,194 +19,174 @@ body {
   /*1.7 times larger than deault*/
   color: #777;
   padding: 1.5rem;
+  box-sizing: border-box; }
 
-  box-sizing: border-box;
-}
+@keyframes moveInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-10rem) rotate(0deg); }
+  60% {
+    transform: rotate(180deg); }
+  80% {
+    transform: translateX(1rem); }
+  100% {
+    opacity: 1;
+    transform: translate(0); } }
+
+@keyframes moveInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(10rem); }
+  80% {
+    transform: translateX(-1rem); }
+  100% {
+    opacity: 1;
+    transform: translate(0); } }
+
+@keyframes moveInBottem {
+  0% {
+    opacity: 0;
+    transform: translateY(10rem); }
+  80% {
+    transform: translateY(-1rem); }
+  100% {
+    opacity: 1;
+    transform: translate(0); } }
+
+.heading-primary {
+  color: #fff;
+  text-transform: uppercase;
+  backface-visibility: hidden;
+  /*back part of element transformed is visible or not*/ }
+  .heading-primary--main {
+    display: block;
+    font-size: 6rem;
+    font-weight: 400;
+    letter-spacing: 3.5rem;
+    animation-name: moveInLeft;
+    animation-duration: 3s;
+    animation-timing-function: ease-out;
+    /* fast and then slow */
+    animation-delay: 3s;
+    /*happens but delayed for 3 second*/
+    /* animation-iteration-count: 3; happen 3 times */ }
+  .heading-primary--sub {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 1.75rem;
+    animation-name: moveInRight;
+    animation-duration: 3s;
+    margin-bottom: 6rem; }
+
+.btn {
+  /*pseudo after, just like a element behind the original element*/ }
+  .btn:link, .btn:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 1.5rem 4rem;
+    display: inline-block;
+    border-radius: 10rem;
+    transition: all .2s;
+    position: relative; }
+  .btn:hover {
+    transform: translateY(-0.3rem);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    /* x y blur shadow-color */
+    /*&::after only shows when & is hovered*/ }
+    .btn:hover::after {
+      transform: scaleX(1.4) scaleY(1.6);
+      opacity: 0; }
+  .btn:active {
+    transform: translateY(-0.1rem);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2); }
+  .btn--white {
+    background-color: #fff;
+    color: #777; }
+  .btn::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    border-radius: 10rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: all .4s;
+    /* transition happens here, because this is the original state of ::after element, and we want the transition happens for .4second, from the original state of ::after element to the :hover::after element*/ }
+  .btn--white::after {
+    background-color: #fff; }
+  .btn--animated {
+    animation: moveInBottem 4s ease-out .75s;
+    /*name duration effect delay*/
+    animation-fill-mode: backwards;
+    /*0% key frame will be at the beginning state of element*/ }
 
 .header {
   height: 95vh;
-  background-image: linear-gradient(to right bottom, rgba(126, 213, 111, 0.8), rgba(40, 180, 131, 0.8)),
-    url(../img/hero.jpg);
+  background-image: linear-gradient(to right bottom, rgba(126, 213, 111, 0.8), rgba(40, 180, 133, 0.8)), url(../img/hero.jpg);
   background-size: cover;
   /*Always fit the elemetn*/
   background-position: top;
   /*When the image is shrink or enlarged, the top stays fixed, and other direction will adjust*/
   clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
-  position: relative; /*This make sure the absolute parent element is header*/
-}
-.target{
-  backface-visibility: hidden;
-}
-
-.logo-box {
+  position: relative;
+  /*This make sure the absolute parent element is header*/ }
+  .header__logo-box {
     position: absolute;
     top: 4rem;
     left: 4rem;
     width: 10rem;
-    height: 10rem;
-}
-
-.logo {
+    height: 10rem; }
+  .header__logo {
     height: 3.5rem;
-}
+    transition: all 4s; }
+  .header__logo:hover {
+    transform: translateX(10rem);
+    animation-fill-mode: backwards; }
+  .header__text-box {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*adjust position using translate*/
+    text-align: center; }
 
-.text-box{
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%); /*adjust position using translate*/
-  text-align: center;
-}
-
-.heading-primary{
-    color:#fff;
-    text-transform: uppercase;
-
-    backface-visibility: hidden; /*back part of element transformed is visible or not*/
-}
-
-.heading-primary-main{
+.heading-primary {
+  color: #fff;
+  text-transform: uppercase;
+  backface-visibility: hidden;
+  /*back part of element transformed is visible or not*/ }
+  .heading-primary--main {
     display: block;
     font-size: 6rem;
     font-weight: 400;
     letter-spacing: 3.5rem;
-
     animation-name: moveInLeft;
     animation-duration: 3s;
-    animation-timing-function: ease-out; /* fast and then slow */
-    animation-delay: 3s; /*happens but delayed for 3 second*/
-    /* animation-iteration-count: 3; happen 3 times */
-    
-}
-
-.heading-primary-sub{
+    animation-timing-function: ease-out;
+    /* fast and then slow */
+    animation-delay: 3s;
+    /*happens but delayed for 3 second*/
+    /* animation-iteration-count: 3; happen 3 times */ }
+  .heading-primary--sub {
     display: block;
-    font-size:2rem;
+    font-size: 2rem;
     font-weight: 400;
     letter-spacing: 1.75rem;
-
     animation-name: moveInRight;
-    animation-duration: 3s; 
-    margin-bottom: 6rem;
-}
-
-@keyframes moveInLeft {
-  0%{
-    opacity: 0;
-    transform: translateX(-10rem) rotate(0deg);
-  }
-
-  60%{
-    transform: rotate(180deg);
-  }
-
-  80%{
-    transform: translateX(1rem);
-  }
-
-  100%{
-    opacity: 1;
-    transform: translate(0);
-  }
-}
-
-@keyframes moveInRight{
-  0%{
-    opacity: 0;
-    transform: translateX(10rem);
-  }
-
-  80%{
-    transform: translateX(-1rem);
-  }
-
-  100%{
-    opacity: 1;
-    transform: translate(0);
-  }
-}
-
-@keyframes moveInBottem{
-  0%{
-    opacity: 0;
-    transform: translateY(10rem);
-  }
-
-  80%{
-    transform: translateY(-1rem);
-  }
-
-  100%{
-    opacity: 1;
-    transform: translate(0);
-  }
-}
-
-.btn:link,
-.btn:visited {
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 1.5rem 4rem;
-  display: inline-block;
-  border-radius: 10rem;
-  transition: all .2s;
-  position: relative;
-}
-
-.btn:hover {
-  transform: translateY(-0.3rem);
-  box-shadow: 0 1rem 2rem rgba(0,0,0,.2); /* x y blur shadow-color */
-}
-
-.btn:active {
-  transform: translateY(-0.1rem);
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.2);
-}
-
-.btn-white {
-  background-color: #fff;
-  color: #777
-}
-
-/*pseudo after, just like a element behind the original element*/
-.btn::after {
-  content:"";
-  display:inline-block;
-  height: 100%;
-  width: 100%;
-  border-radius: 10rem;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  transition: all .4s; /* transition happens here, because this is the original state of ::after element, and we want the transition happens for .4second, from the original state of ::after element to the :hover::after element*/
-}
-
-.btn-white::after {
-  background-color: #fff;
-}
-/*.btn::after only shows when .btn is hovered*/
-.btn:hover::after {
-  transform: scaleX(1.4) scaleY(1.6);
-  opacity: 0;
-}
-
-.btn-animated {
-  animation: moveInBottem 4s ease-out .75s; /*name duration effect delay*/
-  animation-fill-mode: backwards; /*0% key frame will be at the beginning state of element*/
-}
+    animation-duration: 3s;
+    margin-bottom: 6rem; }
 
 /* Example for Chpater 3 inheritance */
-.grandparent{
+.grandparent {
   line-height: 5rem;
-  width: 5rem;
-}
+  width: 5rem; }
 
-.parent{
+.parent {
   line-height: 1.5em;
-  width: 1.5em;
-}
+  width: 1.5em; }
 
-.child{
-  font-size: 2.5rem;
-}
+.child {
+  font-size: 2.5rem; }

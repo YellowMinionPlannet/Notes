@@ -1,0 +1,28 @@
+@import "../abstracts/variables";
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    /*Like h1 element browser will add margin automatically*/
+    padding: 0;
+    box-sizing: inherit;
+    /*By default, browser will calculate borders and paddings are added to the height and width*/
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    /*Everything regarding to font better be body element, if Lato is not applied, it goes to San-Sarif*/
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.7;
+    /*1.7 times larger than deault*/
+    color: $color-grey;
+    padding: 1.5rem;
+
+    box-sizing: border-box;
+}

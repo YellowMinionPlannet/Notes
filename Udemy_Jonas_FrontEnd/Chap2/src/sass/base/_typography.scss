@@ -1,0 +1,36 @@
+@import "../abstracts/variables";
+
+.heading-primary {
+    color: $color-white;
+    text-transform: uppercase;
+
+    backface-visibility: hidden;
+    /*back part of element transformed is visible or not*/
+
+    &--main {
+        display: block;
+        font-size: 6rem;
+        font-weight: 400;
+        letter-spacing: 3.5rem;
+
+        animation-name: moveInLeft;
+        animation-duration: 3s;
+        animation-timing-function: ease-out;
+        /* fast and then slow */
+        animation-delay: 3s;
+        /*happens but delayed for 3 second*/
+        /* animation-iteration-count: 3; happen 3 times */
+
+    }
+
+    &--sub {
+        display: block;
+        font-size: 2rem;
+        font-weight: 400;
+        letter-spacing: 1.75rem;
+
+        animation-name: moveInRight;
+        animation-duration: 3s;
+        margin-bottom: 6rem;
+    }
+}

@@ -1,0 +1,63 @@
+.btn {
+
+    &:link,
+    &:visited {
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 1.5rem 4rem;
+        display: inline-block;
+        border-radius: 10rem;
+        transition: all .2s;
+        position: relative;
+    }
+
+    &:hover {
+        transform: translateY(-0.3rem);
+        box-shadow: 0 1rem 2rem rgba($color-black, .2);
+        /* x y blur shadow-color */
+
+        /*&::after only shows when & is hovered*/
+        &::after {
+            transform: scaleX(1.4) scaleY(1.6);
+            opacity: 0;
+        }
+    }
+
+    &:active {
+        transform: translateY(-0.1rem);
+        box-shadow: 0 0.5rem 1rem rgba($color-black, .2);
+    }
+
+    &--white {
+        background-color: $color-white;
+        color: $color-grey
+    }
+
+    /*pseudo after, just like a element behind the original element*/
+    &::after {
+        content: "";
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 10rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: all .4s;
+        /* transition happens here, because this is the original state of ::after element, and we want the transition happens for .4second, from the original state of ::after element to the :hover::after element*/
+    }
+
+    &--white::after {
+        background-color: $color-white;
+    }
+
+
+
+    &--animated {
+        animation: moveInBottem 4s ease-out .75s;
+        /*name duration effect delay*/
+        animation-fill-mode: backwards;
+        /*0% key frame will be at the beginning state of element*/
+    }
+}
