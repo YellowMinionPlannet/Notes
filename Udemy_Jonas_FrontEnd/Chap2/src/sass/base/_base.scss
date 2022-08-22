@@ -16,7 +16,7 @@ body {
     font-family: "Lato", sans-serif;
     /*Everything regarding to font better be body element, if Lato is not applied, it goes to San-Sarif*/
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: $default-font-size;
     line-height: 1.7;
     /*1.7 times larger than deault*/
     color: $color-grey;
