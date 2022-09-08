@@ -58,4 +58,34 @@ Color blindness, macular degeneration, cataracts, glaucoma etc.
 
 ## Test of Text
 WCAG 1.4.4 Resize Text, 
-1. 
+1. able to resize the text to 200%
+2. Probably ignored by now
+
+## Text Spacing
+1. Line height 1.5 times font size
+2. Spacing after paragraphs 2 times the font size
+3. Letter spacing is .12 times the font size
+4. Word spacing is .16 times the font size
+
+## Using color effectively
+1. WCAG 1.4.1 
+2. Chrome F12, More tools => render => Emulate vision deficiencies 
+3. So different color blindness people can't differentiate if you use only color to show context of difference. For example, in form, red is for error, green is for pass.
+
+## Contrast
+WCAG 1.4.3 and 1.4.11
+* 1.4.3 applies to text or image of text
+* 1.4.11 non-text content
+### 1.4.3
+1. Contrast of text has to be 4.5:1
+2. Firefox built-in tools to check, F12, color property on element will show the contrast ratio
+
+### 1.4.11
+1. Contrast of non-text has to be 3:1
+2. Chrome color picker for color property in F12
+
+## Content on Hover or Focus
+1. tooltip must be able to show when focus and dimiss when blur, able to show when hover and dismiss when hover-off, to pass 2.1.1 for keyboard
+2. Tooltip must be able to dismiss by ESC key for 1.4.13
+3. Tooltip must be able to allow to copy the content for 1.4.13
+4. 
