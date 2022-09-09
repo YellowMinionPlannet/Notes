@@ -88,4 +88,122 @@ WCAG 1.4.3 and 1.4.11
 1. tooltip must be able to show when focus and dimiss when blur, able to show when hover and dismiss when hover-off, to pass 2.1.1 for keyboard
 2. Tooltip must be able to dismiss by ESC key for 1.4.13
 3. Tooltip must be able to allow to copy the content for 1.4.13
-4. 
+
+# Cognitive
+## HTML validation
+4.1.1 for parsing
+1. https://validator.w3.org/nu/ for check
+
+## Landmarks
+Landmarks includes:
+* Header
+* Nav
+* Main
+* Footer
+* Aside
+
+At min, you should find a Main tag.
+
+## Headings
+Only 1 H1 
+
+If h1 and h3 exists, but h2 does not, it breaches the guideline
+
+## Buttons and Links
+Links for change of context
+Buttons for actions
+
+Links for navigation should be in consistant order.
+Label for link should be descriptive.
+Use F12 accessibility feature to see calculated name for link, it follows by priority of properties.
+
+## Image
+Use
+1. alt attibute
+2. aria-label (property of label in text)
+3. aria-labelledby (property of other text element's id)
+to give a alternative text for image.
+
+When check the image calculated name in F12 accessibility feature, if there's duplicate name, try put alt property to empty string.
+
+## List
+group of 3 and more items should go in to a list.
+
+## table 
+th tag should have scope, if th for column the scope should be col.
+
+## Forms
+1.3.5
+autocomplete attribute should be applied for `<input type='email'/>`.
+
+### Element label
+2.4.6/ 2.5.3/ 3.3.2
+* Calculated Name in F12 accessibility could include Email address (Required) for example.
+* for input tag required property/ aria-required=true could be used to inform the field is required.
+* Group of check box need to be included in fieldset tag.
+```html
+<fieldset>
+    <legend>
+        Favorite Colors
+    </legend>
+    <div class="form-check">
+        ...
+    </div>
+    <div class="form-check">
+        ...
+    </div>
+    <div class="form-check">
+        ...
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value id="defaultCheck2" disabled>
+        <label class="form-check-label" for="defaultCheck2">Green</label>
+    </div>
+    <div class="form-check">
+        ...
+    </div>
+</fieldset>
+```
+* aria-invalid=true should be presented when the form's field is invalid or has error and prevent form to be submitted.
+* aria-describedby=#error_text_element_id should be presented when the error text is presented.
+
+# Tools
+## Plugins
+* WAVE
+    * make sure Allow to access to file urls checked on manage extensions
+    * color contrast might need manual validation
+    * Check structure tab for layout of HTML errors
+## Tenon Check
+* tenon.io create a free account
+* extension options put your api key
+
+## axe (by Deque)
+* axe tab in F12 
+
+# Developer Tools
+## eslint-plugin-jsx-a11y
+* add .eslintrc file for eslint config file
+```json
+{
+    "extends": ["react-app", "plugin:jsx-a11y/recommended"],
+    "plugins":["jsx-a11y"],
+    // "rules":{
+
+    // }
+}
+```
+* npm install eslint-plugin-jsx-a11y --save-dev
+
+## axe-core(by Deque)
+* npm install jest-axe --save-dev
+* in App.test.js
+```js
+//App.test.js
+import {axe, toHaveNoViolations} from 'jest-axe';
+('does not have any accessibility failures', async() => {
+    render(<App/>);
+    expect(await axe(document.body)).toHaveNoViolations();
+});
+```
+* npm run test
+
