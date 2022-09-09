@@ -207,3 +207,19 @@ import {axe, toHaveNoViolations} from 'jest-axe';
 ```
 * npm run test
 
+# Testing with Screen Readers
+## Screen Reader Modes
+### Browse Mode
+#### Single-key shortcuts
+h
+b
+t
+
+### Focus Mode
+single-key shortcuts won't work
+
+### Application Mode
+
+## Testing with NVDA
+
+* NVDA + F7 to open element list 
