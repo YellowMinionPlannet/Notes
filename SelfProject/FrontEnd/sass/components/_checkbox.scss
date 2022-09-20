@@ -5,9 +5,6 @@
         display: flex;
         align-items: center;
         gap: .5em;
-    }
-
-    &__span__text{
         cursor: pointer;
     }
 
@@ -17,10 +14,6 @@
         border: .3em solid var(--color-secondary);
         display: inline-block;
         text-align: center;
-    }
-
-    &__span__container:hover > &__span, &__span__container:hover > &__span::after{
-        background-color: var(--color-primary);
     }
 
     &__span{
@@ -51,5 +44,9 @@
     }
     &__input:checked + &__label &__span__container{
         background-color: var(--color-secondary);
+    }
+
+    &__label:hover &__span, &__label:hover &__span::after{
+        background-color: var(--color-primary);
     }
 }
