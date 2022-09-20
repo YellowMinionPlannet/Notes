@@ -55,7 +55,7 @@
     &__input:checked + &__label &__span__container{
         background-color: var(--color-secondary);
     }
-
+    //We can comment out this line to change effect of hover
     &__label:hover &__span, &__label:hover &__span::after{
         background-color: var(--color-primary);
     }
