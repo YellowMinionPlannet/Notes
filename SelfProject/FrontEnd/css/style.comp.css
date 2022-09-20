@@ -93,9 +93,7 @@ main.container {
   display: none; }
 
 .checkbox__input:checked + .checkbox__label .checkbox__span, .checkbox__input:checked + .checkbox__label .checkbox__span::after {
-  background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
   background-position: 100%;
-  background-size: 200%;
   background-color: var(--color-primary); }
 
 .checkbox__input:checked + .checkbox__label .checkbox__span__container {

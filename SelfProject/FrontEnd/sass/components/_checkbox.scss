@@ -49,9 +49,7 @@
         display: none;
     }
     &__input:checked + &__label &__span, &__input:checked + &__label &__span::after{
-        background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
         background-position: 100%;
-        background-size: 200%;
         background-color: var(--color-primary);
     }
     &__input:checked + &__label &__span__container{
