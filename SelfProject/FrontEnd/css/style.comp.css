@@ -99,6 +99,9 @@ main.container {
 .checkbox__input:checked + .checkbox__label .checkbox__span__container {
   background-color: var(--color-secondary); }
 
+.checkbox__label:hover .checkbox__span, .checkbox__label:hover .checkbox__span::after {
+  background-color: var(--color-primary); }
+
 .bar__container {
   width: 100%;
   height: 2.5em;

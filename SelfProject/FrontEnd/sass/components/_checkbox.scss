@@ -56,7 +56,7 @@
         background-color: var(--color-secondary);
     }
 
-    // &__label:hover &__span, &__label:hover &__span::after{
-    //     background-color: var(--color-primary);
-    // }
+    &__label:hover &__span, &__label:hover &__span::after{
+        background-color: var(--color-primary);
+    }
 }
