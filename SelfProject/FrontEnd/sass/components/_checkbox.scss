@@ -1,4 +1,7 @@
 .checkbox{
+    &__container{
+        margin: .5em 3em;
+    }
 
     &__label{
         position: relative;
