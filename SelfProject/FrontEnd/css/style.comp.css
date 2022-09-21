@@ -42,9 +42,9 @@ body {
 
 @keyframes radioout {
   from {
-    opacity: 1; }
+    background-color: var(--color-primary); }
   to {
-    opacity: 0; } }
+    background-color: transparent; } }
 
 main.container {
   height: 40rem;
@@ -165,11 +165,16 @@ main.container {
     width: 1em;
     height: 1em;
     border-radius: 50%;
-    background-color: transparent;
-    transition: background-color 1s; }
+    background-color: transparent; }
 
 .radio__input:checked + .radio__label .radio__span::after {
   background-color: var(--color-primary); }
+
+.radio__input:not(:checked) + .radio__label .radio__span::after {
+  animation: radioout 1s; }
+
+.radio__input {
+  display: none; }
 
 .radio__label:hover .radio__span {
   background-color: var(--color-primary); }

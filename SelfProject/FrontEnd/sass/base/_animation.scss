@@ -13,9 +13,9 @@
 
 @keyframes radioout {
     from{
-        opacity: 1;
+        background-color: var(--color-primary);
     }
     to{
-        opacity: 0;
+        background-color: transparent;
     }
 }

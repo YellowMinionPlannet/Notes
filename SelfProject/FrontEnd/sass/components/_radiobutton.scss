@@ -36,12 +36,15 @@
             height: 1em;
             border-radius: 50%;
             background-color: transparent;
-            transition: background-color 1s;
         }
     }
 
     &__input:checked + &__label &__span::after{
         background-color: var(--color-primary);
+    }
+
+    &__input:not(:checked) + &__label &__span::after{
+        animation: radioout 1s;
     }
 
     &__input{
