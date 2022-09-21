@@ -13,7 +13,6 @@
         height: 2em;
         border: .3em solid var(--color-secondary);
         display: inline-block;
-        text-align: center;
     }
 
     &__span{
@@ -22,7 +21,7 @@
         display: inline-block;
         position: relative;
         transform: rotate(255deg);
-        margin-left: -.4em;
+        margin-left: -.1em;
     }
     &__span::after{
         content:"";
@@ -55,8 +54,8 @@
     &__input:checked + &__label &__span__container{
         background-color: var(--color-secondary);
     }
-    // We can comment out this line to change effect of hover
-    // &__label:hover &__span, &__label:hover &__span::after{
-    //     background-color: var(--color-primary);
-    // }
+
+    &__label:hover &__span__container{
+        background-color: var(--color-primary);
+    }
 }

@@ -10,3 +10,12 @@
         background-size: 200%;
     }
 }
+
+@keyframes radioout {
+    from{
+        opacity: 1;
+    }
+    to{
+        opacity: 0;
+    }
+}

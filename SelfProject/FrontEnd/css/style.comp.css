@@ -1,6 +1,6 @@
 :root {
-  --color-primary: #FBD04D;
-  --color-secondary: #2C72AD;
+  --color-primary: #2C72AD;
+  --color-secondary: #FBD04D;
   --color-grey-light-1: #faf9f9;
   --color-grey-light-2: #f4f2f2;
   --color-grey-light-3: #f0eeee;
@@ -40,6 +40,12 @@ body {
     background-position: 100%;
     background-size: 200%; } }
 
+@keyframes radioout {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
+
 main.container {
   height: 40rem;
   width: 60%;
@@ -56,6 +62,9 @@ main.container {
   display: flex;
   justify-content: center; }
 
+.radio__container {
+  margin-left: 1em; }
+
 .checkbox__label {
   position: relative;
   display: flex;
@@ -67,8 +76,7 @@ main.container {
   width: 2em;
   height: 2em;
   border: 0.3em solid var(--color-secondary);
-  display: inline-block;
-  text-align: center; }
+  display: inline-block; }
 
 .checkbox__span {
   width: 1em;
@@ -76,7 +84,7 @@ main.container {
   display: inline-block;
   position: relative;
   transform: rotate(255deg);
-  margin-left: -.4em; }
+  margin-left: -.1em; }
 
 .checkbox__span::after {
   content: "";
@@ -107,6 +115,9 @@ main.container {
 .checkbox__input:checked + .checkbox__label .checkbox__span__container {
   background-color: var(--color-secondary); }
 
+.checkbox__label:hover .checkbox__span__container {
+  background-color: var(--color-primary); }
+
 .bar__container {
   width: 100%;
   height: 2.5em;
@@ -120,3 +131,45 @@ main.container {
     background-position: 100%;
     background-size: 200%;
     background-color: var(--color-primary); }
+
+.radio__span__container {
+  width: 2em;
+  height: 2em;
+  border: 0.3em solid var(--color-secondary);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative; }
+
+.radio__label {
+  display: flex;
+  align-items: center;
+  gap: .5em; }
+
+.radio__span {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: transparent; }
+  .radio__span::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: background-color 1s; }
+
+.radio__input:checked + .radio__label .radio__span::after {
+  background-color: var(--color-primary); }
+
+.radio__label:hover .radio__span {
+  background-color: var(--color-primary); }
