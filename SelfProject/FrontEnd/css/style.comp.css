@@ -47,6 +47,12 @@ body {
   to {
     background-color: transparent; } }
 
+@keyframes circlerotate {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
+
 main.container {
   min-height: 40rem;
   width: 60%;
@@ -64,11 +70,14 @@ form {
   align-items: center; }
 
 .form-group {
+  width: 100%;
   font-size: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; }
+  align-items: flex-start;
+  padding-left: 20%; }
   .form-group__radio {
+    width: 100%;
     font-size: 2rem;
     display: flex;
     justify-content: center; }
@@ -192,3 +201,28 @@ form {
 
 .radio__label:hover .radio__span {
   background-color: var(--color-primary); }
+
+.spin {
+  margin: 2em 3em;
+  width: 5em;
+  height: 5em;
+  border: 0.5em solid var(--color-secondary);
+  border-radius: 50%;
+  position: relative; }
+  .spin::after {
+    content: "";
+    position: absolute;
+    top: -15%;
+    left: -10%;
+    width: 5em;
+    height: 5em;
+    border-radius: 50%;
+    border: .5em solid;
+    border-color: var(--color-primary) var(--color-secondary) var(--color-secondary) var(--color-secondary);
+    opacity: 0; }
+
+.spin__container:hover .spin::after {
+  opacity: 1;
+  animation: circlerotate 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out; }

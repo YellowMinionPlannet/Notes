@@ -17,11 +17,14 @@ form{
 }
 
 .form-group{
+    width: 100%;
     font-size: 2rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-left: 20%;
     &__radio{
+        width: 100%;
         font-size: 2rem;
         display: flex;
         justify-content: center;
