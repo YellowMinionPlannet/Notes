@@ -23,10 +23,6 @@
         position: relative;
         transform: rotate(255deg);
         margin-left: -.4em;
-        background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
-        background-position: 0%;
-        background-size: 200%;
-        transition: background-position .3s, background-color .3s;
     }
     &__span::after{
         content:"";
@@ -39,24 +35,28 @@
         transform: rotate(225deg);
         border-bottom-right-radius: .05em;
         border-top-right-radius: .05em;
-        background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
-        background-position: 0%;
-        background-size: 200%;
-        transition:  background-position .5s, background-color .5s;
-        transition-delay: .2s;
     }
     &__input{
         display: none;
     }
-    &__input:checked + &__label &__span, &__input:checked + &__label &__span::after{
-        background-position: 100%;
-        background-color: var(--color-primary);
+    &__input:checked + &__label &__span{
+        animation-name: checkboxin;
+        animation-duration: .3s;
+        animation-fill-mode: forwards;
+    }
+
+    &__input:checked + &__label &__span::after{
+        animation-name: checkboxin;
+        animation-duration: .5s;
+        animation-delay: .2s;
+        animation-fill-mode: forwards;
+        
     }
     &__input:checked + &__label &__span__container{
         background-color: var(--color-secondary);
     }
-    //We can comment out this line to change effect of hover
-    &__label:hover &__span, &__label:hover &__span::after{
-        background-color: var(--color-primary);
-    }
+    // We can comment out this line to change effect of hover
+    // &__label:hover &__span, &__label:hover &__span::after{
+    //     background-color: var(--color-primary);
+    // }
 }

@@ -30,6 +30,16 @@ body {
   min-height: 100vh;
   background-color: var(--color-grey-light-4); }
 
+@keyframes checkboxin {
+  from {
+    background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
+    background-position: 0%;
+    background-size: 200%; }
+  to {
+    background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
+    background-position: 100%;
+    background-size: 200%; } }
+
 main.container {
   height: 40rem;
   width: 60%;
@@ -66,11 +76,7 @@ main.container {
   display: inline-block;
   position: relative;
   transform: rotate(255deg);
-  margin-left: -.4em;
-  background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
-  background-position: 0%;
-  background-size: 200%;
-  transition: background-position .3s, background-color .3s; }
+  margin-left: -.4em; }
 
 .checkbox__span::after {
   content: "";
@@ -82,25 +88,24 @@ main.container {
   top: .65em;
   transform: rotate(225deg);
   border-bottom-right-radius: .05em;
-  border-top-right-radius: .05em;
-  background-image: linear-gradient(to right, transparent, transparent 50%, var(--color-primary) 50%, var(--color-primary));
-  background-position: 0%;
-  background-size: 200%;
-  transition: background-position .5s, background-color .5s;
-  transition-delay: .2s; }
+  border-top-right-radius: .05em; }
 
 .checkbox__input {
   display: none; }
 
-.checkbox__input:checked + .checkbox__label .checkbox__span, .checkbox__input:checked + .checkbox__label .checkbox__span::after {
-  background-position: 100%;
-  background-color: var(--color-primary); }
+.checkbox__input:checked + .checkbox__label .checkbox__span {
+  animation-name: checkboxin;
+  animation-duration: .3s;
+  animation-fill-mode: forwards; }
+
+.checkbox__input:checked + .checkbox__label .checkbox__span::after {
+  animation-name: checkboxin;
+  animation-duration: .5s;
+  animation-delay: .2s;
+  animation-fill-mode: forwards; }
 
 .checkbox__input:checked + .checkbox__label .checkbox__span__container {
   background-color: var(--color-secondary); }
-
-.checkbox__label:hover .checkbox__span, .checkbox__label:hover .checkbox__span::after {
-  background-color: var(--color-primary); }
 
 .bar__container {
   width: 100%;
