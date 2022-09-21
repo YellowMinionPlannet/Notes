@@ -26,6 +26,7 @@ html {
 
 body {
   font-family: sans-serif;
+  color: var(--color-primary);
   position: relative;
   min-height: 100vh;
   background-color: var(--color-grey-light-4); }
@@ -57,11 +58,16 @@ main.container {
   left: 50%;
   transform: translate(-50%, -50%); }
 
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
 .form-group {
   font-size: 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center; }
+  align-items: flex-start; }
   .form-group__radio {
     font-size: 2rem;
     display: flex;
