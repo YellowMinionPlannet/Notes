@@ -1,0 +1,46 @@
+.toggle{
+    &__container{
+        margin: .5em 3em;
+        cursor: pointer;
+    }
+    &__label{
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        gap: .5em;
+    }
+
+    &__input{
+        display: none;
+    }
+
+    &__button__container{
+        min-width: 4em;
+        height: 2em;
+        border-radius: 1em;
+        border: .3em solid var(--color-secondary);
+        position: relative;
+    }
+
+    &__button__container::after{
+        content:"";
+        display: block;
+        width: 1.4em;
+        height: 1.4em;
+        border-radius: 50%;
+        background-color: var(--color-secondary);
+        transition: all 2s;
+        position: absolute;
+        top: 0;
+        left: 2%;
+    }
+
+    &__input:checked + &__label &__button__container::after{
+        left:58%;
+    }
+    &__input:checked + &__label &__button__container{
+        background-color: var(--color-primary);
+        border: .3em solid transparent;
+        background-clip: content-box;
+    }
+}

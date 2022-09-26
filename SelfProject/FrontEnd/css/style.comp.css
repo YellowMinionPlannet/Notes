@@ -163,7 +163,8 @@ form {
 .radio__label {
   display: flex;
   align-items: center;
-  gap: .5em; }
+  gap: .5em;
+  cursor: pointer; }
 
 .radio__span {
   display: inline-block;
@@ -223,3 +224,43 @@ form {
   animation: circlerotate 2s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out; }
+
+.toggle__container {
+  margin: .5em 3em;
+  cursor: pointer; }
+
+.toggle__label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: .5em; }
+
+.toggle__input {
+  display: none; }
+
+.toggle__button__container {
+  min-width: 4em;
+  height: 2em;
+  border-radius: 1em;
+  border: 0.3em solid var(--color-secondary);
+  position: relative; }
+
+.toggle__button__container::after {
+  content: "";
+  display: block;
+  width: 1.4em;
+  height: 1.4em;
+  border-radius: 50%;
+  background-color: var(--color-secondary);
+  transition: all 2s;
+  position: absolute;
+  top: 0;
+  left: 2%; }
+
+.toggle__input:checked + .toggle__label .toggle__button__container::after {
+  left: 58%; }
+
+.toggle__input:checked + .toggle__label .toggle__button__container {
+  background-color: var(--color-primary);
+  border: .3em solid transparent;
+  background-clip: content-box; }
