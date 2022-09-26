@@ -1,6 +1,6 @@
 .logo{
     height: 3.25rem;
-    margin-left: 3rem;
+    margin-left: 2rem;
 }
 
 .search{
@@ -55,12 +55,17 @@
 }
 
 .user-nav{
-    display: flex;
     align-self: stretch;
+
+    display: flex;
+    align-items: center;
 
     & > * {
         padding: 0 2rem;
         cursor: pointer;
+        height: 100%;
+        display: flex;
+        align-items: center;
     }
 
     & > *:hover{
@@ -68,25 +73,206 @@
     }
 
     &__icon-box{
-        display: flex;
-        align-items: center;
+        position: relative;
     }
     &__icon{
         height: 2.25rem;
         width: 2.25rem;
+        fill: var(--color-grey-dark-2);
+
     }
     &__notification{
+        font-size: .8rem;
+        height: 1.75rem;
+        width: 1.75rem;
+        border-radius: 50%;
+        background-color: var(--color-primary);
+        color: #fff;
+        position: absolute;
+        top: 1.5rem;
+        right: 1.1rem;
 
-    }
-    &__user{
-
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     &__user-photo{
         height: 3.75rem;
         width: 3.75rem;
+        margin-right: 1rem;
     }
-    &__user-name{
+}
 
+// SIDE NAVIGATION
+.side-nav{
+    font-size: 1.4rem;
+    list-style: none;
+    margin: 3.5rem 0;
+
+    &__item{
+        position:relative;
+        &:not(:last-child){
+            margin-bottom: .5rem;
+        }
+    }
+
+    &__item::after{
+        content:"";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 3px;
+        background-color: var(--color-primary);
+        transform: scaleY(0);
+        transition: transform .2s,
+                    width .4s cubic-bezier(1, 0, 0, 1) .2s,
+                    background-color .1s; // set different effect separately. 
+    }
+
+    &__item:hover::after,
+    &__item--active::after
+    {
+        transform: scaleY(1);
+        width: 100%;
+    }
+
+    &__item:active::after{
+        background-color: var(--color-primary-light);
+    }
+
+    &__link:link,
+    &__link:visited{
+        color: var(--color-grey-light-1);
+        text-decoration:none;
+        text-transform: uppercase;
+        display: block;
+        padding: 1.5rem 3rem;
+        position: relative;//This is a MUST for z-index;
+        z-index: 10;
+
+        display:flex;
+        align-items: center;
+    }
+    &__icon{
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-right: 2rem;
+        fill: currentColor; // parent or current element of color property
+    }
+}
+
+.legal{
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--color-grey-light-4);
+}
+
+.gallery{
+    display: flex;
+
+
+    &__photo{
+        width: 100%;
+        display: block;
+    }
+}
+
+.overview{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-grey-light-2);
+
+    &__heading{
+        font-size: 2.25rem;
+        font-weight: 300;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 1.5rem 3rem;
+    }
+
+    &__stars{
+        margin-right: auto; // flex box + margin direction set to auto
+        display: flex;
+    }
+
+    &__icon-star{
+        width: 1.75rem;
+        height: 1.75rem;
+        fill: var(--color-primary);
+    }
+
+    &__icon-location{
+        width: 1.75rem;
+        height: 1.75rem;
+        fill: var(--color-primary);
+        margin-right: .5rem;
+    }
+
+    &__location{
+        font-size: 1.2rem;
+        display:flex;
+        align-items: center;
+    }
+
+    &__rating{
+        background-color:var(--color-primary);
+        color: #fff;
+        margin-left: 3rem;
+        align-self: stretch;
+        padding: 0 2.25rem;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__rating-average{
+        font-size: 2.25rem;
+        font-weight: 300;
+    }
+
+    &__rating-count{
+        font-size: .8rem;
+        text-transform: uppercase;
+    }
+}
+
+.btn-inline{
+    border: none;
+    color: var(--color-primary);
+    font-size: inherit;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    display: inline-block;
+    background-color: transparent;
+    cursor: pointer;
+    transition: color 1s;
+
+    &:hover{
+        color: var(--color-grey-dark-1);
+    }
+
+    &:focus{
+        outline: none;
+        animation: pulsate 1s infinite;
+    }
+}
+
+@keyframes pulsate{
+    0%{
+        transform: scale(1);
+        box-shadow: none;
+    }
+    50%{
+        transform: scale(1.05);
+        box-shadow: 0 1rem 4rem rgba(0,0,0, .25);
+    }
+    100%{
+        transform:scale(1);
+        box-shadow: none;
     }
 }
