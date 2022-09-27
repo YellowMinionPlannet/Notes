@@ -95,6 +95,7 @@ http://gs.statcounter.com/screen-resolution-stats
 };
 /* only screen means media query only applies to screens, if user try to print, media query does not apply */
 ```
+*See @content at chap2 project base and mixin scss files*
 
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
