@@ -296,3 +296,191 @@ First 2 rows and 2 columns in this sample is defined in the css. So it's called 
 The rest grid areas are called implicit grids;
 
 ## Align grid items
+## Align grid tracks
+
+```html
+<div class="container">
+    <div class="item item--1">Modern</div>
+    <div class="item item--2">CSS</div>
+    <div class="item item--3">with</div>
+    <div class="item item--4">Flexbox</div>
+    <div class="item item--5">and</div>
+    <div class="item item--6">Grid</div>
+    <div class="item item--7">is</div>
+    <div class="item item--8">great</div>
+</div>
+```
+
+```css
+.container{
+    width: 1000px;
+    margin: 30px auto;
+    height: 1000px;
+    background-color: #ddd;
+
+    display: grid;
+    grid-template-rows: repeat(2, 100px);
+    grid-template-columns: repeat(2, 200px);
+    grid-gap: 30px;
+
+    justify-content: center; /*center the entire grid in the container*/
+    align-content:center; /*center the entire grid vertically*/
+
+
+    grid-auto-rows: 80px; /*implicit grids are defined as row height of 80px*/
+
+    grid-auto-columns: .5fr; /*Not work if we set grid-auto-flow to row*/
+
+    grid-auto-flow: row; 
+
+    .item{
+        padding: 20px;
+        color: white;
+        font-family: sans-serif;
+        font-size: 30px;
+        background-color: orangered;
+    }
+
+    &--4{
+        background-color: crimson;
+        grid-row: 2 / span 3;
+        align-self: start; /* overwrite align-items*/
+        justify-self: start: /* overwrite justify-itemss*/
+    }
+}
+```
+
+align-items/justify-items means align items within the grid area.
+align-content/justify-content means align entire grid in the container.
+
+grid-auto-flow: row dense will make sure the automatic placement algorithm does not follow the order of items and create a empty "hole" in the grid.
+
+
+## Using min-content, max-content and minmax() function
+```html
+<div class="container">
+    <div class="item item--1">Modern</div>
+    <div class="item item--2">CSS</div>
+    <div class="item item--3">with</div>
+    <div class="item item--4">Flexbox</div>
+    <div class="item item--5">and</div>
+    <div class="item item--6">Grid</div>
+    <div class="item item--7">is</div>
+    <div class="item item--8">great</div>
+</div>
+```
+
+```css
+.container{
+    width: 1000px;
+    margin: 30px auto;
+
+    background-color: #ddd;
+
+    display:grid;
+    grid-template-rows: repeat(2, min-content);
+    grid-template-columns: max-content 1fr 1fr min-content; /*max-content makes the column to fit the max width of content*/
+    /*min-content makes the row / column to fit the min content size*/
+    /*minmax(150px, min-content) means at least 150px and max to the min-content size*/
+
+    .item{
+        padding: 20px;
+        color: white;
+        font-family: sans-serif;
+        font-size: 30px;
+        background-color: orangered;
+
+        &--1{
+            background-color: orangered;
+        }
+        &--2{
+            background-color: yellowgreen;
+        }
+        &--3{
+            background-color: blueviolet;
+        }
+        &--4{
+            background-color: palevioletred;
+        }
+        &--5{
+            background-color: royalblue;
+        }
+        &--6{
+            background-color: goldenrod;
+        }
+        &--7{
+            background-color: crimson;
+        }
+        &--8{
+            background-color: darkslategray;
+        }
+    }
+}
+```
+
+1fr take min-content as min size to the 1 fraction width as max size
+
+
+## Using auto-fill and auto-fit
+```html
+<div class="container">
+    <div class="item item--1">Modern</div>
+    <div class="item item--2">CSS</div>
+    <div class="item item--3">with</div>
+    <div class="item item--4">Flexbox</div>
+    <div class="item item--5">and</div>
+    <div class="item item--6">Grid</div>
+    <div class="item item--7">is</div>
+    <div class="item item--8">great</div>
+</div>
+```
+
+```css
+.container{
+    width: 1000px;
+    margin: 30px auto;
+
+    background-color: #ddd;
+
+    display:grid;
+    grid-template-rows: repeat(2, minmax(150px, min-content));
+    grid-template-columns: repeat(auto-fill, 100px);/*since the width is 1000px this will create 10 columns, each is 100px*/
+    grid-template-columns: repeat(auto-fit, 100px);/*since width is 1000px this will create 10 columns, last 2 is 0px*/
+
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    /*this will automatically create new row if one row does not fit*/
+
+    .item{
+        padding: 20px;
+        color: white;
+        font-family: sans-serif;
+        font-size: 30px;
+        background-color: orangered;
+
+        &--1{
+            background-color: orangered;
+        }
+        &--2{
+            background-color: yellowgreen;
+        }
+        &--3{
+            background-color: blueviolet;
+        }
+        &--4{
+            background-color: palevioletred;
+        }
+        &--5{
+            background-color: royalblue;
+        }
+        &--6{
+            background-color: goldenrod;
+        }
+        &--7{
+            background-color: crimson;
+        }
+        &--8{
+            background-color: darkslategray;
+        }
+    }
+}
+```
