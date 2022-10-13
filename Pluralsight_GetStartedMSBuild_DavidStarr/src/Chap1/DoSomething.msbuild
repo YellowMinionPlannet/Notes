@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="HelloWorld" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Name>Lei</Name>
+        <FullName>$(Name) Zhong</FullName>
+        <PicsPath>c:\temp\*.*</PicsPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Pics Include="$(PicsPath)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Simpsons Include="Homer">
+            <CatchPhrase>Doh</CatchPhrase>
+        </Simpsons>
+        <Simpsons Include="Marge">
+            <CatchPhrase>Mmmmmmph</CatchPhrase>
+        </Simpsons>
+        <Simpsons Include="Bart">
+            <CatchPhrase>Eat my shorts</CatchPhrase>
+        </Simpsons>
+        <Simpsons Include="Lisa">
+            <CatchPhrase>Bart!</CatchPhrase>
+        </Simpsons>
+        <Simpsons Include="Maggie">
+            <CatchPhrase>slurp, slurp, slurp</CatchPhrase>
+        </Simpsons>
+    </ItemGroup>
+
+    <Target Name="Simpsons">
+        <Message Text="@(Simpsons)" />
+        <Message Text="@(Simpsons->'%(CatchPhrase)')" />
+    </Target>
+
+    <Target Name="ListPics">
+        <Message Text="@(Pics)" />
+        <Message Text="@(Pics->'%(ModifiedTime)')"/>
+    </Target>
+
+    <Target Name="ReservedProperties">
+        <Massage Text="MSBuildProjectDirectory : $(MSBuildProjectDirectory)" />
+        <Message Text="LOGONSERVER : $(LOGONSERVER)" />
+    </Target>
+    <Target Name="Goodbyeworld">
+        <Message Text="Goodbye, $(FullName)!"/>
+    </Target>
+    <Target Name="HelloWorld">
+        <Message Text="Hello, $(Name)"/>
+    </Target>
+
+    <PropertyGroup>
+        <DoIt>true</DoIt>
+        <DoItString>Test</DoItString>
+    </PropertyGroup>
+    
+    <Target Name="TargetA" DependsOnTargets="TargetC">
+        <Message Text="This is Target A" />
+    </Target>
+
+    <Target Name="TargetB" Condition="$(DoItString) == 'Production'">
+        <Message Text="This is Target B" />
+    </Target>
+
+    <Target Name="TargetC" Condition="$(DoIt)">
+        <Message Text="This is Target C" />
+    </Target>
+</Project>
