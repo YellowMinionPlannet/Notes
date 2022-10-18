@@ -376,6 +376,8 @@ MSBuild must have xml file to work with. There are conventions to name these xml
 # Custom Tasks
 ## The MSBuild Extension Pack
 ## Using Tasks from the Extension Pack
+We can use tasks that are not originally from MSBuild.
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -398,6 +400,9 @@ MSBuild must have xml file to work with. There are conventions to name these xml
 ```
 
 ## Implementing ITask
+
+We can write our own task too.
+
 ```C#
 public class Add2Numbers:ITask{
     [required]
@@ -418,6 +423,8 @@ public class Add2Numbers:ITask{
 ```
 
 ## Create an Inline Task
+
+
 
 ```xml
 <!-- PsTasks.tasks -->
@@ -488,3 +495,95 @@ public class Add2Numbers:ITask{
     <Import Project="c:\Program Files\MSBuild\ExtensionPack\4.0\MSBuild.ExtensionPck.tasks">
 </Project>
 ```
+
+# Common Scenarios
+## The Web Application
+Now we are building a web application using MSBuild.
+```xml
+<!-- Common.props -->
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <MSBuildExtensionPath>$(MSBuildExtensionPath64)</MSBuildExtensionPath>
+        <ProjectDir>.\Autos</ProjectDir>
+        <SolutionFileName>$(ProjectDir)\Autos.sln</SolutionFileName>
+        <OutputPath>c:\temp\out</OutputPath>
+    </PropertyGroup>
+</Project>
+
+<!-- DoSomething.proj -->
+<!-- Condition="Exists($(OutputPath))" makes sure only excute RemoveDir when it exists-->
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <Target Name="ClearDir">
+        <RemoveDir Directories="$(OutputPath)" Condition="Exists($(OutputPath))" />
+    </Target>
+    
+    <Target Name="BuildSolution" DependsOnTargets="ClearDir">
+        <MSBuild Projects="$(SolutionFileName)" Properties="Configuration=Release;OutputPath=$(OutputPath)" />
+    </Target>
+
+    <Target Name="RunTests" DependsOnTargets="BuildSolution">
+        <ItemGroup>
+            <TestDLLs include="$(OutputPath)\*Test.dll" />
+        </ItemGroup>
+        <Exec Command="MSTest.exe @(TestDLLs->'/testcontainer:%(FullPath)', ' ')" IgnoreExitCode="false" WorkingDirectory="$(OutputPath)">
+    </Target>
+
+    <Target Name="SetVersion">
+        <ItemGroup>
+            <AssemblyInfoFiles Include="$(ProjectDir)\**\AssemblyInfo.cs"/>
+        </ItemGroup>
+        <MSBuild.ExtensionPack.Framework.AssemblyInfo AssemblyInfoFiles="@(AssemblyInfoFiles)" 
+                                                        AssemblyFileMajorVersion="5"
+                                                        AssemblyFileMinorVersion="10"
+        />
+    </Target>
+
+    <Target Name="Deploy" DependsOnTargets="RunTests">
+        <PropertyGroup>
+            <OutputPathWebFiles>$(OutputPath)\_PublishedWebsites\Auto.Web</OutputPathWebFiles>
+            <DeployDir>c:\temp\deploy</DeployDir>
+            <WebSiteName>Default</WebSiteName>
+            <AppPoolName>ASP.NET 4.0</AppPoolName>
+            <AppName>AutoWebDemo</AppName>
+        </PropertyGroup>
+
+        <!-- make the physical dir if it isn't there -->
+        <MakeDir Directories="$(DeployDir)" Condition="!Exists($DeployDir))">
+        <!-- if needed, create application in iis -->
+        <ItemGroup>
+            <Application Include="/($AppName)">
+                <PhysicalPath>$(DeployDir)</PhysicalPath>
+                <AppPool>$(APpPoolName)</AppPool>
+            </Application>
+        </ItemGroup>
+
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="AddApplication"
+                                                Name="$(WebsiteName)"
+                                                Appication="@(Application)"
+                                                ContinueOnError="true"
+        />
+        <!-- stop IIS -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Stop" Name="$(WebSiteName)" />
+        <!-- copy physical files -->
+        <MSBuild.ExtensionPack.FileSystem.RoboCopy Source="$(OutputPathWebFiles)"
+                                                    Destination="$(DeployDir)"
+                                                    Files="*.*"
+                                                    Options="/E /PURGE"
+        />
+        <!-- start iis -->
+        <MSBuild.ExtensionPack.Web.Iis7Website TaskAction="Start" Name="$(WebSiteName)" />
+    </Target>
+
+    <Import Project="Common.targets" />
+    <Import Project="PsBuildTasks.tasks" />
+    <Import Project="C:\Program Files\MSBuild\ExtensionPack\4.0\MSBuild.ExtensionPack.tasks">
+</Project>
+```
+
+## Managing Assembly Version Numbers
+
+
+# MSBuild and Team Foundation Server
+## 
