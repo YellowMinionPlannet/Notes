@@ -99,7 +99,7 @@ You can explicitly give Item Type a shared metadata and also overwite all existe
 More Metadata manipulation of Items please refer to the original website
 
 # How MSBuild builds projects
-待完成 [How MSBuild builds projects](https://learn.microsoft.com/en-us/visualstudio/msbuild/build-process-overview?view=vs-2022)
+[How MSBuild builds projects](https://learn.microsoft.com/en-us/visualstudio/msbuild/build-process-overview?view=vs-2022)
 
 # .NET project SDKs
-待完成 [.NET project SDKs](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview)
+[.NET project SDKs](https://learn.microsoft.com/en-us/dotnet/core/project-sdk/overview)
