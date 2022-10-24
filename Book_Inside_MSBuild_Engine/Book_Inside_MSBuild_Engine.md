@@ -247,7 +247,7 @@ These properties can never be overwritten!!!
 
 ### Dynamic Properties
 
-Dynamic Properties are evaluated when execute the target, but not at the time before targets execution. It can override the Command-line properties.
+Dynamic Properties are evaluated when execute the target, but not at the time before targets execution. It can override the Command-line properties and static property.
 ```xml
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
     <Target Name="PrintReservedProperties">
@@ -358,3 +358,127 @@ Item transformation never change the original, and make sure the transformed has
 `@( ItemType-> 'TransformExpression [ TransformExpression .  .  .]'[, Separator ]) `
 
 # Chapter 3 MSBuild Deep Dive, Part 2
+## Dynamic Properties and Items
+### Dynamic Items
+Because the static properties and static items are evaluated before targets are executed, if the items need to be updated during the target execution, we need to use dynamic items.
+Dynamic items also can remove item from static item.
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">    
+    <ItemGroup>
+		<Server Include="Server1">
+			<Type>2008</Type>
+			<Name>SVR01</Name>
+			<AdminContact></AdminContact>
+		</Server>
+		<Server Include="Server2">
+			<Type>2003</Type>
+			<Name>SVR02</Name>
+			<AdminContact>Sayed Y. Hashimi</AdminContact>
+		</Server>
+		<Server Include="Server3">
+			<Type>2008</Type>
+			<Name>SVR03</Name>
+			<AdminContact>Nicole Woodsmall</AdminContact>
+		</Server>
+		<Server Include="Server4">
+			<Type>2003</Type>
+			<Name>SVR04</Name>
+			<AdminContact>Keith Tingle</AdminContact>
+		</Server>
+	</ItemGroup>
+	<Target Name="PrintInfo">
+		<Message Text="%(Server.Identity) : %(Server.AdminContact)" />
+		<Message Text="" />
+		<Message Text="Override the AdminContact" Importance="high" />
+		<ItemGroup>
+			<Server Condition="'%(Server.AdminContact)' == 'Keith Tingle'">
+				<AdminContact>Sayed Ibrahim Hashimi</AdminContact>
+			</Server>
+		</ItemGroup>
+		<Message Text="%(Server.Identity) : %(Server.AdminContact)" />
+		<Message Text="" />
+		<Message Text="Remiving item" />
+		<ItemGroup>
+			<Server Remove="Server2" />
+		</ItemGroup>
+		<Message Text="%(Server.Identity) : %(Server.AdminContact)" />
+		<Message Text="Admin: @(Server->'%(AdminContact)')" />
+	</Target>
+</Project>
+<!-- PrintInfo:
+        Server1 : Sayed Ibrahim Hashimi
+        Server2 : Sayed Y. Hashimi
+        Server3 : Nicole Woodsmall
+        Server4 : Keith Tingle
+
+    Overriding AdminContact
+        Server1 : Sayed Ibrahim Hashimi
+        Server2 : Sayed Y. Hashimi
+        Server3 : Nicole Woodsmall
+        Server4 : Sayed Ibrahim Hashimi
+
+    Removing item
+        Server1 : Sayed Ibrahim Hashimi
+        Server3 : Nicole Woodsmall
+        Server4 : Sayed Ibrahim Hashimi
+ -->
+```
+
+## Property and Item Evaluation
+Process of MSBuild:
+0. Load all environment and global properites, and toolset properties
+1. Evaluate properties(static) and process imports as encountered
+2. Evaluate item definitions
+3. Evaluate items
+4. Evaluate using tasks
+5. Start build and reading targets
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="PrintInfo" ToolsVersion="4.0">
+	<ItemGroup>
+		<ItemOne Include="One" />
+		<ItemTwo Include="@(ItemThree)" />
+		<ItemThree Include="Three" />
+		<ItemFour Include="@(ItemThree)" />
+	</ItemGroup>
+	<Target Name="PrintInfo">
+		<Message Text="ItemOne: @(ItemOne)" />
+		<Message Text="ItemTwo: @(ItemTwo)" />
+		<Message Text="ItemThree: @(ItemThree)" />
+		<Message Text="ItemFour: @(ItemFour)" />
+	</Target>
+</Project>
+<!-- 
+    ItemOne: One
+    ItemTwo: 
+    ItemThree: Three
+    ItemFour: Three
+ -->
+```
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="PrintInfo">
+	<PropertyGroup>
+		<OutputPathCopy>$(OutputPath)</OutputPathCopy>
+	</PropertyGroup>
+	<ItemGroup>
+		<OutputPathItem Include="$(OutputPath)" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Configuration>Debug</Configuration>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+	<Target Name="PrintInfo">
+		<Message Text="Configuration: $(Configuration)" />
+		<Message Text="OutputPath: $(OutputPath)"/>
+		<Message Text="OutputPathCopy: $(OutputPathCopy)" />
+		<Message Text="OutputPathItem: @(OutputPathItem)" />
+	</Target>
+</Project>
+<!-- 
+        Configuration: Debug
+        OutputPath: bin\Debug\
+        OutputPathCopy:
+        OutputPathItem: bin\Debug\
+ -->
+```
+
+## Importing Files
