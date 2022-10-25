@@ -482,3 +482,165 @@ Process of MSBuild:
 ```
 
 ## Importing Files
+Import files are used as shared information.
+
+Import element must be immediate child of Project element, and only Project and Condition attributes are available.
+
+For C# project, Microsoft.CSharp.targets file is imported then the Microsoft.Common.targets file is imported.
+```xml
+<!-- Import01.proj -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="All">
+    <PropertyGroup>
+        <SourceRoot>$(MSBuildProjectDirectory)\src\</SourceRoot>
+        <Configuration>Debug</Configuration>
+    </PropertyGroup>
+    <ItemGroup>
+        <SourceFiles Include="$(SourceRoot)\*" />
+    </ItemGroup>
+
+    <Import Project="$(MSBuildProjectDirectory)\Import01.targets" />
+
+    <Target Name="PrintOutputPath">
+        <Message Text="OutputPath: $(OutputPath)" />
+        <Message Text="MSBuildProjectFile: $(MSBuildProjectFile)" />
+    </Target>
+    <Target Name="All" DependsOnTargets="PrintInfo;PrintOutputPath" />
+</Project>
+
+<!-- Import01.targets -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <Target Name="PrintInfo">
+        <Message Text="SourceRoot: $(SourceRoot))" />
+        <Message Text="Configuration: $(Configuration)" />
+        <Message Text="SourceFiles: @(SourceFiles)" />
+    </Target>
+    <PropertyGroup>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+    </PropertyGroup>
+</Project>
+
+<!-- 
+    PrintInfo:
+        SourceRoot: C:\InsideMSBuild\Ch03\src\
+        Configuration: Debug
+        SourceFiles: C:\...
+    PrintOutputPath:
+        OutputPath: bin\Debug\
+        MSBuildProjectFile: Import01.proj
+ -->
+```
+
+Note:
+1. All items and properties in Import01.proj before the Import element are available to Import01.targets.
+2. All items and properties defined in Import01.targets are available to Import01.proj after the Import element.
+3. All properties and targets are defined from top to bottom, and the last definition that occurs is the value that persists.
+4. **Targets are executed after all items, properties, and imports are evaluated.**
+
+Reserved Property, such as MSBuildProjectFullPath, is evaluated when the process starts, and will not be changed. Even you request that property in imported file with different path, the property will not change. If you want to use current path (different from the path MSBuild starts), you can use MSBuildThisFile property.
+
+## Extending the Build Process
+We can extends the build by:
+1. PreBuildEvent and PostBuildEvent(Not recommended)
+2. Override BeforeBuild, AfterBuild, and similar targets
+3. Target Hooks(i.e. BeforeTargets and AfterTarget)
+4. Target Injection
+
+For point 2, if you define target with the same name, AfterBuild, for example, then the target will override the AfterBuild target defined previously. But if you have more imported files, all AfterBuild targets will be overriden.
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+...
+    <Target Name="AfterBuild">
+        <Message Text="Build Complete!" />
+    </Target>
+...
+</Project>
+```
+
+### Target Hooks
+We can use BeforeTargets and AfterTargets attributes on Target Element to tell MSBuild, the attributed target should execute before or after the targeted target.
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
+    <Target Name="Build">
+        <Message Text="Build target" />
+    </Target>
+    <Target Name="GenerateCode" BeforeTargets="Build" Condition="false">
+        <Message Text="GenerateCode target" />
+    </Target>
+    <Target Name="CustomCopyOutput" AfterTargets="Build">
+        <Message Text="CustomCopyOutput target" />
+    </Target>
+</Project>
+
+<!-- 
+    GenerateCode:
+        GenerateCode target
+    Build:
+        Build target
+    CustomCopyOutput:
+        CustomCopyOutput target
+
+ -->
+```
+Note: 
+* Even Build target's condition equals to false, Before/AfterBuild will execute.
+* Before/AfterBuild only execute once.
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build;Build1">
+    <Target Name="Build">
+        <Message Text="Build target" />
+    </Target>
+    <Target Name="Build1">
+    <Message Text="Build1 target" />
+    </Target>
+    <Target Name="GenerateCode" BeforeTargets="Build;Build1">
+        <Message Text="GenerateCode target" />
+    </Target>
+    <Target Name="CustomCopyOutput" AfterTargets="Build;Build1">
+        <Message Text="CustomCopyOutput target" />
+    </Target>
+</Project>
+
+<!-- 
+    GenerateCode:
+        GenerateCode target
+    Build:
+        Build target
+    CustomCopyOutput:
+        CustomCopyOutput target
+    Build1:
+        Build1 target
+ -->
+
+```
+
+### Target Injection
+We can use DependsOnTargets attribute to achieve this.
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build">
+...
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+    <PropertyGroup>
+        <BuildDependsOn>
+            $(BuildDependsOn);
+            CustomAfterBuild
+        </BuildDependsOn>
+    </PropertyGroup>
+
+    <Target Name="CustomAfterBuild">
+        <Message Text="Inside CustomAfterBuild target" Importance="high" />
+    </Target>
+
+    ...
+    <Target Name="Build" DependsOnTargets="$(BuildDependsOn)">
+</Project>
+```
+
+Note: 
+* If target Build's condition is false, then DpendsOnTargets will be ignored.
+* We can also place CustomAfterBuild infront of $(BuildsDependsOn)
+
+## Property Functions and Item Functions
+
+Also visit official doc for this topic [Property functions](https://learn.microsoft.com/en-us/visualstudio/msbuild/property-functions?view=vs-2022)

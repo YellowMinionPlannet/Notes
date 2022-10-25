@@ -1,15 +1,14 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">    
-    <ItemGroup>      
-        <Server Include="Server1">
-                <Identity>like a piece of work</Identity>
-                <Type>2008</Type>        
-                <Name>SVR01</Name>        
-                <AdminContact>Adam Barr</AdminContact>        
-                <AdminContact>Kim Abercrombie</AdminContact>      
-        </Server>    
-    </ItemGroup>    
-    <Target Name="PrintInfo" Outputs="%(Server.Identity)">      
-        <Message Text="Server: @(Server)" />      
-        <Message Text="Admin: @(Server->'%(AdminContact)')" />    
-    </Target>  
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="Build;Build1">
+    <Target Name="Build">
+        <Message Text="Build target" />
+    </Target>
+    <Target Name="Build1">
+    <Message Text="Build1 target" />
+    </Target>
+    <Target Name="GenerateCode" BeforeTargets="Build;Build1">
+        <Message Text="GenerateCode target" />
+    </Target>
+    <Target Name="CustomCopyOutput" AfterTargets="Build;Build1">
+        <Message Text="CustomCopyOutput target" />
+    </Target>
 </Project>
