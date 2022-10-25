@@ -11,4 +11,58 @@
     <Target Name="CustomCopyOutput" AfterTargets="Build;Build1">
         <Message Text="CustomCopyOutput target" />
     </Target>
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+        <OutputPath>bin\Debug\</OutputPath>
+    </PropertyGroup>
+
+    <Target Name="Demo">
+        <Message Text="Configuration: $(Configuration)" Importance="high" />
+        <Message Text="OutputPath: $(OutputPath)" Importance="high" />
+        <Message Text="======================================================" Importance="high" />
+        <Message Text="OutputPath length: $(OutputPath.Length)" />
+        <Message Text="OutputPath ends with '\': $(OutputPath.EndsWith('\'))" />
+        <Message Text="OutputPath no trailing slash: $(OutputPath.TrimEnd('\'))" />
+        <Message Text="OutputPath no trailing slash ends with Configuration: $(OutputPath.TrimEnd('\').EndsWith('$(Configuration)'))" />
+        <Message Text="OutputPath root: $(OutputPath.TrimEnd('\').Replace($(Configuration), ''))" />
+        <Message Text="OutputPath root no trailing slash: $(OutputPath.TrimEnd('\').Replace($(Configuration), '').TrimEnd('\'))" />
+    </Target>
+
+    <Target Name="Demo1">
+        <Message Text="DateTime.Now: $([System.DateTime]::Now)" />
+        <Message Text="Days in month: $([System.DateTime]::DaysInMonth(2011,2))" />
+        <Message Text="New Guid: $([System.Guid]::NewGuid())" />
+        <Message Text="IsMatch: $([System.Text.RegularExpressions.Regex]::IsMatch('someInputHere', '.*In.*'))" />
+        <Message Text="Framework path: $([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToDotNetFramework(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion.Version40))" />
+        <Message Text="MSBuild.exe path: $([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToSystemFile('msbuild.exe'))" />
+     </Target>
+     <Target Name="Demo2">
+        <Message Text="Add: $([MSBuild]::Add(5,9))" />
+        <Message Text="Subtract01: $([MSBuild]::Subtract(90,768))" />
+        <Message Text="Mult01: $([MSBuild]::Multiply(4,9))" />
+        <Message Text="Div01: $([MSBuild]::Divide(100,5.2))" />
+      </Target>
+
+      <ItemGroup>
+        <None Include="one.txt;two.txt;three.txt;One.txt" />
+    
+        <Reference Include="System;">
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Data">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Deployment">
+            <Private>True</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="Demo3">
+        <Message Text="None: @(None)" Importance="high" />
+        <Message Text="Reference: @(Reference)" Importance="high" />
+        <Message Text="=============================================" Importance="high" />
+        <Message Text="Distinct: @(None->Distinct())" />
+        <Message Text="DistincetWithCase: @(None->DistinctWithCase())" />
+        <Message Text="Metadata: @(Reference->Metadata('Private'))" />
+    </Target>
 </Project>

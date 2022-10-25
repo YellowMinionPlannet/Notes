@@ -644,3 +644,106 @@ Note:
 ## Property Functions and Item Functions
 
 Also visit official doc for this topic [Property functions](https://learn.microsoft.com/en-us/visualstudio/msbuild/property-functions?view=vs-2022)
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+        <OutputPath>bin\Debug\</OutputPath>
+    </PropertyGroup>
+
+    <Target Name="Demo">
+        <Message Text="Configuration: $(Configuration)" Importance="high" />
+        <Message Text="OutputPath: $(OutputPath)" Importance="high" />
+        <Message Text="======================================================" Importance="high" />
+        <Message Text="OutputPath length: $(OutputPath.Length)" />
+        <Message Text="OutputPath ends with '\': $(OutputPath.EndsWith('\'))" />
+        <Message Text="OutputPath no trailing slash: $(OutputPath.TrimEnd('\'))" />
+        <Message Text="OutputPath no trailing slash ends with Configuration: $(OutputPath.TrimEnd('\').EndsWith('$(Configuration)'))" />
+        <Message Text="OutputPath root: $(OutputPath.TrimEnd('\').Replace($(Configuration), ''))" />
+        <Message Text="OutputPath root no trailing slash: $(OutputPath.TrimEnd('\').Replace($(Configuration), '').TrimEnd('\'))" />
+    </Target>
+    <!-- 
+        Configuration: Debug
+        OutputPath: bin\Debug\
+        ======================================================
+        OutputPath length: 10
+        OutputPath ends with '\': True
+        OutputPath no trailing slash: bin\Debug
+        OutputPath no trailing slash ends with Configuration: True
+        OutputPath root: bin\
+        OutputPath root no trailing slash: bin
+     -->
+
+     <Target Name="Demo1">
+        <Message Text="DateTime.Now: $([System.DateTime]::Now)" />
+        <Message Text="Days in month: $([System.DateTime]::DaysInMonth(2011,2))" />
+        <Message Text="New Guid: $([System.Guid]::NewGuid())" />
+        <Message Text="IsMatch: $([System.Text.RegularExpressions.Regex]::IsMatch('someInputHere', '.*In.*'))" />
+        <Message Text="Framework path: $([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToDotNetFramework(Microsoft.Build.Utilities.TargetDotNetFrameworkVersion.Version40))" />
+        <Message Text="MSBuild.exe path: $([Microsoft.Build.Utilities.ToolLocationHelper]::GetPathToSystemFile('msbuild.exe'))" />
+     </Target>
+     <!-- 
+        DateTime.Now: 2022/10/25 12:58:34
+        Days in month: 28
+        New Guid: 9c1125a7-49c9-41af-8e00-fa167afa9695
+        IsMatch: True
+        Framework path: C:\Windows\Microsoft.NET\Framework\v4.0.30319
+        MSBuild.exe path: C:\Windows\system32\msbuild.exe
+      -->
+
+      <Target Name="Demo2">
+        <Message Text="Add: $([MSBuild]::Add(5,9))" />
+        <Message Text="Subtract01: $([MSBuild]::Subtract(90,768))" />
+        <Message Text="Mult01: $([MSBuild]::Multiply(4,9))" />
+        <Message Text="Div01: $([MSBuild]::Divide(100,5.2))" />
+      </Target>
+      <!-- 
+        Add: 14
+        Subtract01: -678
+        Mult01: 36
+        Div01: 19.2307692307692
+       -->
+</Project>
+```
+
+### Item Functions
+|Function|Description|
+|-|-|
+|DirectoryName|Returns a list of the directory names of each value in the item list|
+|Metadata|Returns the values for the metadata name specified|
+|DistinctWithCase|Returns the distinct (case-sensitive) values from the item list|
+|Distinct|Returns the distinct (case-insensitive) values from the item list|
+|ClearMetadata|Returns an item list whose values do not contain any metadata|
+|WithMetadataValue|Returns the values from the item list that have a value defined for the given metadata value|
+|AnyHaveMetadataValue|Returns boolean if any value in the item list has a value for the given metadata name|
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <ItemGroup>
+        <None Include="one.txt;two.txt;three.txt;One.txt" />
+    
+        <Reference Include="System;">
+            <Private>True</Private>
+        </Reference>
+        <Reference Include="System.Data">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="System.Deployment">
+            <Private>True</Private>
+        </Reference>
+    </ItemGroup>
+
+    <Target Name="Demo3">
+        <Message Text="None: @(None)" Importance="high" />
+        <Message Text="Reference: @(Reference)" Importance="high" />
+        <Message Text="=============================================" Importance="high" />
+        <Message Text="Distinct: @(None->Distinct())" />
+        <Message Text="DistincetWithCase: @(None->DistinctWithCase())" />
+        <Message Text="Metadata: @(Reference->Metadata('Private'))" />
+    </Target>
+
+</Project>
+```
+
+# Chapter 4 Custom Tasks
