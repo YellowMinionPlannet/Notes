@@ -747,3 +747,135 @@ Also visit official doc for this topic [Property functions](https://learn.micros
 ```
 
 # Chapter 4 Custom Tasks
+We can write custom task ourselves by coding class library which inherits Microsoft.Build.Framework.ITask interface.
+Then we use UsingTask element to reference the created custom task.
+Then, in any targets, we can use the task name as element to tell MSBuild to run created custom task.
+
+```c#
+public class HelloWorld : ITask{
+    public IBuildEngine BuildEngine{get;set;}
+    public ITaskHost HostObject{get;set;}
+
+    public bool Execute(){
+        TaskLoggingHelper helper = new TaskLogginHelper(this);
+        helper.LogMessageFromText("Hello MSBuild", MessageImportance.High);
+
+        return true;
+    }
+}
+```
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <UsingTask AssemblyFile="$(MSBuildProjectDirectory)\..\Examples.Tasks.dll" TaskName="HelloWorld" />
+
+    <Target Name="Demo">
+        <HelloWorld />
+    </Target>
+</Project>
+<!-- 
+    Hello MSBuild
+ -->
+```
+
+There are several attributes for UsingTask element:
+|Name|Description|
+|-|-|
+|TaskName|The class name of the task that is to be used. If there is a naming conflict, this value should be specified using the full namespace. If conflict persists, then unexpected results might occur.|
+|AssemblyFile|Specifies the location of the assembly that contains the task to be loaded. Must be full path, where System.Reflection.Assembly.LoadFrom will be called. AssemblyFile/AssemblyName should exist and only exist one of them|
+|AssemblyName|Name of the assembly that contains the task to be loaded where System.Reflection.Assembly.Load will be called. You would use this if your task's assembly is in GAC|
+|TaskFactory|This specifies the class in the assembly that is responsible for creating new instances of the task. This is primarily used for inline tasks.|
+
+# Task Input/Output
+```c#
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+
+namespace CustomTask
+{
+    public class MetadataExample : Task
+    {
+        [Required]
+        public ITaskItem[] ServerList { get; set; }
+        [Output]
+        public ITaskItem[] Result { get; set; }
+        public override bool Execute()
+        {
+            if(ServerList.Length > 0)
+            {
+                Result = new ITaskItem[ServerList.Length];
+
+                for(var i = 0; i < Result.Length ; i++)
+                {
+                    var item = ServerList[i];
+                    var newItem = new TaskItem(item.ItemSpec);
+                    var fullpath = item.GetMetadata("Fullpath");
+
+                    Log.LogMessageFromText(fullpath, MessageImportance.High);
+
+                    newItem.SetMetadata("ServerName", item.GetMetadata("Name"));
+                    newItem.SetMetadata("DropLoc", item.GetMetadata("DropLocation"));
+
+                    newItem.SetMetadata("IpAddress", $"127.0.0.{i}");
+                    Result[i] = newItem;
+                }
+            }
+            return true;
+        }
+    }
+}
+```
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <CustomTaskFile Condition="'$(CustomTaskFile)' == ''">\src\CustomTask\bin\Debug\netstandard2.0\CustomTask.dll</CustomTaskFile>
+        <CustomTaskFilePath>$(MSBuildProjectDirectory)$(CustomTaskFile)</CustomTaskFilePath>
+        <CustomTaskFilePath Condition="'$(CustomTaskFileFullPath)' != ''">$(CustomTaskFileFullPath)</CustomTaskFilePath>
+        <CustomTaskName Condition="'$(CustomTaskName)' == ''">MetadataExample</CustomTaskName>
+    </PropertyGroup>
+    <UsingTask AssemblyFile="$(CustomTaskFilePath)" TaskName="$(CustomTaskName)" />
+
+    <ItemGroup>
+        <Server Include="server1.app.config">
+            <Name>server1</Name>
+            <DropLocation>D:\Drops\</DropLocation>
+        </Server>
+        <Server Include="server2.app.config">
+            <Name>server2</Name>
+            <DropLocation>E:\Builds\Drops\</DropLocation>
+        </Server>
+        <Server Include="server3.app.config">
+            <Name>server3</Name>
+            <DropLocation>D:\Data\DropDir\</DropLocation>
+        </Server>
+        <Server Include="server4.app.config">
+            <Name>server4</Name>
+            <DropLocation>D:\Projects\DropLocation\</DropLocation>
+        </Server>
+    </ItemGroup>
+    <Target Name="CustomTaskDemo">
+        <MetadataExample ServerList="@(Server)">
+            <Output ItemName="ServerIpList" TaskParameter="Result" />
+        </MetadataExample>
+
+        <Message Text="ServerIpList: @(ServerIpList)" />
+        <Message Text="Server: %(ServerIpList.ServerName) %(ServerIpList.DropLoc) %(ServerIpList.IpAddress) " />
+    </Target>
+</Project>
+<!-- 
+    CustomTaskDemo:
+        D:\Notes\Notes\Book_Inside_MSBuild_Engine\server1.app.config
+        D:\Notes\Notes\Book_Inside_MSBuild_Engine\server2.app.config
+        D:\Notes\Notes\Book_Inside_MSBuild_Engine\server3.app.config
+        D:\Notes\Notes\Book_Inside_MSBuild_Engine\server4.app.config
+        ServerIpList: server1.app.config;server2.app.config;server3.app.config;server4.app.config
+        Server: server1 D:\Drops\ 127.0.0.0 
+        Server: server2 E:\Builds\Drops\ 127.0.0.1 
+        Server: server3 D:\Data\DropDir\ 127.0.0.2 
+        Server: server4 D:\Projects\DropLocation\ 127.0.0.3 
+ -->
+
+```
+
+## Inline Tasks

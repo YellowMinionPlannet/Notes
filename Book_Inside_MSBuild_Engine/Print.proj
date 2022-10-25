@@ -65,4 +65,40 @@
         <Message Text="DistincetWithCase: @(None->DistinctWithCase())" />
         <Message Text="Metadata: @(Reference->Metadata('Private'))" />
     </Target>
+
+    
+    <PropertyGroup>
+        <CustomTaskFile Condition="'$(CustomTaskFile)' == ''">\src\CustomTask\bin\Debug\netstandard2.0\CustomTask.dll</CustomTaskFile>
+        <CustomTaskFilePath>$(MSBuildProjectDirectory)$(CustomTaskFile)</CustomTaskFilePath>
+        <CustomTaskFilePath Condition="'$(CustomTaskFileFullPath)' != ''">$(CustomTaskFileFullPath)</CustomTaskFilePath>
+        <CustomTaskName Condition="'$(CustomTaskName)' == ''">MetadataExample</CustomTaskName>
+    </PropertyGroup>
+    <UsingTask AssemblyFile="$(CustomTaskFilePath)" TaskName="$(CustomTaskName)" />
+
+    <ItemGroup>
+        <Server Include="server1.app.config">
+            <Name>server1</Name>
+            <DropLocation>D:\Drops\</DropLocation>
+        </Server>
+        <Server Include="server2.app.config">
+            <Name>server2</Name>
+            <DropLocation>E:\Builds\Drops\</DropLocation>
+        </Server>
+        <Server Include="server3.app.config">
+            <Name>server3</Name>
+            <DropLocation>D:\Data\DropDir\</DropLocation>
+        </Server>
+        <Server Include="server4.app.config">
+            <Name>server4</Name>
+            <DropLocation>D:\Projects\DropLocation\</DropLocation>
+        </Server>
+    </ItemGroup>
+    <Target Name="CustomTaskDemo">
+        <MetadataExample ServerList="@(Server)">
+            <Output ItemName="ServerIpList" TaskParameter="Result" />
+        </MetadataExample>
+
+        <Message Text="ServerIpList: @(ServerIpList)" />
+        <Message Text="Server: %(ServerIpList.ServerName) %(ServerIpList.DropLoc) %(ServerIpList.IpAddress) " />
+    </Target>
 </Project>
