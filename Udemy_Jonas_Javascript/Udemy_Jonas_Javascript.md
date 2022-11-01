@@ -457,7 +457,7 @@ console.log(arr1);
 | To mutate original array | A new array | An array index | An array element | Know if array includes | A new string | To transform to value | To just loop array |
 | ------------------------ | ----------- | -------------- | ---------------- | ---------------------- | ------------ | --------------------- | ------------------ |
 | push                     | map         | indexOf        | find             | includes               | join         | reduce                | forEach            |
-| unshift                  | filter      | findIndex      | N/A              | some                   | N/A          | N/A                   |                    |
+| unshift                  | filter      | findIndex      | N/A              | some                   | N/A          | N/A                   | N/A                |
 | pop                      | slice       | N/A            | N/A              | every                  | N/A          | N/A                   | N/A                |
 | shift                    | concat      | N/A            | N/A              | N/A                    | N/A          | N/A                   | N/A                |
 | splice                   | flat        | N/A            | N/A              | N/A                    | N/A          | N/A                   | N/A                |
