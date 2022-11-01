@@ -879,3 +879,205 @@ namespace CustomTask
 ```
 
 ## Inline Tasks
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <UsingTask
+        TaskName="PrintMessage"
+        TaskFactory="CodeTaskFactory"
+        AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll"
+    >
+        <ParameterGroup>
+            <Message Required="true"/>
+        </ParameterGroup>
+        <Task>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+                Log.LogMessage(Message, MessageImportance.High);
+                ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+
+    <UsingTask
+        TaskName="CreateGuid01"
+        TaskFactory="CodeTaskFactory"
+        AssemblyFIle="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll"
+    >
+    <ParameterGroup>
+        <Id Output="true"/>
+    </ParameterGroup>
+    <Task>
+        <Code Type="Fragment" Language="cs">
+            <![CDATA[
+                Id = Guid.NewGuid().ToString();
+            ]]>
+        </Code>
+    </Task>
+    </UsingTask>
+    <Target Name="Demo">
+        <PrintMessage Message="Print this message"/>
+    </Target>
+    <Target Name="Demo01">
+        <CreateGuid01>
+            <Output PropertyName="MyId" TaskParameter="Id" />
+        </CreateGuid01>
+        <Message Text="MyId: $(MyId)"/>
+    </Target>
+</Project>
+```
+
+# Chapter 6 Batching and Incremental Builds
+We can group our target files by their different metadata, and each group goes into one batch.
+We can have target batching and task batching.
+Example of task batching:
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <SourceFolder>src\</SourceFolder>
+    </PropertyGroup>
+    <ItemGroup>
+        <SourceFiles Include="$(SourceFolder)*.txt" />
+    </ItemGroup>
+    <Target Name="TaskBatching">
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Not Batched: @(SourceFiles->'%(FullPath)')" />
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Batched: %(SourceFiles.FullPath)" />
+    </Target>
+</Project>
+
+<!-- 
+  ------------------------------------------------------------------
+  Not Batched: D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\four.txt;D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\one
+  .txt;D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\three.txt;D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\two.txt
+  ------------------------------------------------------------------
+  Batched: D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\four.txt
+  Batched: D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\one.txt
+  Batched: D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\three.txt
+  Batched: D:\Notes\Notes\Book_Inside_MSBuild_Engine\src\two.txt
+ -->
+```
+Watch the output of this example, if targets are batched, the task only execute once per batch!
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <SourceFolder>src\</SourceFolder>
+    </PropertyGroup>
+    <ItemGroup>
+        <SourceFiles Include="$(SourceFolder)01.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </SourceFiles>
+        <SourceFiles Include="$(SourceFolder)02.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </SourceFiles>
+        <SourceFiles Include="$(SourceFolder)03.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </SourceFiles>
+        <SourceFiles Include="$(SourceFolder)04.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </SourceFiles>
+    </ItemGroup>
+    <Target Name="TaskBatching">
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Not Batched: @(SourceFiles->'%(CopyToOutputDirectory)')" />
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Batched: %(SourceFiles.CopyToOutputDirectory)" />
+    </Target>
+</Project>
+
+<!-- 
+  ------------------------------------------------------------------
+  Not Batched: Always;PreserveNewest;Always;PreserveNewest
+  ------------------------------------------------------------------
+  Batched: Always
+  Batched: PreserveNewest
+ -->
+```
+
+## Target Batching
+
+Target Batching is different than Task Batching. For Task Batching, task is executed once per batch. Target is executed once per batch in Target Batching, and it is driven by the Output attribute.
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <PropertyGroup>
+        <SourceRoot>src\</SourceRoot>
+    </PropertyGroup>
+    <ItemGroup>
+        <BuildFile Include="$(SourceRoot)TestProj1.sln" />
+        <Config Include="Debug configuration">
+            <Configuration>Debug</Configuration>
+        </Config>
+        <Config Include="Release configuration">
+            <Configuration>Release</Configuration>
+        </Config>
+    </ItemGroup>
+    <Target Name="BuildAll" Outputs="%(Config.Configuration)">
+        <Message Text="Start building for configruation: %(Config.Configuration)" />
+        <MSBuild Projects="@(BuildFile)"
+                Properties="Configuration=%(Config.Configuration)"
+                Targets="Rebuild"
+        />
+    </Target>
+</Project>
+
+<!-- 
+  will execute 2 times, once for debug, once for release!
+ -->
+```
+
+## Combining Task and Target Batching
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+    <ItemGroup>
+        <Server Include="Server1">
+            <Type>2008</Type>
+            <Name>SVR01</Name>
+            <AdminContact>Sayed Ibrahim Hashimi</AdminContact>
+        </Server>
+        <Server Include="Server2">
+            <Type>2003</Type>
+            <Name>SVR02</Name>
+            <AdminContact>Sayed Y. Hashimi</AdminContact>
+        </Server>
+        <Server Include="Server3">
+            <Type>2008</Type>
+            <Name>SVR03</Name>
+            <AdminContact>Nicold Woodsmall</AdminContact>
+        </Server>
+        <Server Include="Server4">
+            <Type>2003</Type>
+            <Name>SVR04</Name>
+            <AdminContact>Keith Tingle</AdminContact>
+        </Server>
+    </ItemGroup>
+    <Target Name="TaskBatching02" Output="%(Server.Type)">
+        <Message Text="@(Server->'%(Name)')" />
+        <Message Text="===================================" />
+
+        <Message Text="%(Server.Name)" />
+        <Message Text="===================================" />
+
+        <Message Text="%(Server.Type)" />
+    </Target>
+</Project>
+<!-- 
+  SVR01;SVR03
+  ===================================
+  SVR01
+  SVR03
+  ===================================
+  2008
+
+  SVR02;SVR04
+  ===================================
+  SVR02
+  SVR04
+  ===================================
+  2003
+ -->
+```
+
+## Multi-batching
+## Using Batching to Build Multiple Configurations

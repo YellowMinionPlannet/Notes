@@ -101,4 +101,49 @@
         <Message Text="ServerIpList: @(ServerIpList)" />
         <Message Text="Server: %(ServerIpList.ServerName) %(ServerIpList.DropLoc) %(ServerIpList.IpAddress) " />
     </Target>
+
+    <PropertyGroup>
+        <SourceFolder>src\</SourceFolder>
+    </PropertyGroup>
+    <ItemGroup>
+        <SourceFiles Include="$(SourceFolder)*.txt" />
+    </ItemGroup>
+    <Target Name="TaskBatching">
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Not Batched: @(SourceFiles->'%(FullPath)')" />
+        <Message Text="------------------------------------------------------------------" />
+        <Message Text="Batched: %(SourceFiles.FullPath)" />
+    </Target>
+
+    <ItemGroup>
+        <Server Include="Server1">
+            <Type>2008</Type>
+            <Name>SVR01</Name>
+            <AdminContact>Sayed Ibrahim Hashimi</AdminContact>
+        </Server>
+        <Server Include="Server2">
+            <Type>2003</Type>
+            <Name>SVR02</Name>
+            <AdminContact>Sayed Y. Hashimi</AdminContact>
+        </Server>
+        <Server Include="Server3">
+            <Type>2008</Type>
+            <Name>SVR03</Name>
+            <AdminContact>Nicold Woodsmall</AdminContact>
+        </Server>
+        <Server Include="Server4">
+            <Type>2003</Type>
+            <Name>SVR04</Name>
+            <AdminContact>Keith Tingle</AdminContact>
+        </Server>
+    </ItemGroup>
+    <Target Name="TaskBatching02" Outputs="%(Server.Type)">
+        <Message Text="@(Server->'%(Name)')" />
+        <Message Text="===================================" />
+
+        <Message Text="%(Server.Name)" />
+        <Message Text="===================================" />
+
+        <Message Text="%(Server.Type)" />
+    </Target>
 </Project>
