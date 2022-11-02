@@ -1140,3 +1140,302 @@ newSup.init = function () {
 
 console.log(newSup);
 ```
+
+# Section 16: Asynchronous JavaScript: Promises, Async/Await, and AJAX
+
+## Our First AJAX Call: XMLHttpRequest
+
+```js
+const request = new XMLHttpRequest();
+request.open("GET", "https://restcountries.com/v2/name/portugal");
+request.send(); //Asynchronous call
+
+request.addEventListener("load", function () {
+  console.log(this.responseText); //request
+  const [data] = JSON.parse(this.responseText);
+});
+```
+
+## Welcome to Callback Hell
+
+This is the reason we need Promise.
+
+```js
+setTimeout(() => {
+  console.log("1 second passed");
+  setTimeout(() => {
+    console.log("2 seconds passed");
+    setTimeout(() => {
+      console.log("3 secondes passed");
+    }, 1000);
+  }, 1000);
+}, 1000);
+```
+
+## Promises and the Fetch API
+
+Promise is an object that is used as a placeholder for the future result of a asynchronous operation.
+
+### Promise Lifecycle
+
+PENDING ===> SETTLED
+
+Promise is only settled once, and either is fulfilled or rejected. Before we Consume Promises we need to build promises and then consume it. With Fetch API, promises are built already.
+
+## Consuming Promises
+
+```js
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (response) {
+    // this function only receive fulfilled promise
+    return response.json(); // this json method is also async and returns a promise
+  })
+  .then(function (data) {
+    console.log(data);
+  });
+```
+
+## Chaining Promises
+
+Common mistake sample
+
+```js
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (response) {
+    // this function only receive fulfilled promise
+    return response.json(); // this json method is also async and returns a promise
+  })
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) return;
+
+    fetch(`https://restcountries.com/rest/v2/alpha/${neighbour}`)
+      .then((response) => response.json())
+      .then((data) => console.log(data)); //CALLBACK HELL
+  });
+```
+
+Correct sample
+
+```js
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (response) {
+    // this function only receive fulfilled promise
+    return response.json(); // this json method is also async and returns a promise
+  })
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) return;
+
+    return fetch(`https://restcountries.com/rest/v2/alpha/${neighbour}`);
+  })
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+```
+
+## Handling Rejected Promises
+
+By manual
+
+```js
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(
+    function (response) {
+      // this function only receive fulfilled promise
+      return response.json(); // this json method is also async and returns a promise
+    },
+    (err) => alert(err)
+  )
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) return;
+
+    return fetch(`https://restcountries.com/rest/v2/alpha/${neighbour}`);
+  })
+  .then(
+    (response) => response.json(),
+    (err) => alert(err)
+  )
+  .then((data) => console.log(data));
+```
+
+By catch
+
+```js
+const renderError = function (err) {};
+
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (response) {
+    // this function only receive fulfilled promise
+    return response.json(); // this json method is also async and returns a promise
+  })
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) return;
+
+    return fetch(`https://restcountries.com/rest/v2/alpha/${neighbour}`);
+  })
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((err) => {
+    console.error(err);
+    renderError(err);
+  }) //will catch all the error in the promises chain
+  .finally(() => {
+    //then is only called when it's fulfilled, catch is only called when it's rejected, finally is called both way
+  });
+```
+
+## Throwing Errors Manually
+
+However, catch DOES NOT catch errors for fulfilled promise, like 404. We have to throw this kind of error manually.
+
+```js
+const renderError = function (err) {};
+
+fetch("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (response) {
+    // this function only receive fulfilled promise
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+
+    return response.json(); // this json method is also async and returns a promise
+  })
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) return;
+
+    return fetch(`https://restcountries.com/rest/v2/alpha/${neighbour}`);
+  })
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((err) => {
+    console.error(err);
+    renderError(err);
+  }) //will catch all the error in the promises chain
+  .finally(() => {
+    //then is only called when it's fulfilled, catch is only called when it's rejected, finally is called both way
+  });
+```
+
+We need a helper function to avoid writing catch, throwing errors manually, parsing json over and over.
+
+```js
+const getJSON = function (url, errorMsg = "something is wrong") {
+  fetch(url).then((response) => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+    return resopnse.json();
+  });
+};
+
+const renderError = function (err) {};
+
+getJSON("https://restcountries.com/rest/v2/name/portugal")
+  .then(function (data) {
+    console.log(data);
+    const neighbour = data[0].borders[0];
+
+    if (!neighbour) throw new Error("No neighbours");
+
+    return getJSON(`https://restcountries.com/rest/v2/alpha/${neighbour}`);
+  })
+  .then((data) => console.log(data))
+  .catch((err) => {
+    console.error(err);
+    renderError(err);
+  }) //will catch all the error in the promises chain
+  .finally(() => {
+    //then is only called when it's fulfilled, catch is only called when it's rejected, finally is called both way
+  });
+```
+
+## The Event Loop in Practice
+
+Event loop plays the orchestration in the JS runtime. JS engine first execute sync codes. During this time, callbacks with async operations are fired to the webapis. When the async operation is done, callbacks are queued to callback que or microtask que(normal callback to the callback que, promises' callback to the microtask que). When JS engine finished the sync code execution, Event Loop decide which callback executes first. Microtask queues have priority over callback queues. When callback executes, other callbacks must wait till the end of execution.(Combine all of these is why setTimeout to 5000 CANNOT guarantee the callback executes at exact 5000 after)
+
+```js
+console.log("Test start");
+setTimeout(() => console.log("0 sec timer"), 0);
+Promise.resolve("Resolved promise 1").then((res) => console.log(res));
+Promise.resolve("Resolved promise 2").then((res) => {
+  for (let i = 0; i < 1000000000; i++) {}
+  console.log(res);
+});
+console.log("Test end");
+//Test start
+//Test end
+//Resolved promise 1
+//Resolved promise 2
+//0 sec timer
+```
+
+This sample proved that microtask queue(callback from promise) has priority over callback queue(callback from setTimeout).
+
+## Building a Simple Promise
+
+```js
+const lotteryPromise = new Promise(function (resolve, reject) {
+  console.log("Lottery draw is happening...");
+  //we simulate a async call here
+  setTimeout(() => {
+    if (Math.random() > 0.5) {
+      resolve("You WIN!");
+    } else {
+      reject(new Error("You LOST!"));
+    }
+  }, 2000);
+});
+
+lotteryPromise.then((res) => console.log(res)).catch((err) => console.log(err));
+
+// promisifying setTimeout so that we avoid callback hell
+const wait = function (miliseconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, miliseconds);
+  });
+};
+
+wait(2000)
+  .then(() => {
+    return wait(1000);
+  })
+  .then(() => {
+    console.log("finished");
+  });
+
+// promisifying XMLHttpRequest
+const myFetch = function (url) {
+  return new Promise(function (resolve, reject) {
+    const req = new XMLHttpRequest();
+    req.addEventListener("load", () => {
+      debugger;
+      resolve(req.responseText);
+    });
+    req.addEventListener("error", () => {
+      debugger;
+      reject(req);
+    });
+    req.open("GET", url);
+    req.send();
+  });
+};
+
+myFetch("https://restcountries.com/v2/name/china")
+  .then((res) => {
+    console.log(JSON.parse(res));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
