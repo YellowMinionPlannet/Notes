@@ -132,7 +132,96 @@ return (
 
 ```
 
-### Async/await in javascript?
+## Implementing Async/await in useEffect
 
-Code like `alert("Text set!")` will block the js program execute line by line until user click the ok button. So, alert is a synchronous code.
-Code like `setTimeout(function(){ p.textContent= "My name is Jonas!"}, 5000)` is asynchronous code, because the callback will execute in 5000 milisecond, but next line(after setTimeout) will execute immediately right after.
+```jsx
+export default function App() {
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    (async () => {
+      try{
+        const data = await getProducts("shoes")
+      }catch(error){
+        setError(error);
+      }
+  })()
+  }, []);
+
+  if(error) throw error;
+  return (
+    //...
+  );
+}
+```
+
+## Creating Custom Hooks for Handling Remote State
+
+```jsx
+export default function useFetch(url) {
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const json = await response.json();
+          setData(json);
+        } else {
+          throw response;
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [url]);
+
+  return { data, error, loading };
+}
+```
+
+# Chapter 4 Implementing Routing
+
+## Configuring React Router's Entry Point
+
+```jsx
+//index.js
+import { BrowserRouter } from "react-router-dom";
+
+ReactDOM.render(
+  <ErrorBoundary>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </ErrorBoundary>, document.getElementById("root");
+);
+
+//App.jsx
+import {Routes, Route} from "react-router-dom";
+export default function App(){
+  return (
+    <>
+      <div className="content">
+        <main>
+          <Routes>
+            <Route path="/:category" element={<Products />} />
+            <Route path="/detail" element={<Detail />} />
+            <Route path="/cart" element={<Cart />} />
+          </Routes>
+        </main>
+      </div>
+    </>
+  );
+}
+
+//Products.jsx
+import {useParams} from "react-router-dom";
+export default function Products(){
+  const {cateogry} = useParams();
+  ...
+}
+```
