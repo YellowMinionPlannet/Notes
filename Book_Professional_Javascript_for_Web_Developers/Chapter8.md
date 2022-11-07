@@ -141,6 +141,50 @@ We can use `Object.getOwnPropertyDescriptor()` or `Object.getOwnPropertyDescript
 
 ### Merging Objects
 
+Object.assign() will merge object to destination object from src objects. When property with `src.propertyIsEnumerable(), src.hasOwnProperty()` returns true, Object.assign will execute accessor property's get function on src and set function on destination. And merge data property from src to destination as well.
+
+```js
+dest = {
+  set a(val) {
+    console.log(`Invoked dest setter with param ${val}`);
+  },
+};
+
+src = {
+  get a() {
+    console.log("Invoked src getter");
+    return "foo";
+  },
+};
+console.log(src.propertyIsEnumerable("a")); //true
+console.log(src.hasOwnProperty("a")); //true
+
+console.log(Object.getOwnPropertyDescriptors(dest)); //{a : {...}}
+console.log(Object.getOwnPropertyDescriptors(src)); //{a: {...}}
+
+Object.assign(dest, src);
+
+console.log(Object.getOwnPropertyDescriptors(dest)); // does not change
+console.log(Object.getOwnPropertyDescriptors(src)); // does not change
+```
+
+### Object Identity and Equality
+
+use `===` or `Object.is()` to evaluate,
+example:
+
+```js
+//待补
+```
+
+### Enhanced Object Syntax
+
+待补
+
+### Object Destructuring
+
+待补
+
 ## Object Creation
 
 ## Inheritance
