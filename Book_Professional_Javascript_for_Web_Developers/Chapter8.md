@@ -105,6 +105,42 @@ console.log(book.edition); // 2
 
 ### Defining Multiple Properties
 
+When you want to define multiple properties, you can use `Object.defineProperties` instead.
+
+```js
+let book = {};
+Object.defineProperties(book, {
+  year_: {
+    value: 2017,
+  },
+  edition: {
+    value: 1,
+  },
+  year: {
+    get() {
+      return this.year_;
+    },
+    set(newValue) {
+      if (newValue > 2017) {
+        this.year_ = newValue;
+        this.edition += newValue - 2017;
+      }
+    },
+  },
+});
+// the book has year_ configurable and writable and enumerable set to false. this can be proofed by
+
+let descriptors = Object.getOwnPropertyDescriptors(book);
+
+console.log(descriptors);
+```
+
+### Reading Property Attributes
+
+We can use `Object.getOwnPropertyDescriptor()` or `Object.getOwnPropertyDescriptors()` to retrieve property descriptor for a given property.
+
+### Merging Objects
+
 ## Object Creation
 
 ## Inheritance
