@@ -410,6 +410,27 @@ console.log(Object.getOwnPropertyNames()); // ["0", "1", "3", "first", "second",
 
 ### Object Iteration
 
+An interesting example of constructor's prototype
+
+```js
+function Person() {}
+
+let friend = new Person(); // refer to the begining of this topic(Prototype pattern), when new is used, it create a new object, and assign this friend's __proto__ to Person's prototype.
+
+//here, we asign a new object to Person's prototype.
+Person.prototype = {
+  constructor: Person,
+  name: "Nicholas",
+  age: 29,
+  job: "Software Engineer",
+  sayName() {
+    console.log(this.name);
+  },
+};
+
+friend.sayName(); // error, because friend still point to the old Person's prototype.
+```
+
 ## Inheritance
 
 ## Classes
