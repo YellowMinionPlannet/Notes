@@ -258,6 +258,63 @@ o.sayName(); // Kristen
 
 #### Problems with Constructors
 
+The function is an object in javascript. When we create object with Constructor Function like previously stated, every object will have a new function object.
+
+```js
+console.log(person1.sayName === person2.sayName); // false
+```
+
+And this is why we introduce Prototype Pattern
+
+### The Prototype Pattern
+
+```js
+function Person(name, age, job) {
+  this.name = name;
+  this.age = age;
+  this.job = job;
+}
+
+Person.prototype.sayName = function () {
+  console.log(this.name);
+};
+
+let person1 = new Person("Lei", 36, "Software Engineer");
+let person2 = new Person("Greg", 27, "Doctor");
+person1.sayName();
+person2.sayName();
+console.log(person1.sayName === person2.sayName); // true
+```
+
+#### How Prototypes Work
+
+![prototype.jpg](prototype.jpg?raw=true)
+
+There are two prototype related methods.
+
+```js
+console.log(Person.prototype.isPrototypeOf(person1)); //true
+
+console.log(Object.getPrototypeOf(person1) === Person.prototype); // true
+```
+
+```js
+let biped = {
+  numLegs: 2,
+};
+
+let person = {
+  name: "Matt",
+};
+
+console.dir(biped);
+console.dir(person);
+
+Object.setPrototypeOf(person, biped); // Will substitute person._proto_ to biped. so that person.numLegs will be accessible.
+console.log(person.numLegs); // 2
+console.dir(person);
+```
+
 ## Inheritance
 
 ## Classes
