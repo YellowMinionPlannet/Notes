@@ -433,4 +433,75 @@ friend.sayName(); // error, because friend still point to the old Person's proto
 
 ## Inheritance
 
+There are two types of inheritance,
+
+1. interface inheritance - where only the method signatures are inherited
+2. implementation inheritance - where actual methods are inherited
+
+ECMAScript can achieve implementation inheritance through prototype chaining.
+
+### Prototype Chaining
+
+Main Idea: We assign instance's constructor's prototype to a new type.
+
+```js
+function SuperType() {
+  this.property = true;
+}
+
+SuperType.prototype.getSuperTypeValue = function () {
+  return this.property;
+};
+
+function SubType() {
+  this.subProperty = false;
+}
+
+SubType.prototype = new SuperType();
+
+SubType.prototype.getSubValue = function () {
+  return this.subProperty;
+};
+
+let instance = new SubType();
+console.log(instance.getSuperValue()); // true
+```
+
+![Prototype_Chaining.jpg](prototypechaining.jpg)
+
+So, when we call `instance.getSuperValue()`
+
+1. we first find if instance properties of SubType include it? NO.
+2. we then try to find the [[Prototype]] of SubType instance include it? Where [[Prototype]] of SubType instance is pointing to the prototype property of SubType constructor. That is an instance of SuperType + `getSubValue` function. And NO.
+3. we then try to find the [[Prototype]] of SubType's prototype property, which is [[Prototype]] of SuperType instance which point to the SuperType function's prototype property. And here we find that function name. Yeah!!!
+
+#### Default Prototypes
+
+Remember any function's default prototype is an intance of Object.
+Here is a self example about prototype chaining to the end of the world.
+
+```js
+function SuperType() {}
+
+function SubType() {}
+
+// Object.prototype.getSuperValue = function (){
+//   console.log("YOU WIN!!!");
+// }
+
+SubType.prototype = new SuperType();
+
+let instance = new SubType();
+
+// instance.getSuperValue();
+console.dir(instance);
+console.log(Object.getOwnPropertyNames(instance)); // SubType instance's instance property
+console.log(Object.getOwnPropertyNames(instance.__proto__)); // SubType instance's [[Prototype]] =>  SubType.prototype => instance of SuperType
+console.log(Object.getOwnPropertyNames(instance.__proto__.__proto__)); //SuperType instance's [[Prototype]] => SuperType.prototype => instance of Object
+console.log(Object.getOwnPropertyNames(instance.__proto__.__proto__.__proto__)); // Object instance's [[Prototype]] => Object.prototype
+console.log(
+  Object.getOwnPropertyNames(instance.__proto__.__proto__.__proto__.__proto__)
+); // Object.prototype's __proto__ => null
+```
+
 ## Classes
