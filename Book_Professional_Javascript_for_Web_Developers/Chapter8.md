@@ -504,6 +504,9 @@ console.log(
 ); // Object.prototype's __proto__ => null
 ```
 
-Remember that prototype chaining end at Object.prototype and browser gives us mistereous results after that...
+- Remember that prototype chaining end at Object.prototype and browser gives us mistereous results after that...
+- Remember that instance of function and instance created by function are different things.
+  1. Instance of function's [[Prototype]] point to Function.prototype,
+  2. Function.prototype's [[Prototype]] is also a Object.prototype. Since Function is also inherited from Object.
 
 ## Classes
