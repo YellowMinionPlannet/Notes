@@ -315,6 +315,101 @@ console.log(person.numLegs); // 2
 console.dir(person);
 ```
 
+#### Understanding the Prototype Hierarchy
+
+Instance Property with the same name will mask Property on Prototype. We can use `delete` keyword to delete instance property, and `getOwnPropertyDescriptor` to display Instance Property. `getOwnPropertyDescriptor` also can work with prototype object to retrieve Prototype Property.
+
+```js
+function Person() {}
+
+Person.prototype.name = "Nicholas";
+Person.prototype.sayName = function () {
+  console.log(this.name);
+};
+
+let person1 = new Person();
+let person2 = new Person();
+person1.name = "Lei";
+console.log(person1.name); //Lei
+console.log(person2.name); // Nicholas
+
+console.log(person1.hasOwnProperty("name")); // true
+console.log(person2.hasOwnProperty("name")); // false
+
+console.log(Object.getOwnPropertyDescriptor(person1, "name"));
+
+delete person1.name;
+
+console.log(person1.name); // Nicholas
+console.log(person1.hasOwnProperty("name")); // false
+
+console.log(Object.getOwnPropertyDescriptor(person1, "name")); // undefined
+console.log(Object.getOwnPropertyDescriptor(person1.__proto__, "name"));
+
+delete person1.name;
+
+console.log(person1.name); // Nicholas
+console.log(person1.hasOwnProperty("name")); // false
+```
+
+#### Prototypes and the "in" Operator
+
+There are two ways of using `in` operator.
+
+##### `in` on self
+
+```js
+function Person() {}
+
+Person.prototype.name = "Nicholas";
+Person.prototype.sayName = function () {
+  console.log(this.name);
+};
+
+let person1 = new Person();
+let person2 = new Person();
+
+person1.name = "Lei";
+
+console.log("name" in person1); // true
+console.log("name" in person2); // true
+
+delete person1.__proto__.name;
+console.log("name" in person1); // true
+console.log("name" in person2); // false
+```
+
+For this way, if property key is accessible(both on instance / prototype), the result will return true.
+
+##### `in` with `for-in`
+
+`for-in` will retrieve all accessible properties(both instance or prototype) that is enumerable.
+`Object.keys()` will retrieve all enumerable instance properties.
+`Object.getOwnPropertyNames` will retrieve instance properties whether enumerable or not.
+
+#### Property Enumeration Order
+
+`for-in` loop and `Object.keys()` Does not have an order.
+`Object.getOwnPropertyNames()` has an order:
+
+1. first comes with number keys
+2. then comes with string and _symbol_ keys with insertion order
+
+```js
+let o = {
+  1: 1,
+  first: "first",
+  second: "second",
+  0: 0,
+};
+o[3] = 3;
+o.third = "third";
+
+console.log(Object.getOwnPropertyNames()); // ["0", "1", "3", "first", "second", "third" ]
+```
+
+### Object Iteration
+
 ## Inheritance
 
 ## Classes
