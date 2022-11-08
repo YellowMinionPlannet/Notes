@@ -504,4 +504,6 @@ console.log(
 ); // Object.prototype's __proto__ => null
 ```
 
+Remember that prototype chaining end at Object.prototype and browser gives us mistereous results after that...
+
 ## Classes
