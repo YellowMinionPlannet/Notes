@@ -187,6 +187,77 @@ example:
 
 ## Object Creation
 
+We can create object through Object constructor and object literal. But when creating multiple objects with the same interface requires lots of code duplication. Before ES6 classes, constructor functions and prototypal inheritance are used for such cases. It is good to know about these techniques before jump in to classes directly, because classes is just syntactical abstraction for ES5.
+
+### The Factory Pattern
+
+```js
+function createPeron(name, age, job) {
+  let o = new Object();
+  o.name = name;
+  o.age = age;
+  o.job = job;
+  o.sayName = function () {
+    console.log(this.name);
+  };
+  return o;
+}
+
+let person1 = createPerson("Lei", 36, "Software Engineer");
+```
+
+We can see that factory pattern can solve the code duplication issue, but it will not tell us: what type of returned object is.
+
+### The Function Constructor Pattern
+
+```js
+function Person(name, age, job) {
+  this.name = name;
+  this.age = age;
+  this.job = job;
+  this.sayName = function () {
+    console.log(this.name);
+  };
+}
+
+let person1 = new Person("Lei", 36, "Software Engineer");
+person1.sayName(); //Lei
+```
+
+The constructor function pattern will also create a object with different syntax:
+
+- Use of `this` keyword
+- There is no `return` in the constructor
+- Use of `new` keyword
+
+When use `new` operator, the following will happen:
+
+1. A new object is created in memory
+2. The new object's internal [[Prototype]] is assigned to the constructor's `prototype` property
+3. `this` value of the constructor is assigned to the new Object
+4. Code inside constructor is executed
+5. If the constructor returns a non-null value, that value is returned. Otherwise, the new object that was just created is returned.
+
+6. _object is filled with `constructor` property that is pointing back to Person(constructor function)_
+
+#### Constructors as Functions
+
+constructor function is just function, any function called with `new` operator acts as a constructor, and any function called without `new` is just normal function.
+
+```js
+let person = new Person("Lei", 36, "Software Engineer");
+person.sayName(); // Lei
+
+Person("Greg", 27, "Doctor"); // Adds to window, because this key word is always pointing to Global object(window in browser) by default
+window.sayName(); // Greg
+
+let o = new Object();
+Person.call(o, "Kristen", 25, "Nurse");
+o.sayName(); // Kristen
+```
+
+#### Problems with Constructors
+
 ## Inheritance
 
 ## Classes
