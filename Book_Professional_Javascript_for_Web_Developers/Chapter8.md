@@ -509,4 +509,131 @@ console.log(
   1. Instance of function's [[Prototype]] point to Function.prototype,
   2. Function.prototype's [[Prototype]] is also a Object.prototype. Since Function is also inherited from Object.
 
+#### Prototype and Instance Relationships
+
+`instanceof` return true if a Function(Constructor function) appears in its prototype chain.
+`isPrototypeOf` returns true if the prototype appears in the chain.
+
+```js
+console.log(instance instanceof Object); //true
+console.log(instance instanceof SuperType); //true
+console.log(instance instanceof SubType); //true
+
+console.log(Object.prototype.isPrototypeOf(instance)); //true
+console.log(SuperType.prototype.isPrototypeOf(instance)); //true
+console.log(SubType.prototype.isPrototypeOf(instance)); //true
+```
+
+#### Problems with Prototype Chaining
+
+Consider a sample here
+
+```js
+function SuperType() {
+  this.colors = ["red", "blue", "green"];
+}
+function SubType() {}
+SubType.prototype = new SuperType();
+let instance1 = new SubType();
+instance1.colors.push("black");
+
+let instance2 = new SubType();
+console.log(instance2.colors); // red blue green black
+```
+
+1. Although colors is a instance property in SuperType, but as SubType inherits SuperType as prototype, it shares colors among all instances of SubType.
+2. There's no way of calling SuperType constructor with arguments when initialize SubType.
+
+So, Prototype chaining is not used in these cases. New Technique is ahead!!!
+
+### Constructor Stealing
+
+```js
+function SuperType() {
+  this.colors = ["red", "blue", "green"];
+}
+function SubType() {
+  SuperType.call(this); //important!
+}
+
+let instance1 = new SubType();
+instance1.colors.push("black");
+
+let instance2 = new SubType();
+console.log(instance2.colors); // red blue green
+```
+
+Problem solved!
+
+#### Problem with Constructor Stealing
+
+1. Function will not be shared, since it's only instance property
+2. Property on Prototype of SuperType never get a chance to be inherited
+
+### Combination Inheritance
+
+```js
+function SuperType(name) {
+  this.name = name;
+}
+
+SuperType.prototype.sayName = function () {
+  console.log(this.name);
+};
+
+function SubType(name, age) {
+  SuperType.call(this, name);
+  this.age = age;
+}
+
+SubType.prototype = new SuperType();
+SubType.prototype.sayAge = function () {
+  console.log(this.age);
+};
+
+let instance1 = new SubType("Nicholas", 29);
+instance1.colors.push("black");
+instance1.sayName(); //Nicholas
+instance1.sayAge(); //29
+
+let instance2 = new SubType("Greg", 27);
+console.log(instance2.colors); //red blue green
+instance2.sayName(); //Greg
+instance2.sayAge(); //27
+```
+
+### Prototypal Inheritance
+
+This method is same as `Object.create()` method.
+
+```js
+function object(o) {
+  function F() {}
+  F.prototype = o;
+  return new F();
+}
+
+let person = {
+  name: "Greg",
+  age: 27,
+  friends: ["Lei", "Qin"],
+};
+
+let newPerson = object(person);
+newPerson.friends.push("Rob");
+newPerson.name = "Qiu";
+
+let anotherPerson = Object.create(person);
+console.log(anotherPerson.name); //Greg, not Qiu because name is not a reference value
+console.log(anotherPerson.friends); // Lei Qin Rob
+```
+
+#### Parasitic Inheritance
+
+待做
+
+#### Parasitic Combination Inheritance
+
+待做
+
 ## Classes
