@@ -637,3 +637,6 @@ console.log(anotherPerson.friends); // Lei Qin Rob
 待做
 
 ## Classes
+伪代码：
+instance.__proto__ === constructor.prototype
+constructor.prototype.__proto === super.prototype
