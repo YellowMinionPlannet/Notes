@@ -644,3 +644,66 @@ console.log(anotherPerson.friends); // Lei Qin Rob
 instance.__proto__ === constructor.prototype
 constructor.prototype.__proto === super.prototype
 ```
+
+推导
+
+```js
+class Viehcle {}
+
+Viehcle.staticDum = "staticDumOfV";
+Viehcle.prototype.protoDum = "protoDumOfV";
+
+class Car extends Viehcle {}
+Car.staticDum = "staticDumOfCar";
+Car.prototype.protoDum = "protoDumOfCar";
+
+class Mini extends Car {}
+Mini.staticDum = "staticDumOfMini";
+Mini.prototype.protoDum = "protoDumOfMini";
+
+const c = new Car();
+console.dir(c);
+console.dir(Car);
+
+const v = new Viehcle();
+console.dir(v);
+console.dir(Viehcle);
+
+const mini = new Mini();
+console.dir(mini);
+console.dir(Mini);
+
+console.log(c.__proto__ === Car.prototype);
+console.log(Car.prototype.__proto__ === Viehcle.prototype);
+console.log(v.__proto__ === Viehcle.prototype);
+// v is same type as Car.prototype
+
+console.log(Car.__proto__ === Viehcle); // Viehcle(instance) is Car(instance)'s proto, is Car(instance)'s constructor's prototype
+console.log(Viehcle.__proto__ === Function.prototype);
+console.log(Function.prototype.__proto__ === Object.prototype);
+
+function SuperType() {}
+
+SuperType.staticDum = "staticDumOfSUPER";
+SuperType.prototype.protoDum = "protoDumOfSUPER";
+
+function SubType() {}
+SubType.prototype = new SuperType();
+
+SubType.staticDum = "staticDumOfSUB";
+SubType.prototype.protoDum = "protoDumOfSUB";
+
+const sub = new SubType();
+console.dir(sub);
+console.dir(SubType);
+const sup = new SuperType();
+console.dir(sup);
+console.dir(SuperType);
+
+console.log(sub.__proto__ === SubType.prototype);
+console.log(SubType.prototype.__proto__ === SuperType.prototype);
+console.log(sup.__proto__ === SuperType.prototype);
+
+console.log(SuperType.__proto__ === Function.prototype);
+console.log(SubType.__proto__ === Function.prototype);
+```

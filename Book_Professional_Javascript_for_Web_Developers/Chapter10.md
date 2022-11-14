@@ -140,3 +140,238 @@ addSomeNumber = function (num) {
 ```
 
 ## Default Parameter Values
+
+Good sample about _argument_ property and default parameter
+
+```js
+function makeKing(name = "Henry") {
+  name = "Louis";
+  console.log(`King ${arguments[0]}`);
+}
+
+makeKing(); // King undefined
+makeKing("Humuhumunukunukuapuaa"); // King Humuhumunukunukuapuaa
+makeKing("Henry"); // King Henry
+```
+
+Good sample about arrow function and default parameter
+
+```js
+let numeral = ["I", "II", "III", "IV", "V"];
+let order = 0;
+
+function getNumeral() {
+  return numeral[order++];
+}
+
+const makeKing = (name = "Henry", numeral = getNumeral()) => {
+  console.log(`King ${name} ${numeral}`);
+};
+
+makeKing(); // King Henry I
+makeKing("Humuhumunukunukuapuaa"); // King Humuhumunukunukuapuaa II
+makeKing(undefined, undefined); // King Henry III
+makeKing(); // King Henry IV
+makeKing(); // King Henry V
+makeKing(); // King Henry undefined
+```
+
+### Default Prameter Scope and Temporal Dead Zone
+
+The later parameter can reference the earlier and cannot reference the laterer and body of function
+
+```js
+function makeKing (name = "Henry", numeral = name){
+
+}
+//ERROR
+function makeKing1 (name = numeral , numeral = "V"){
+
+}
+//ERROR
+function makeKing2( name = "Henry", numeral = v){
+    let v = "VII":
+}
+```
+
+## Spread Argument and Rest Parameter
+
+Spread Argument Sample
+
+```js
+let values = [1, 2, 3, 4];
+function getSum() {
+  let sum = 0;
+  for (var i = 0; i < arguments.length; i++) {
+    sum += arguments[i];
+  }
+  return sum;
+}
+
+console.log(getSum(...values)); // 10
+console.log(getSum.apply(null, values)); // 10
+console.log(getSum(-1, ...values)); // 9
+console.log(getSum(...values, 5)); // 15
+console.log(getSum(-1, ...values, 5)); // 14
+console.log(getSum(...values, ...[5, 6, 7])); // 28
+```
+
+Rest Parameter Sample
+
+Rest Parameter is different from arguments
+
+```js
+function getSum(...values) {
+  console.log(values); // [1,2,3]
+  console.log(arguments); // [1,2,3]
+}
+
+getSum(1, 2, 3);
+```
+
+## Function Declarations versus Function Expressions
+
+Hoisting behavior is different
+
+```js
+console.log(f); // content of f()
+console.log(express); // ERROR
+const express = function () {
+  return 20;
+};
+function f() {
+  return 30;
+}
+```
+
+## Function as Values
+
+Sample of function returns a function
+
+```js
+function createComparisonFunction(propertyName) {
+  return function (object1, object2) {
+    let value1 = object1[propertyName];
+    let value2 = object2[propertyName];
+
+    if (value1 < value2) {
+      return -1;
+    } else if (value1 > value2) {
+      return 1;
+    } else {
+      return 0;
+    }
+  };
+}
+
+let data = [
+  { name: "Zeck", age: 28 },
+  { name: "Lei", age: 36 },
+];
+
+data.sort(createComparisonFunction("name"));
+console.log(data[0].name); // Lei
+data.sort(createComparisonFunction("age"));
+console.log(data[0].name); // Zeck
+```
+
+## Function Internals
+
+### arguments
+
+when declares function through _function_ keyword, we can use _arguments_ property. There's a property called _callee_ on arguments ponits back to the function itself. So when we implement a recursive function, we can decouple it with _callee_.
+
+```js
+function factorial(num) {
+  if (num <= 1) {
+    return 1;
+  } else {
+    return num * arguments.callee(num - 1);
+  }
+}
+
+let trueFactorial = factorial;
+factorial = function () {
+  return 0;
+};
+
+console.log(trueFactorial(5)); // 120
+console.log(factorial(5)); // 0
+```
+
+### this
+
+Good sample of this scope
+
+```js
+window.color = "red";
+let o = {
+  color: "blue",
+};
+
+function sayColor() {
+  console.log(this.color);
+}
+
+sayColor(); // red
+
+o.say = sayColor;
+o.say(); // blue
+
+o.sayArrow = () => {
+  console.log(this.color);
+};
+o.sayArrow(); // red
+```
+
+Good sample of this to differentiat situation between function and arrow function
+
+```js
+function MyKing() {
+  this.RoyalName = "Henry";
+  setTimeout(function () {
+    console.log(this.RoyalName);
+  }, 1000);
+}
+
+function MyQueen() {
+  this.RoyalName = "Mary";
+  setTimeout(() => {
+    console.log(this.RoyalName);
+  }, 1000);
+}
+
+new MyKing(); // undefined
+new MyQueen(); // Mary
+```
+
+### caller
+
+Following sample throw error when running under `"use strict";` (strict mode).
+
+```js
+function outer() {
+  inner();
+}
+
+function inner() {
+  console.log(arguments.callee.caller);
+}
+
+outer();
+
+console.log(inner);
+```
+
+### new.target
+
+If function are executed with _new_ keyword new.target will be the intance of function itself.
+
+```js
+function King() {
+  console.dir(new.target);
+}
+new King(); // f King
+```
+
+## Function Properties and Methods
