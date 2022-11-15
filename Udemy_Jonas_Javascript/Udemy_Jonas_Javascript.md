@@ -32,7 +32,7 @@ function calAge() {
   }
   printAge();
 }
-calAge();
+calAge(); // Lei Zhong 18
 ```
 
 We can visit firstName and age variable because the scope chain look up procedure.
@@ -49,11 +49,12 @@ We can visit firstName and age variable because the scope chain look up procedur
 
 ```js
 "use strict";
+const firstName = "Lei";
 function calcAge(birthYear) {
   const age = 2037 - birthYear;
 
   function printAge() {
-    const output = "${firstName}, you are ${age}, born in ${birthYear}";
+    const output = `${firstName}, you are ${age}, born in ${birthYear}`;
     console.log(output);
 
     if (birthYear >= 1981 && birthYear <= 1996) {
@@ -61,19 +62,23 @@ function calcAge(birthYear) {
         return a + b;
       }
     }
-    add(2, 3); //ERROR, function add is block scope
+    console.log(add(2, 3)); //ERROR, function add is block scope
   }
+
+  printAge();
 }
+
+calcAge(1986);
 ```
 
-## Hoisting and TDZ
+## Hoisting and TDZ(Temporal Dead Zone)
 
-|                                 | Hoisted?                             | Initial Value      | Scope    |
-| ------------------------------- | ------------------------------------ | ------------------ | -------- |
-| function declaration            | YES                                  | Actual Function    | Block    |
-| var variables                   | YES                                  | undefined          | Function |
-| let and const variables         | NO                                   | <uninitialized>TDZ | Block    |
-| function expressions and arrows | Depends on if using var or let/const |                    |
+|                                 | Hoisted?                                                   | Initial Value      | Scope    |
+| ------------------------------- | ---------------------------------------------------------- | ------------------ | -------- |
+| function declaration            | YES                                                        | Actual Function    | Block    |
+| var variables                   | YES                                                        | undefined          | Function |
+| let and const variables         | NO                                                         | <uninitialized>TDZ | Block    |
+| function expressions and arrows | Depends on if using var or let/const behave like variables |                    |
 
 ## _This_ Keyword
 
@@ -103,8 +108,12 @@ const lei = {
   sex: "male",
   code: someFeature,
 };
-console.log(lei.code()); //34
-console.log(someFeature()); //ERROR this is undefined
+console.log(lei.code());
+/*
+{age: 34, sex:'mail', code: f}
+Window
+Window
+*/
 ```
 
 # A Closer Look at Functions
@@ -268,11 +277,22 @@ document
 ## Immediately Invoked Function Expressions(IIFE)
 
 ```js
-"use strict;"(function () {
+"use strict";
+(function () {
   console.log("This will never run again!");
+  console.log(this);
 })();
 
-(() => console.log("This will ALSO never run again!"))();
+(() => {
+  console.log("This will ALSO never run again!");
+  console.log(this);
+})();
+/*
+This will never run again!
+undefined
+This will ALSO never run again!
+Window
+*/
 ```
 
 ## Closures
