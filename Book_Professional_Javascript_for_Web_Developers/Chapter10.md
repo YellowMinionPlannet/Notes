@@ -375,3 +375,50 @@ new King(); // f King
 ```
 
 ## Function Properties and Methods
+
+1. length - num of named arguments
+2. prototype - place for shared methods
+
+### apply vs. call
+
+_apply_ will allow you to pass a arguments object / array of arguments, where _call_ will only allow spread values.
+
+```js
+function sum(num1, num2) {
+  return num1 + num2;
+}
+console.log(sum.length); // 2
+
+function applySum(num1, num2) {
+  return sum.apply(this, arguments);
+}
+
+function callSum(num1, num2) {
+  return sum.call(this, num1, num2);
+}
+```
+
+### bind
+
+bind this to a object and return a new function instance.
+
+```js
+let o = {
+  color: "blue",
+};
+
+function sayColor() {
+  console.log(this.color);
+}
+
+let objectSayColor = sayColor.bind(o);
+objectSayColor(); // blue
+```
+
+## Function Expressions
+
+## Recursion
+
+## Tail Call Optimization
+
+## Closures
