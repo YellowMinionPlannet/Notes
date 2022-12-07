@@ -314,6 +314,11 @@ const booker = secureBooking();
 booker();
 booker();
 booker();
+/*
+1 passengers
+2 passengers
+3 passengers
+*/
 ```
 
 # Working With Arrays
