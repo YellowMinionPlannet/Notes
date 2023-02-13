@@ -54,3 +54,16 @@ When you add icon, make sure you select gallery element, so that the icon will b
 At the right top corner of the screen there's a diagnostic icon, you can use that to do error checking.
 
 # Section 5: Intermediate: Canvas Apps
+
+## Contexual variables/Global variables/Collections
+
+Contexual variables is variable to the current screen, global variables can be shared among screens. Collections is close to the datasource, user can modify its items instead of set it as a whole.
+
+## Creating the New Form screen
+
+NewForm Function will make specific form a new form.
+
+`NewForm(Form2); Navigate(EditScreen)`
+
+EditForm Function will make specific form a edit form.
+`EditForm(Form2); Nagigate(EditScreen)`
