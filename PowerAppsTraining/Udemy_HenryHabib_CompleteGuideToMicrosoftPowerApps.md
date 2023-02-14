@@ -67,3 +67,14 @@ NewForm Function will make specific form a new form.
 
 EditForm Function will make specific form a edit form.
 `EditForm(Form2); Nagigate(EditScreen)`
+
+# Section 6: Expert: Canvas Apps
+
+## Cascading dropdown 1
+
+Change dropdown "Item" property to the table, and you can use formulas to customize the values. For example,
+`SortByColumn(Distinct(Table1, Location), "Result")` will sort the result of Table1's distinct location.
+
+## Delete Button
+
+`Remove(Table1, Gallery.Selected)`
