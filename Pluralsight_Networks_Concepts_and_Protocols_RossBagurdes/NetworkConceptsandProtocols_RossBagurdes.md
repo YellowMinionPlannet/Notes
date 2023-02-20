@@ -59,6 +59,63 @@ Now we are going to map the Homer example into network.
 | Application       | Presentation | - IBM etc.            |
 | Application       | Application  | Website/Email         |
 
-# Encapsulation
+# 5 Encapsulation
 
-##
+## Examining the OSI Model
+
+## How Encapsulation Works
+
+![TransportLayer](./TransportLayer.png)
+![NetworkLayer](./NetworkLayer.png)
+![DataLinkLayer](./DataLinkLayer.png)
+Physical Layer: 010101001010101101010101010
+
+# 6 Data Networks and Addressing
+
+## Addresing the Network
+
+Local Address(MAC Address)
+000C:29FC:70A5
+First 24 bits are for Manufacturer ID
+Second 24 bits are for Serial Number
+
+MAC Address are printed into the Network Interface Card(网卡).
+NIC is responsible for Physical Layer -> Data Link Layer transfer.
+
+## How Local Communication Works
+
+Frames are only allowed in local networks. Router(Gateway, Default Gateway) separates networks into inside and outside. Frames in inside will never go out to the outside.
+
+## How Global Addressing Works
+
+So in order to visit pluralsight.com(outside) from your home(inside), the packet is first send within inside frames to the router, then, the router pull out the packet and put it into a outside frame and send to the internet.
+
+![GolobalAddressing](./GlobalAddressing.png)
+
+## IP Networks
+
+So since router has different IP addresses (inside vs. outside), it's a layer-3 devices.
+
+### The Subnet Mask
+
+192.168.104.1
+255.255.255.0
+
+203.000.113.8
+255.255.255.0
+
+That makes 192.168.104, 203.000.113 be the **network** portion, and 1 and 8 be the **host** portion of the IP address.
+
+When send message to different network IP address, the device won't even send it directly. We need router in the middle to send message between two different network IP address.
+
+## Demo: Examining the IP Address of a Workstation
+
+`certmgr.msc`
+
+# Cisco Certification Resources
+
+- Todd Lammele for Cisco study guide
+- Wendel Odom for Cisco study guide
+- Cisco Network Academy
+- GNS3 / VIRL
+- Packet Tracer
