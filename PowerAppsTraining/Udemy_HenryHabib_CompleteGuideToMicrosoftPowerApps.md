@@ -10,7 +10,7 @@ In canvas apps, when you connect with data and generate apps automatically, Tree
 
 ## Forms and data cards
 
-- When you open Detail screen, there will be list of data cards. Each data card represents a column of a row of data, where key is the actual column name and value si the value.
+- When you open Detail screen, there will be list of data cards. Each data card represents a column of a row of data, where key is the actual column name and value is the value.
 
 - Detail form has a property called _fields_. You can click on Edit Fields to manage columns in detail form.
 
