@@ -119,3 +119,114 @@ When send message to different network IP address, the device won't even send it
 - Cisco Network Academy
 - GNS3 / VIRL
 - Packet Tracer
+
+# Introduction to IP Addressing
+
+## What is an IP Address
+
+![IPAddress](./IPAddress.png)
+Network Portion identifies a group of device, and host portion is the individual device identifier.
+
+1. Classful Addressing (1995 and prior)
+2. Classless Addressing (1995 to present)
+
+## Classless Addressing
+
+Subnet Mask determine which part of IP Address is network prefix and which is host portion.
+Network prefix portion is the 1s part and host is the 0s part.
+For example,
+
+- 203.0.113.10 with 255.255.255.0, will give us last 8 bits for host and 24 bits at beginning for network prefix.
+- 10.0.0.10 with 255.255.240.0, will give us last 12 bits for host and 20 bits at beginning for network prefix.
+
+## Classful Addressing
+
+![ClassfulAddressing](./ClassfulAddress.png)
+ClassA : beginning 8 bits are network prefix
+ClassB : beginning 16 bits are network prefix
+ClassC : beginning 24 bits are network prefix
+ClassD : 32 bits are all network prefix, used for multicasting
+
+## Address Types
+
+Network Address
+
+- Identifier for a group of devices
+- Network prefix
+
+Broadcast Address
+
+- Identifier for all devices on a network
+
+Host Address
+
+- Identifier for unique device on a network
+
+### Network Address Example
+
+203.0.113.0 with 255.255.255.0, then it is a network address, because all the host portion is 0s.
+
+### Broadcast Address Example
+
+203.0.113.255 with 255.255.255.0, then it is a broadcast address, because all the host portion is 1s.
+
+> Never assign these two types of address to any device.
+
+## Private and Public Addresses
+
+Only allowed to be used within an organization.
+![Private IP Address Range](./PrivateIPRange.png)
+127.0.0.1 is loopback address for local.
+
+Except private IP Address and loopback gives us the public IP Address.
+
+# Introduction to Subnetting
+
+Simple way to write IP Address and Subnet Mask with Classless Inter-Domain Routing Notation(CIDR notation).
+
+203.0.113.10/24 means 203.0.113.10 with 255.255.255.0
+
+# Introduction to IPv6
+
+Bit
+
+- 1 or 0
+
+Nibble - 4 bits
+
+- 1010
+- Hex - 0xA
+
+Byte - 8 bits
+
+- 11001001
+- Hex - 0xC9
+
+Hextet - 16 bits
+
+- 10101010 01000110
+- Hex - 0xAA46
+
+## IPv4 Addresses vs. IPv6 Addresses
+
+IPv6 Address Size is 128 bits long
+
+2001:0DB8:0002:008D:0000:0000:00A5:52F5
+
+## The Structure of an IPv6 Addresses
+
+64 bits at beginning is for network prefix.
+
+64 bits at the end is for host portion.
+
+## IPv6 Address Types
+
+Unicast Address
+
+- Global Unicast Address
+- Link Local Address
+  - FE80::/10
+
+Loopback Address
+
+- ::1/128
