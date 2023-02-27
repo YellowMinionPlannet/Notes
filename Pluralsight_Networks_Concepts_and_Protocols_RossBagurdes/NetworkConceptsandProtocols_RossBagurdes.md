@@ -348,3 +348,84 @@ If you put all Fs in destination MAC address, then it's broadcast message.
 ### Broadcast
 
 When the destination MAC address of the frame is all Fs, the frame is sent out all active interfaces, except the receiving interface.
+
+# Routing IPv4 and IPv6
+
+## Address Resolution Protocal
+
+The topology of this section
+![RoutingIPv4IPv6](./RoutingIPv4IPv6.png)
+
+This section we examine what actually happened when we do ping in the command prompt.
+
+## How Address Resolution Protocol works
+
+![Ping](./Ping.png)
+
+When we do Ping, we actually do it at IP layer. So we start to fill out the packet with destination IP which is 10.0.0.20 and source IP is 10.0.0.10 and TTL(Time to live) is 128 which is default for Windows Operating System. (TTL will decrement when it hits a router? Read More...) and for the Data part, we use ICMP protocol. Then we needs to put packet into a frame. Where Type will be IPv4, Data will be the packet, and Source MAC Address is 000C29FC70A5.
+
+But Destination is missing!!!!!
+
+How we gonna retrieve this message?
+
+### ARP(Address Resolution Protocol)
+
+So before sending the Ping frame, this 10.0.0.10 device needs to create a frame for ARP.
+
+![ARPFrame](./ARPFrame.png)
+
+We can see that this is a broadcast message.
+
+So it sends to the 10.0.0.20 and 10.0.0.1, and 10.0.0.20 will say I have that IP Address. Then 10.0.0.20 will send a ARP Echo reply message.
+
+![ARPReply](./ARPReply.png)
+
+Then we have complete ping message with destination MAC address filled.
+
+### ARP Cache
+
+Devices maintain an ARP Cache (Table) which each entry will age out in 90s.
+
+`arp -a` command prompt in windows
+`arp -d *` to delete all your ARP table cache
+
+### Using WireShark
+
+wireshark.org
+
+_Introduction to wireshark_ in Pluralsight
+
+## The Default Gateway - How ping get to another network
+
+The topology of this section
+![PingThoughGateway](./PingThroughGateway.png)
+
+When we send ping outside of local network (to another network outside router), we cannot use ARP directly, because we cannot ARP IP Address that is not on our local subnet.
+
+For example, we send ping from 10.0.0.10/24 to 192.168.10.8/24.
+
+We can check our routing through command prompt `route PRINT`
+
+When you enter the command above, you will get something like following:
+|Destination|Mask|Gateway|Description|
+|-|-|-|-|
+|10.0.0.0|/24|on-link|Represents all devices within the local subnet, and you can ARP these devices directly|
+|0.0.0.0|/0|10.0.0.1|All IP Address is anything but 10.0.0.0, we gonna send ARP through this gateway address|
+
+We are now asking "Who has 10.0.0.1?".
+
+Now this broadcast message will be sent to any devices in the subnet except receiving device. So when the router receives it, it will send router's MAC to the receiving device. And receiving device will send Ping message to that router right after.
+
+Then the router will compare that destination IP and the routing table in the router.
+
+Then if the router found the Destination IP in the routing table (`show ip route`), it will send the ARP first and then PING later.
+
+## IPv4 Static Routing
+
+![RoutingThroughRouters](./RoutingThoughRouters.png)
+
+We need to add route table in Router A and Router B a forward entry to let router A to know we can get to 192.168.10.0/24 through 172.16.0.0/30 from 10.0.0.0/24.
+
+## How to configure?
+
+# Troubleshooting IPv4 Static Routes
