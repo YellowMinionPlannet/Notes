@@ -230,3 +230,121 @@ Unicast Address
 Loopback Address
 
 - ::1/128
+
+# Configuring a Cisco Router
+
+## The Router Boot Process
+
+1. Power On Self Test
+2. Load Bootstrap : operate minimum hardware to run router. it's in EEPROM.
+3. Load IOS: System for router, it's in Flash Drive
+4. Load Configuration: start-config file, it's in NVRAM, when you turn power off it will still memorize it.
+
+(5). when we run router the configuration is in RAM, and running-config, when power off this will lose. So we need to sync between start-config and running-config files.
+
+# Physical Layer Technologies
+
+## RJ-45 Connecotrs and Cable Types
+
+![StraightThoughCable](./StraightThroughCable.png)
+![CrossOverCable](./CrossOverCable.png)
+
+# Data Link Layer Technologies
+
+## Ethernet
+
+802.3 wire ethernet
+802.11 wireless ethernet
+
+## CSMA/CD
+
+When multiple workstations(PCs/carriers) connect to each other with one wire. There should be only one device sending the message, other devices can all listen to that message.(So the message is broadcast to all devices and you can't prevent this happening) If another device wants to send message, this device must wait until the previous message is sent. If two devices sending messages at the same time (they both checked there's no one sending and send the message simultaneously), it's called collision.
+
+CSMA/CD stands for carrier sense multiple access with collision detection.
+
+## Duplex and Speed
+
+Half duplex, two devices connect to each other, and only one device is allowed to send message.
+
+Full duplex, two devices can send message at same time.
+
+| Ethernet Name     | Ethernet Speed | Half Duplex allowed |
+| ----------------- | -------------- | ------------------- |
+| Ehternet          | 10Mbps         | yes                 |
+| FastEthernet      | 100Mbps        | yes                 |
+| GigabitEthernet   | 1Gbps          | no                  |
+| 10GigabitEthernet | 10Gbps         | no                  |
+| 40GigabitEthernet | 40Gbps         | no                  |
+
+## Ethernet II Frame
+
+The frame on Data Link Layer consists
+![EthernetFrame](./EthernetFrame.png)
+
+### Type
+
+- If it is IPv4 type:
+  0x0800
+- If it is IPv6 type:
+  0x86DD
+- If it is ARP type:
+  0x0806
+
+### Data
+
+A packet from IP Layer
+
+### FCS
+
+When devcie sends frame, will put all the 1s and 0s from Destination MAC Address to the Data, throw them into CRC algorithm and generate 32 bits. And send this 32 bits at FCS part with the rest of the frame. When device receives frame, will throw all 1s and 0s from Destination MAC Address to Data into CRC algorithm and generate 32 bits, and compare this with the sent FCS. If there's difference, then it means there should be severe electrical magnetic interference. So the frame has no integrity. Device will drop this frame. However, device can't ask to send frame again through Data Link Layer, we must recover this through TCP/IP Layer.
+
+# Ethernet Switching
+
+## Network Topologies
+
+- Bus topologies
+- Ring topologies (IBM Token Ring)
+- Star topologies
+  ![Star Topology](./StarTopology.png)
+
+At the center, the grey box could be hub or switch. When one device send message, hub will repeat this message and deliver to all the other devices.
+
+### Collision Domain
+
+A group of networked devices that will simultaneously detect a voltage spike. Star topology with a hub will still have collision domain.
+
+### The MAC Address Table
+
+If you have a Star topology with a switch.
+
+The Switch will have a MAC Address Table in it's memo.
+
+The MAC address table(Suppose we have 6 ports with this switch)
+|Port| MAC|
+|-|-|
+|1|6E|
+|2|B3|
+|3|3F|
+|4|DF|
+|5|C2|
+|6|A7|
+
+![switch](./Switch.png)
+
+The Switch will have a chip, called ASIC(Application Specific Integrated Circut), for each port. ASIC in switch is for reading the frame header. When A7 is sending message to the B3, Switch will build a circut between A7 and B3, all other devices cannot receive the message. So when other devices want to send message simultaneously they are able to do it now, because there will be no collision.
+
+## MAC Addressing Aging
+
+May be 3F is not sending any frames and just keep idle there, MAC Address will lose the 3F at port 3. When some device is sending message to 3F now, it causes flooding.
+
+### Flooding
+
+Flooding is when destination MAC address of the frame is not in MAC Address Table, the frame is sent out all active interfaces, except the receiving interface.
+
+## Broadcasts and Broadcast Domains
+
+If you put all Fs in destination MAC address, then it's broadcast message.
+
+### Broadcast
+
+When the destination MAC address of the frame is all Fs, the frame is sent out all active interfaces, except the receiving interface.
