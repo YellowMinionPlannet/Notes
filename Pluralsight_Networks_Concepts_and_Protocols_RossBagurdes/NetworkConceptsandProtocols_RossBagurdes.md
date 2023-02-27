@@ -429,3 +429,5 @@ We need to add route table in Router A and Router B a forward entry to let route
 ## How to configure?
 
 # Troubleshooting IPv4 Static Routes
+
+`tracert -d 192.168.10.8`
