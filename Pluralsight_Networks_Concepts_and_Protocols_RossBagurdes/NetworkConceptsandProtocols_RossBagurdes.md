@@ -440,3 +440,60 @@ We need to add route table in Router A and Router B a forward entry to let route
 # Troubleshooting IPv4 Static Routes
 
 `tracert -d 192.168.10.8`
+
+Here is a sample of redundant network. It means there are multiple link from one point get to another point. The problem with static routing with redundant network is the routing table maintenance will be complicated.
+
+![Redundant](./Redundant.png)
+
+# TCP
+
+TCP uses a client and server model.
+
+3 way handshake and 4-way DIsconnect Closed.
+
+SYN => SYN-ACK => ACK
+
+FIN => FIN-ACK => FIN => FIN-ACK
+
+## Transport Layer Addressing Port Numbers
+
+Port Numbers could be 0 - 65535.
+Well Known Port Numbers(Server Port)
+0-1023 (Well known)
+1024-49151 (Registered)
+
+Ephemeral(Client Port Numbers)
+49512 - 65535
+
+Examples for Well known.
+| Application Protocol | Port Number |
+| -------------------- | ----------- |
+| HTTP | 80 |
+| HTTPs | 443 |
+| FTP | 20, 21 |
+| SSH | 22 |
+| Telnet(Unencrypted SSH) | 23 |
+
+For example if we use Putty to telnet a router, it should follow procedures below.
+
+First workstation send SYN with a source port of a ephemeral port(49512 for this time), and destination port of 23, and data will be empty, flag will be SYN, and put this segment into packet, with 10.0.0.1:23 of Destination Socket, and 10.0.0.2:49512 of Source Socket, and TTL is 128 as usual, and put all of this into Frame, where Destination MAC Address with A and Source MAC Addres with B.
+
+## Using Netstat to see Active TCP Sessions
+
+`netstat -help` in command prompt in Windows.
+
+`netstat -n` lookup without translation of port numbers.
+
+`netstat -n 1` 1 second refresh version or above.
+
+`netstat -na` all tcp sessions and their states including those your device is listening.
+
+`netstat -nap TCP` Only TCP sessions
+
+`netstat -naop TCP` Only TCP sessions and add another column for PID
+
+`netstat -naobp TCP` Only TCP sessions and the owner
+
+`netstat -r` route table
+
+## TCP Sequence Number
