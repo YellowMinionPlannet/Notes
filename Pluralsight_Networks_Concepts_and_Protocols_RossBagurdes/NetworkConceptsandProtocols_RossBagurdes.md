@@ -2,17 +2,17 @@
 
 ## Local and Global Addressing
 
-When we have conversation with the other party, the conversation can be processed due to following categories of components.
+When we have conversation with the other party, the conversation can be processed by following categories of components.
 
 Instructor used Homer's example, which is Homer can talk to Marge locally and remotely.
 
-| Category       | Description                                                                                                                                                                                                                                                                                                                                                                               |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Media          | In order to have data spread out, we need air/wire, those are the media for conversations                                                                                                                                                                                                                                                                                                 |
-| Local address  | In Homer's example, this could be the name of Homer and name of Marge, when the conversation starts, two names will tell everyone in local environment, this conversation is between Homer and Marge                                                                                                                                                                                      |
-| Global address | In Homer's example, this could be Marge's phone number. When Homer talks to Marge remotely, he needs to know Marge's phone number to start a conversation                                                                                                                                                                                                                                 |
-| Cues           | In order to pass the real content of conversation, which is the data, Homer and Marge needs to say **hello** at first to make sure, the phone conversation is started, and say **goodbye** to each other, so that they know the conversation is ended. Hellos and goodbyes including other words to check the status between these two people are defined as the cues to the conversation |
-| Data           | the real content of conversation, data                                                                                                                                                                                                                                                                                                                                                    |
+| Category       | Description                                                                                                                                                                                                                                                                                                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Media          | In order to have data spread out, we need air/wire, those are the media for conversations                                                                                                                                                                                                                                                                                                |
+| Local address  | In Homer's example, this could be the name of Homer and name of Marge, when the conversation starts, two names will tell everyone in local environment, this conversation is between Homer and Marge                                                                                                                                                                                     |
+| Global address | In Homer's example, this could be Marge's phone number. When Homer talks to Marge remotely, he needs to know Marge's phone number to start a conversation                                                                                                                                                                                                                                |
+| Cues           | In order to pass the real content of conversation, which is the data, Homer and Marge needs to say **hello** at first to make sure the phone conversation is started, and say **goodbye** to each other, so that they know the conversation is ended. Hellos and goodbyes including other words to check the status between these two people are defined as the cues to the conversation |
+| Data           | the real content of conversation, data                                                                                                                                                                                                                                                                                                                                                   |
 
 ## Protocols and Communications Models
 
@@ -39,13 +39,15 @@ Now we are going to map the Homer example into network.
 
 ## The OSI Model
 
-| Layer       | Description           |
-| ----------- | --------------------- |
-| Physical    | Wires/Radio/Glass     |
-| Data Link   | Ethernet              |
-| Network     | Internet Protocol(IP) |
-| Transport   | TCP                   |
-| Application | Website/Email         |
+| Number | Layer        | Description           |
+| ------ | ------------ | --------------------- |
+| 1      | Physical     | Wires/Radio/Glass     |
+| 2      | Data Link    | Ethernet              |
+| 3      | Network      | Internet Protocol(IP) |
+| 4      | Transport    | TCP                   |
+| (5)    | Session      | ssl                   |
+| (6)    | Presentation | IBM etc.              |
+| 7      | Application  | Website/Email         |
 
 ## TCP/IP Model
 
@@ -76,6 +78,7 @@ Physical Layer: 010101001010101101010101010
 
 Local Address(MAC Address)
 000C:29FC:70A5
+
 First 24 bits are for Manufacturer ID
 Second 24 bits are for Serial Number
 
@@ -88,7 +91,7 @@ Frames are only allowed in local networks. Router(Gateway, Default Gateway) sepa
 
 ## How Global Addressing Works
 
-So in order to visit pluralsight.com(outside) from your home(inside), the packet is first send within inside frames to the router, then, the router pull out the packet and put it into a outside frame and send to the internet.
+So in order to visit pluralsight.com(outside) from your home(inside), the packet is first send within frames to the router, then, the router pull out the packet and put it into a outside frame and send to the internet.
 
 ![GolobalAddressing](./GlobalAddressing.png)
 
@@ -98,6 +101,10 @@ So since router has different IP addresses (inside vs. outside), it's a layer-3 
 
 ### The Subnet Mask
 
+The Subnet Mask is used to seperate IP address into two parts, network and host portions.
+
+For example, we have two pairs of IPs and subnet mask
+
 192.168.104.1
 255.255.255.0
 
@@ -106,7 +113,7 @@ So since router has different IP addresses (inside vs. outside), it's a layer-3 
 
 That makes 192.168.104, 203.000.113 be the **network** portion, and 1 and 8 be the **host** portion of the IP address.
 
-When send message to different network IP address, the device won't even send it directly. We need router in the middle to send message between two different network IP address.
+When send message to different network IP address(for exampple, from 192.168.104 to 203.000.113.8), the device won't even send it directly. That's because the network portions of these two IPs are different. We need router in the middle to send message between two different network IP address.
 
 ## Demo: Examining the IP Address of a Workstation
 
@@ -133,7 +140,7 @@ Network Portion identifies a group of device, and host portion is the individual
 ## Classless Addressing
 
 Subnet Mask determine which part of IP Address is network prefix and which is host portion.
-Network prefix portion is the 1s part and host is the 0s part.
+Network prefix portion is the 1s part of subnet mask and host is the 0s part of subnet mask.
 For example,
 
 - 203.0.113.10 with 255.255.255.0, will give us last 8 bits for host and 24 bits at beginning for network prefix.
@@ -235,12 +242,12 @@ Loopback Address
 
 ## The Router Boot Process
 
-1. Power On Self Test
-2. Load Bootstrap : operate minimum hardware to run router. it's in EEPROM.
+1. Power On: Self Test
+2. Load Bootstrap: operate minimum hardware to run router. it's in EEPROM.
 3. Load IOS: System for router, it's in Flash Drive
-4. Load Configuration: start-config file, it's in NVRAM, when you turn power off it will still memorize it.
+4. Load Configuration: start-config file, it's in NVRAM, when you turn power off it will still memorize it. (Same as 1-3 above)
 
-(5). when we run router the configuration is in RAM, and running-config, when power off this will lose. So we need to sync between start-config and running-config files.
+(5). When we run router, the configuration is in RAM which is called running-config file, and running-config will lose when power off. So we need to sync between start-config and running-config files.
 
 # Physical Layer Technologies
 
@@ -296,7 +303,7 @@ A packet from IP Layer
 
 ### FCS
 
-When devcie sends frame, will put all the 1s and 0s from Destination MAC Address to the Data, throw them into CRC algorithm and generate 32 bits. And send this 32 bits at FCS part with the rest of the frame. When device receives frame, will throw all 1s and 0s from Destination MAC Address to Data into CRC algorithm and generate 32 bits, and compare this with the sent FCS. If there's difference, then it means there should be severe electrical magnetic interference. So the frame has no integrity. Device will drop this frame. However, device can't ask to send frame again through Data Link Layer, we must recover this through TCP/IP Layer.
+When devcie sends frame, will pull all the 1s and 0s from Destination MAC Address to the Data portion, throw them into CRC algorithm and generate 32 bits binary code. And send this 32 bits at FCS part with the rest of the frame. When device receives frame, will throw all 1s and 0s from Destination MAC Address to Data into CRC algorithm and also generate 32 bits, and compare this with the sent FCS. If there's difference, then it means there should be severe electrical magnetic interference. So the frame has no integrity. Device will drop this frame. However, device can't ask to send frame again through Data Link Layer, we must recover this through TCP/IP Layer.
 
 # Ethernet Switching
 
@@ -331,11 +338,11 @@ The MAC address table(Suppose we have 6 ports with this switch)
 
 ![switch](./Switch.png)
 
-The Switch will have a chip, called ASIC(Application Specific Integrated Circut), for each port. ASIC in switch is for reading the frame header. When A7 is sending message to the B3, Switch will build a circut between A7 and B3, all other devices cannot receive the message. So when other devices want to send message simultaneously they are able to do it now, because there will be no collision.
+The Switch will have a chip, called ASIC(Application Specific Integrated Circuist), for each port. ASIC in switch is for reading the frame header. When A7 is sending message to the B3, Switch will build a circuit between A7 and B3, all other devices cannot receive the message. So when other devices want to send message simultaneously they are able to do it now, because there will be no collision.
 
 ## MAC Addressing Aging
 
-May be 3F is not sending any frames and just keep idle there, MAC Address will lose the 3F at port 3. When some device is sending message to 3F now, it causes flooding.
+Switch also need to keep a MAC Address Table in memory. So that switch knows MAC Address to Port mapping(Which MAC Address is which port). May be 3F is not sending any frames and just keep idle there, MAC Address will lose the 3F at port 3. When some device is sending message to 3F now, it causes flooding.
 
 ### Flooding
 
@@ -362,7 +369,7 @@ This section we examine what actually happened when we do ping in the command pr
 
 ![Ping](./Ping.png)
 
-When we do Ping, we actually do it at IP layer. So we start to fill out the packet with destination IP which is 10.0.0.20 and source IP is 10.0.0.10 and TTL(Time to live) is 128 which is default for Windows Operating System. (TTL will decrement when it hits a router? Read More...) and for the Data part, we use ICMP protocol. Then we needs to put packet into a frame. Where Type will be IPv4, Data will be the packet, and Source MAC Address is 000C29FC70A5.
+When we do Ping, we actually do it at IP layer. So we start to fill out the packet with destination IP which is 10.0.0.20 and source IP is 10.0.0.10 and TTL(Time to live) is 128 which is default for Windows Operating System. (TTL will decrement when it hits a router) and for the Data part, we use ICMP protocol. Then we needs to put packet into a frame. Where Type will be IPv4, Data will be the packet, and Source MAC Address is 000C29FC70A5.
 
 But Destination is missing!!!!!
 
@@ -376,7 +383,7 @@ So before sending the Ping frame, this 10.0.0.10 device needs to create a frame 
 
 We can see that this is a broadcast message.
 
-So it sends to the 10.0.0.20 and 10.0.0.1, and 10.0.0.20 will say I have that IP Address. Then 10.0.0.20 will send a ARP Echo reply message.
+So it sends to the switch, and switch will forward to 10.0.0.20 and 10.0.0.1, and 10.0.0.20 will say I have that IP Address. Then 10.0.0.20 will send a ARP Echo reply message.
 
 ![ARPReply](./ARPReply.png)
 
@@ -402,7 +409,7 @@ The topology of this section
 
 When we send ping outside of local network (to another network outside router), we cannot use ARP directly, because we cannot ARP IP Address that is not on our local subnet.
 
-For example, we send ping from 10.0.0.10/24 to 192.168.10.8/24.
+For example, when we send ping from 10.0.0.10/24 to 192.168.10.8/24.
 
 We can check our routing through command prompt `route PRINT`
 
@@ -411,6 +418,8 @@ When you enter the command above, you will get something like following:
 |-|-|-|-|
 |10.0.0.0|/24|on-link|Represents all devices within the local subnet, and you can ARP these devices directly|
 |0.0.0.0|/0|10.0.0.1|All IP Address is anything but 10.0.0.0, we gonna send ARP through this gateway address|
+
+This route PRINT gives us info that when need to ARP some other network, we need to send ARP to 10.0.0.1.
 
 We are now asking "Who has 10.0.0.1?".
 
