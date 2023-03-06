@@ -501,3 +501,44 @@ First workstation send SYN with a source port of a ephemeral port(49512 for this
 ## User Datagram Protocol (UDP)
 
 ![ProtocolDependency](./ProtocolDependency.png)
+
+# Domain Name System(DNS)
+
+Uniform Resource Locator (URL)
+
+For example: www.pluralsight.com
+
+.com is the Top Level Domain(TLD)
+
+There are other TLD:
+
+.com .edu .org .net .gov .mil .ca
+
+Second Level Domain is
+
+pluralsight
+
+Third Level Domain/Host name is
+
+www
+
+So when we type www.pluralsight.com, we get specific IP address for www server IP Address at pluralsight.com.
+
+For example: www.engineering.university.edu
+
+engineering is the third level domain, www is the hostname.
+
+## How DNS works
+
+![DNS](./DNS.png)
+
+We can set DNS server at our own router.
+
+## nslookup
+
+`nslookup` to show DNS server at local
+`nslookup www.pluralsight.com`
+
+# DHCP (Dynamic Host Configuration Protocol)
+
+Usually it's in our router, but when there are thousands of networks we may set up a DHCP server at outside of each router and solve IP Address, Default Gateway and DNS. We use IP Helper Address settings in router to achieve this.
