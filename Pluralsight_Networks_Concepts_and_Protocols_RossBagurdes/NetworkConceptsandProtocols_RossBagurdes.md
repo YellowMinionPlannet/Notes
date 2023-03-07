@@ -502,6 +502,8 @@ First workstation send SYN with a source port of a ephemeral port(49512 for this
 
 ![ProtocolDependency](./ProtocolDependency.png)
 
+Only one request and one response. There are no 3 way handshake and 4 way goodby as TCP does.
+
 # Domain Name System(DNS)
 
 Uniform Resource Locator (URL)
@@ -541,4 +543,6 @@ We can set DNS server at our own router.
 
 # DHCP (Dynamic Host Configuration Protocol)
 
-Usually it's in our router, but when there are thousands of networks we may set up a DHCP server at outside of each router and solve IP Address, Default Gateway and DNS. We use IP Helper Address settings in router to achieve this.
+It simplify the process of workstation to set up IP address and DNS. When workstation is online, it will send out a discovery message, and when DHCP receive this will provide a DHCP offer. Then workstation will send a DHCP Request, and DHCP will follow up with DHCP ACK. At this point, workstation set up IP Address. DHCP also will have a DHCP binding and map MAC Address to IP Address handed out, so that it will not hand out duplicate IP Address.
+
+Usually it's in our router, but when there are thousands of networks we may set up a DHCP server at outside of each router and solve IP Address, Default Gateway and DNS. We use IP Helper Address settings in local router to achieve this.
