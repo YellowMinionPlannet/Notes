@@ -546,3 +546,133 @@ We can set DNS server at our own router.
 It simplify the process of workstation to set up IP address and DNS. When workstation is online, it will send out a discovery message, and when DHCP receive this will provide a DHCP offer. Then workstation will send a DHCP Request, and DHCP will follow up with DHCP ACK. At this point, workstation set up IP Address. DHCP also will have a DHCP binding and map MAC Address to IP Address handed out, so that it will not hand out duplicate IP Address.
 
 Usually it's in our router, but when there are thousands of networks we may set up a DHCP server at outside of each router and solve IP Address, Default Gateway and DNS. We use IP Helper Address settings in local router to achieve this.
+
+# ACL (Access Control List)
+
+Access Control Lists act like a Bouncer at the Bar door. It rejects traffic by certain criteria.
+
+| Category | Description                                                                                                                                                                   |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Standard | Selects packets via source IP ONLY                                                                                                                                            |
+| Extended | Selects packets/segements via: <ul><li>Protocol(IP, TCP, UDP)</li><li>Source IP Address</li><li>Destination IP address</li><li>Source port</li><li>Destination port</li></ul> |
+
+We can apply ACL on both inbound and outbound of both inside and outside interfaces of the router.
+![ACL](./ACL.png)
+
+On the picture above, we are applying InBound ACL on the Inside interfaces(F0/0) of the router. We can also apply the same ACL on the Outbound of Outside interface(F0/1). The Effect will be the same.
+
+However, CISCO says:
+
+> Standard access control lists are applied on the router interface closest to the destination device.
+
+## Wildcard Mask
+
+| Name          | IP address     | binary                              |
+| ------------- | -------------- | ----------------------------------- |
+| IP            | 203.0.113.1/24 | 11001011 00000000 01110001 00000001 |
+| Network IP    | 203.0.113.0    | 11001011 00000000 01110001 00000000 |
+| Broadcast IP  | 203.0.113.255  | 11001011 00000000 01110001 11111111 |
+| Subnet Mask   | 255.255.255.0  | 11111111 11111111 11111111 00000000 |
+| Wildcard Mask | 0.0.0.255      | 00000000 00000000 00000000 11111111 |
+
+We can apply wildcardmask into ACL.
+
+So for example, we have 10.0.128.0 for the first address, and we have wildcard mask 0.0.7.255. Then this will give us
+|IP range|Binary|
+|-|-|
+|Frist IP|00001010 00000000 10000000 00000000|
+|Last IP available| 00001010 00000000 10000111 11111111|
+|WildcardMask|00000000 00000000 00000111 11111111|
+
+Another example, if we have 10.0.0.16, 10.0.0.17, and 10.0.0.128 at local, and we want to only permit 10.0.0.16 and 10.0.0.17.
+
+We can set up like this
+|IP range|Binary|
+|-|-|
+|Frist IP|00001010 00000000 00000000 00010000|
+|Last IP available| 00001010 00000000 00000000 00010001|
+|WildcardMask|00000000 00000000 00000000 00000001|
+
+`permit 10.0.0.16 0.0.0.1`
+
+## Extended ACL
+
+HTTP must use TCP and TCP must use IP.
+![ACLHierarchy](./ACLHierarchy.png)
+
+So when we apply extended ACL, we must be very careful.
+
+# NAT(Network Address Translation)
+
+About routable and non-routable IP Address.
+
+## Review of IP Address
+
+Classfull IP Address
+|Class|IP Range|Description|
+|-|-|-|
+|A|0.0.0.0 - 127.255.255.255||
+|B|128.0.0.0 - 191.255.255.255||
+|C|192.0.0.0 - 223.255.255.255||
+|D|224.0.0.0 - 239.255.255.255|MultiCast devices|
+|E|240.0.0.0 - 255.255.255.255|Lab uses|
+
+Classless Inter-domain Routing (CIDR) 1993
+To solve public IP is running out. Subnet mask is introduced.
+
+| Class | IP Range                    | Subnet mask |
+| ----- | --------------------------- | ----------- |
+| A     | 0.0.0.0 - 127.255.255.255   | /8          |
+| B     | 128.0.0.0 - 191.255.255.255 | /16         |
+| C     | 192.0.0.0 - 223.255.255.255 | /24         |
+
+Private Addressing 1996 RFC-1918
+These IP Address cannot be routed in internet.
+| Class | IP Range | Subnet mask |
+| ----- | ----- | ----------- |
+| A | 10.0.0.0 | /8 |
+| B | 172.16.0.0 | /12 |
+| C | 192.168.0.0 | /16 |
+
+Non-routable IP Address on Internet(Including Private IPs)
+| IP Range | Subnet mask |Description|
+| ----- | ----------- |-|
+| 10.0.0.0 | /8 |Private|
+| 172.16.0.0 | /12 |Private|
+| 192.168.0.0 | /16 |Private|
+|169.254.0.0|/16|Something wrong for local networks with this auto assigned IPs showed up|
+|192.0.2.0|/24|Documentation|
+|198.51.100.0|/24|Documentation|
+|203.0.113.0|/24|Documentation|
+
+## How NAT works
+
+When we visit webserver from local device, our source IP will be the private IP Address. Without NAT, the webserver or even the router in the middle will throw that away, because that's Private IPs and not routable.
+
+What NAT does is assign local private IP to a public IP when sending message out. When the message is back, it will map the public IP to the private IP and get message to the corresponding local device.
+
+## Types of NAT
+
+There are 3 ways to do this.
+|NAT Name|Description|
+|-|-|
+|Source NAT (sNAT)|<ul><li>Modify source IP address as packet move from private to public</li><li>Modify destination IP address as packet move from public to private</li></ul>|
+|Destination NAT (dNAT)|<ul><li>Modify destination IP address as packet move from private to public</li><li>Modify source IP address as packet move from public to private</li><li>Rarely used</li></ul>|
+
+sNAT options:
+
+- Static NAT:
+  - 1 Private IP maps to 1 public IP
+- Dynamic NAT:
+  - Private IP's map to 1 Public IP as needed
+  - Rarely used
+- Dynamic NAT with Overload
+  - Port Address Translation (PAT)
+  - Many Private IP's map to 1 public IP simultaneously
+  - Used everywhere
+
+## Dynamic NAT with Overload
+
+![DynamicNATwithOverload](./DynamicNATwithOverload.png)
+
+# WAN(Wide Area Networks) and VPN
