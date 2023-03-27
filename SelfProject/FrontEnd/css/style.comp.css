@@ -22,7 +22,7 @@
 
 html {
   box-sizing: border-box;
-  font-size: 62.5%; }
+  font-size: 60px; }
 
 body {
   font-family: sans-serif;
@@ -54,15 +54,10 @@ body {
     transform: rotate(360deg); } }
 
 main.container {
-  min-height: 40rem;
-  width: 60%;
   background-color: var(--color-white);
   border-radius: .5rem;
   box-shadow: 0.5rem 0.5rem 0.5rem rgba(0, 0, 0, 0.3);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); }
+  margin: 100px; }
 
 form {
   display: flex;
@@ -71,16 +66,15 @@ form {
 
 .form-group {
   max-width: 50%;
-  font-size: 2rem;
-  margin: 0 auto; }
+  padding: 2em;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em; }
   .form-group__radio {
     width: 100%;
-    font-size: 2rem;
     display: flex;
     justify-content: center; }
-
-.checkbox__container {
-  margin: .5em 3em; }
 
 .checkbox__label {
   position: relative;
@@ -90,8 +84,6 @@ form {
   cursor: pointer; }
 
 .checkbox__span__container {
-  width: 2em;
-  height: 2em;
   border: 0.3em solid var(--color-secondary);
   display: inline-block; }
 
@@ -200,33 +192,36 @@ form {
 .radio__label:hover .radio__span {
   background-color: var(--color-primary); }
 
+.spin__container {
+  margin: auto;
+  width: 5em;
+  line-height: 5em;
+  min-height: 5em; }
+
 .spin {
-  margin: 2em 3em;
   width: 5em;
   height: 5em;
   border: 0.5em solid var(--color-secondary);
   border-radius: 50%;
-  position: relative; }
-  .spin::after {
-    content: "";
-    position: absolute;
-    top: -15%;
-    left: -10%;
-    width: 5em;
-    height: 5em;
-    border-radius: 50%;
-    border: .5em solid;
-    border-color: var(--color-primary) var(--color-secondary) var(--color-secondary) var(--color-secondary);
-    opacity: 0; }
+  position: absolute; }
 
-.spin__container:hover .spin::after {
+.spin2 {
+  content: "";
+  position: absolute;
+  width: 5em;
+  height: 5em;
+  border-radius: 50%;
+  border: .5em solid;
+  border-color: var(--color-primary) var(--color-secondary) var(--color-secondary) var(--color-secondary);
+  opacity: 0; }
+
+.spin__container:hover .spin2 {
   opacity: 1;
   animation: circlerotate 2s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out; }
 
 .toggle__container {
-  margin: .5em 3em;
   cursor: pointer; }
 
 .toggle__label {

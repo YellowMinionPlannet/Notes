@@ -1,27 +1,35 @@
+.spin__container{
+    margin: auto;
+    width: 5em;
+    line-height: 5em;
+    min-height: 5em;
+}
+
 .spin{
-    margin: 2em 3em;
+    //margin: 2em 3em;
 
     width: 5em;
     height: 5em;
     border: .5em solid var(--color-secondary);
     border-radius: 50%;
-    position: relative;
+    position: absolute;
 
-    &::after{
+}
+
+.spin2{
+    
         content:"";
         position: absolute;
-        top: -15%;
-        left: -10%;
         width: 5em;
         height: 5em;
         border-radius: 50%;
         border: .5em solid;
         border-color: var(--color-primary) var(--color-secondary) var(--color-secondary) var(--color-secondary);
         opacity: 0;
-    }
+    
 }
 
-.spin__container:hover .spin::after{
+.spin__container:hover .spin2{
     opacity: 1;
     animation: circlerotate 2s;
     animation-iteration-count: infinite;

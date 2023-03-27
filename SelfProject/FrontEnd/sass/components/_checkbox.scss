@@ -1,6 +1,6 @@
 .checkbox{
     &__container{
-        margin: .5em 3em;
+        
     }
 
     &__label{
@@ -12,8 +12,6 @@
     }
 
     &__span__container{
-        width: 2em;
-        height: 2em;
         border: .3em solid var(--color-secondary);
         display: inline-block;
     }
@@ -57,7 +55,6 @@
     &__input:checked + &__label &__span__container{
         background-color: var(--color-secondary);
     }
-
     &__label:hover &__span__container{
         background-color: var(--color-primary);
     }
