@@ -1,0 +1,11 @@
+{
+  "name": "ui-samples",
+  "version": "0.1.0",
+  "dependencies": {
+    "@frctl/fractal": "^1.5.15"
+  },
+  "scripts": {
+    "fractal:start": "fractal start --watch",
+    "fractal:build": "fractal build"
+  }
+}

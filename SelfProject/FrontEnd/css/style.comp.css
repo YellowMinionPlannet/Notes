@@ -22,7 +22,7 @@
 
 html {
   box-sizing: border-box;
-  font-size: 60px; }
+  font-size: 20px; }
 
 body {
   font-family: sans-serif;
@@ -196,7 +196,8 @@ form {
   margin: auto;
   width: 5em;
   line-height: 5em;
-  min-height: 5em; }
+  min-height: 5em;
+  cursor: pointer; }
 
 .spin {
   width: 5em;

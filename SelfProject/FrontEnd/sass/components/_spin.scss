@@ -3,6 +3,14 @@
     width: 5em;
     line-height: 5em;
     min-height: 5em;
+    cursor: pointer;
+}
+
+.spin__wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .spin{
