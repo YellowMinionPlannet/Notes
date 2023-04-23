@@ -1464,3 +1464,121 @@ myFetch("https://restcountries.com/v2/name/china")
     console.error(error);
   });
 ```
+
+# Section 17: Modern Javascript Development: Modules, Tooling, and Functional
+
+## An Overview of Modules in Javascript
+
+- Module is a reusable piece of code that encapsulates implementation details.
+
+- Module is usually a standalone file.
+
+for example:
+
+```js
+import { rand } from "./math.js";
+const diceP1 = rand(1, 6, 2);
+const diceP2 = rand(1, 6, 2);
+const scores = { diceP1, diceP2 };
+export { scores };
+```
+
+- In ES6, Modules are stored in files, exactly one module per file.
+
+### ES6 Modules Files vs. Script Files
+
+|                     | ES6 Module                                                 | Script        |
+| ------------------- | ---------------------------------------------------------- | ------------- |
+| Top-level variables | Scoped to module(only visible if you export it)            | Global        |
+| Default mode        | Strict mode                                                | "Sloppy" mode |
+| Top-level this      | undefined                                                  | window        |
+| Imports and exports | YES, imports are hoisted(means they are always at the top) | NO            |
+| HTML linking        | `<script type="module" />`                                 | `<script />`  |
+| File downloading    | Asynchronous                                               | Synchronous   |
+
+### How ES6 Modules are imported
+
+```js
+//index.js
+import { rand } from "./math.js";
+import { showDice } from "./dom.js";
+const dice = rand(1, 6, 2);
+showDice(dice);
+
+//1. Parsing index.js
+//  a. Modules are imported synchronously, (although modules files are downloaded asynchronously)
+//  b. Modules are downloaded asynchronously.
+//  c. Modules files are parsed
+//  d. Linking imports to the exports from parsed module files. (the imported values are just pointer to the exported value in the module file)
+//  e. execution of referenced module files
+//2. Execution of index.js
+```
+
+## Exporting and Importing in ES6 Modules
+
+Examples:
+
+```html
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script type="module" defer src="script.js"></script>
+  </head>
+</html>
+```
+
+```js
+//script.js
+console.log("Importing module");
+//---------------------------------------------------------------
+// named export
+// import { addToCart, totalPrice as price, qt, other } from "./shoppingCart.js";
+
+// addToCart("bread", 5);
+// console.log(price, qt, other);
+
+//----------------------------------------------------------------
+// import * as ShoppingCart from "./shoppingCart.js";
+
+// ShoppingCart.addToCart("bread", 5);
+
+//-----------------------------------------------------------------
+// mixed default export and named export
+import add, {
+  addToCart,
+  totalPrice as price,
+  qt,
+  other,
+  cart,
+} from "./shoppingCart.js";
+
+add("pizza", 2);
+console.log(cart); //Here, cart is filled with product, this proves that imported value is a pointer to the exported value.
+```
+
+```js
+//shoppingCart.js
+console.log("Exporting module");
+
+const shippingCost = 10;
+export const cart = [];
+
+//named exports
+export const addToCart = function(product, quantity){
+  cart.push({product, quantity});
+  console.log(`${quantity}` of ${product} pushed to cart.);
+}
+
+const totalPrice = 237;
+const totalQuantity = 23;
+const other = true;
+
+export { totalPrice, totalQuantity as qt, other};
+
+//default exports
+
+export default function(product, quantity){
+  cart.push({product, quantity});
+  console.log(`${quantity}` of ${product} pushed to cart.);
+}
+```
