@@ -1519,6 +1519,7 @@ showDice(dice);
 Examples:
 
 ```html
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -1564,21 +1565,122 @@ const shippingCost = 10;
 export const cart = [];
 
 //named exports
-export const addToCart = function(product, quantity){
-  cart.push({product, quantity});
-  console.log(`${quantity}` of ${product} pushed to cart.);
-}
+export const addToCart = function (product, quantity) {
+  cart.push({ product, quantity });
+  console.log(`${quantity} of ${product} pushed to cart.`);
+};
 
 const totalPrice = 237;
 const totalQuantity = 23;
 const other = true;
 
-export { totalPrice, totalQuantity as qt, other};
+export { totalPrice, totalQuantity as qt, other };
 
 //default exports
 
-export default function(product, quantity){
-  cart.push({product, quantity});
-  console.log(`${quantity}` of ${product} pushed to cart.);
+export default function (product, quantity) {
+  cart.push({ product, quantity });
+  console.log(`${quantity} of ${product} pushed to cart.`);
 }
 ```
+
+## Top-Level await (ES2022)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script type="module" defer src="script.js"></script>
+  </head>
+</html>
+```
+
+```js
+//script.js version 1.0
+
+console.log("start fetching...");
+const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+const data = await res.json();
+console.log(data);
+console.log("finished");
+
+// Top-level await key words is blocking "finished" line if the network is slow.
+```
+
+```js
+//script.js version 2.0
+
+const getLastPost = async function () {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const data = await res.json();
+  console.log(data);
+
+  return { title: data.at(-1).title, text: data.at(-1).body };
+};
+
+const lastPost = getLastPost();
+lastPost.then(last => console.log(last););
+
+const lastPost2 = await getLastPost();
+console.log(lastPost2);
+```
+
+- Conclusion: if a imported module has toplevel-await, it will block the imported module as well as the importing module.
+
+## Module Pattern
+
+```js
+const shoppingCart2 = (function () {
+  const cart = [];
+  const shippingCost = 10;
+  const totalPrice = 237;
+  const totalQuantity = 23;
+
+  const addToCart = function (product, quantity) {
+    cart.push({ product, quantity });
+    console.log(`${quantity} of ${product} pushed to cart.`);
+  };
+  const orderStock = function (product, quantity) {
+    console.log(`${quantity} ${product} ordered from supplier`);
+  };
+
+  return {
+    addTOCart,
+    cart,
+    totalPrice,
+    totalQuantity,
+  };
+})();
+
+shoppingCart2.addToCart("apple", 4);
+```
+
+- Conclusion: Module Pattern works very well, but you need to be careful about the order of the script tags.
+
+## CommonJS Modules
+
+- CommonJS is important because it is used in NodeJS for a long time. and npm also used this. So CommonJS is built in feature in NodeJS environment.
+
+```js
+//This code only work in NodeJS, where export is an object in NODEJS
+export.addToCart = function(product, quantity){
+  cart.push({ product, quantity });
+  console.log(`${quantity} of ${product} pushed to cart.`);
+}
+
+const {addToCart} = require("./shoppingCart.js");//commonJS specification
+```
+
+## Bundling With Parcel and NPM Scripts
+
+- We need module bundler like Parcel/Webpack to bundle modules.
+
+`npx parcel index.html`
+`parcel build index.html` to build compressed version
+
+## Configuring Babel and Polyfilling
+
+- Babel can make old browsers compatible with our modern javascript code.
+
+- Polyfilling,
