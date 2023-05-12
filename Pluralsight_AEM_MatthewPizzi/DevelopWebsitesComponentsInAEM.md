@@ -130,6 +130,20 @@ We have following scripts in `training/components/structure/contentpage`, the re
 
 ### Create a Template in AEM
 
-Under `apps/training/templates`, Right-click, use `training/components/structure/contentpage` as the Resource Type. Set label as contentpage.
+Under `apps/training/templates`, Right-click, create-templates, use `training/components/structure/contentpage` as the Resource Type. Set label as contentpage.
 
 Allowed Path is set to `/content(/.*)?`, which means this template accessed anywhere in the `/content`.
+
+## Ristrict Template Use
+
+In templates Allowed Path, we can change to `/content/pluralsight-train(/.*)?`, then it's restricted to everything below `/content/pluralsight-train`.
+
+We can change `/content/pluralsight-train` page property and add the property to `cq:allowedTemplates` to `/apps/training/templates`
+
+# 6 Introduction to HTL
+
+## Introduction to HTL
+
+[HTL Documentation](https://experienceleague.adobe.com/docs/experience-manager-htl/content/overview.html?lang=en)
+
+## Rendering Basic Page Content
