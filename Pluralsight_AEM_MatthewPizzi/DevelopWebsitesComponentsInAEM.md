@@ -146,4 +146,71 @@ We can change `/content/pluralsight-train` page property and add the property to
 
 [HTL Documentation](https://experienceleague.adobe.com/docs/experience-manager-htl/content/overview.html?lang=en)
 
+[Java API in AEM](https://developer.adobe.com/experience-manager/reference-materials/6-5/javadoc/index.html)
+
 ## Rendering Basic Page Content
+
+# 7 Inheritance
+
+# 8 Developing Structure Components
+
+under `/etc/designs/` create a node with type `cq:Page`, under this node create `jcr:content` and type with `cq:PageContent`.
+
+`/ect/` will store global information for site.
+
+From the course material, move to `/etc/designs/training` and save it to `clientlib-all` and `clientlib-site`
+
+under `/aps/training/components/structure/contentpage`, copy `customfooterlibs.html` and `customheaderlibs.html` from the material to this node.
+
+In `footer.html`, type `<sly data-sly-include="cutomfooterlibs.html" />`
+
+```html
+<!-- customfooterlibs.html -->
+<sly
+  data-sly-use.clientLib="/libs/granite/slightly/templates/clinetlib.html"
+  data-sly-call="${clientLib.js @ categories='we.train.all'}"
+/>
+```
+
+## Component Dialog Boxes
+
+`/libs/granite/ui/components/foundation/form/XXXX` stores touched UIs components, when we write sling:resourceType, we can omit `/libs`.
+
+`/cq/gui/components/authoring/dialog` stores root dialog sling:resourceType
+
+touched-ui inherit type is `nt:unstructured`
+
+On the UI node, name property stores values which can be visited through content property. For example: `./jcr:title`
+
+## Design Dialog Boxes
+
+- Stored in `/etc/designs`
+- Root of `cq:Page`
+- Child node of `cq:PageContent`
+- sling:resourceType is `wcm/design`
+
+`cq:design_dialog`,
+
+- Name: cq:editConfig
+
+  Type: cq:EditConfig
+
+- Name: cq:dropTargets
+
+  Type: nt:unstructured
+
+- Name: image
+
+  Type: cq:DropTargetConfig
+
+  accept: image/.\*
+
+  goups: media
+
+  propertyName: ./fileReference
+
+- Name: parameters
+
+  Type: nt:unstructured
+
+  sling:resourceType: trainng/components/structure/hero
