@@ -384,7 +384,7 @@ export default function (message) {
 ```
 
 ```ts
-//./src/index.ts
+//./src/index.ts v1.0
 
 import util from "./util";
 
@@ -505,4 +505,260 @@ if (production) {
 }
 
 module.exports = config;
+```
+
+# Adding CSS to a Build
+
+## What Are Plugins?
+
+It's a more powerful loader, where loader take input file and produce a output file, on the other hand, plugins have can have inputs and outputs with fewer limits.
+
+## Creating Your HTML File with Webpack
+
+`npm i -D html-webpack-plugin`
+
+```js
+//webpack.config.js v9.0
+const path = require("path"); //CommonJS modules
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+let production = process.env.NODE_ENV === "production";
+
+let config = {
+  entry: ["./src/index", "./src/home"], // NOTE:
+  output: {
+    //where to output
+    filename: "main.js", // NOTE: [name] means the name of the entry object.
+    path: path.resolve(__dirname, "dist"),
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: "ts-loader",
+      },
+    ],
+  },
+  plugins: [new HtmlWebpackPlugin({ template: "./index.html" })], // NOTE: if we leave it blank, it will automatically bundle the js file into a empty html. But here we have a template for plugin.
+  devtool: "inline-source-map",
+  mode: "development",
+  devServer: {
+    static: "./dist",
+  },
+};
+
+if (production) {
+  config.mode = "production";
+  config.devtool = "inline-source-map";
+}
+
+module.exports = config;
+```
+
+Now we want to clean up our `./dist` folder
+
+```js
+//webpack.config.js v10.0
+const path = require("path");
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+let production = process.env.NODE_ENV === "production";
+
+let config = {
+  entry: ["./src/index", "./src/home"],
+  output: {
+    clean: true, // NOTE:
+    filename: "main.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: "ts-loader",
+      },
+    ],
+  },
+  plugins: [new HtmlWebpackPlugin({ template: "./index.html" })],
+  devtool: "inline-source-map",
+  mode: "development",
+  devServer: {
+    static: "./dist",
+  },
+};
+
+if (production) {
+  config.mode = "production";
+  config.devtool = "inline-source-map";
+}
+
+module.exports = config;
+```
+
+So the css is also cleaned up, we can include our css by following:
+
+`npm i -D css-loader style-loader`
+
+```js
+//webpack.config.js v11.0
+const path = require("path");
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+let production = process.env.NODE_ENV === "production";
+
+let config = {
+  entry: ["./src/index", "./src/home"],
+  output: {
+    clean: true, // NOTE:
+    filename: "main.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: "ts-loader",
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: ["style-loader", "css-loader"], //NOTE: here, the order of array matters!!!   from the last to the first.
+      },
+    ],
+  },
+  plugins: [new HtmlWebpackPlugin({ template: "./index.html" })],
+  devtool: "inline-source-map",
+  mode: "development",
+  devServer: {
+    static: "./dist",
+  },
+};
+
+if (production) {
+  config.mode = "production";
+  config.devtool = "inline-source-map";
+}
+
+module.exports = config;
+```
+
+```ts
+//./src/index.ts v2.0
+
+import util from "./util";
+import "./css/main.css"; // NOTE: added
+
+const cart = [];
+function log(message) {
+  console.log(message);
+}
+
+funciton addToCart(item){
+    cart.push(item);
+    log("added: " + item);
+}
+
+function removeFromCart(index){
+    cart.splice(index, 1);
+    log("removed: " + index);
+}
+
+addToCart("Waterproof Boots");
+
+```
+
+## Understanding the Style Loader Implementation
+
+Process the css file and put the css code into the output js files.
+
+## Using SASS
+
+`npm i -D sass-loader sass`
+
+```js
+//webpack.config.js v12.0
+const path = require("path");
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+let production = process.env.NODE_ENV === "production";
+
+let config = {
+  entry: ["./src/index", "./src/home"],
+  output: {
+    clean: true,
+    filename: "main.js",
+    path: path.resolve(__dirname, "dist"),
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: "ts-loader",
+      },
+      {
+        test: /\.scss$/,
+        exclude: /node_modules/,
+        use: ["style-loader", "css-loader", "sass-loader"], //NOTE: here, the order of array matters!!!   from the last to the first.
+      },
+    ],
+  },
+  plugins: [new HtmlWebpackPlugin({ template: "./index.html" })],
+  devtool: "inline-source-map",
+  mode: "development",
+  devServer: {
+    static: "./dist",
+  },
+};
+
+if (production) {
+  config.mode = "production";
+  config.devtool = "inline-source-map";
+}
+
+module.exports = config;
+```
+
+```ts
+//./src/index.ts v3.0
+
+import util from "./util";
+import "./css/main.scss"; // NOTE: updated
+
+const cart = [];
+function log(message) {
+  console.log(message);
+}
+
+funciton addToCart(item){
+    cart.push(item);
+    log("added: " + item);
+}
+
+function removeFromCart(index){
+    cart.splice(index, 1);
+    log("removed: " + index);
+}
+
+addToCart("Waterproof Boots");
+
 ```
