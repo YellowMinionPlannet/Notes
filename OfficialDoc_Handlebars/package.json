@@ -1,0 +1,25 @@
+{
+  "name": "officialdoc_handlebars",
+  "version": "1.0.0",
+  "description": "Notes for Official Documentation of Handlebars",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "webpack --watch",
+    "serve": "webpack serve"
+  },
+  "keywords": [
+    "handlebars"
+  ],
+  "author": "Lei Zhong",
+  "license": "MIT",
+  "dependencies": {
+    "handlebars": "^4.7.7",
+    "handlebars-loader": "^1.7.3"
+  },
+  "devDependencies": {
+    "webpack": "^5.83.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  }
+}

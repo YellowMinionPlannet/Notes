@@ -1,0 +1,26 @@
+<div>
+<p>{{firstname}} {{lastname}}</p>
+<p>{{staff.firstname}} {{staff.lastname}}</p>
+</div>
+
+<div>
+{{#each people}}
+    {{../prefix}} {{loud firstname}}
+{{/each}}
+</div>
+
+<div>
+\{{@!$%^#&*$}}
+</div>
+
+<div>
+{{#each nav}}
+  <a href="{{url}}">
+    {{#if test}}
+      {{title}}
+    {{^}}
+      Empty
+    {{/if}}
+  </a>
+{{~/each}}
+</div>
