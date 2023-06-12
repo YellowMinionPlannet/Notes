@@ -492,3 +492,79 @@ if __name__ == "__main__":
 else:
     print(__name__)
 ```
+
+# Objects
+
+Python uses reference variable. Every variable is a reference of an object. And everything is an object. Function pass argument by reference type but not copy of object.
+
+## Id function
+
+```python
+a = 500
+c = id(a)
+c
+# 1660910711024
+b = 500
+d = id(b)
+d
+# 1660910710992
+
+b == a
+# True
+
+b is a
+# False
+
+b = a
+
+b is a
+# True
+
+```
+
+`is` return if two item's ids are the same, where `==` returns if two items content are the same.
+
+## Function Arguments
+
+```py
+# menu.py ver1.0
+def add_spam(menu = []):
+    menu.append("spam")
+    print(menu)
+```
+
+```py
+from menu import add_spam
+
+add_spam()
+# ["spam"]
+add_spam()
+# ["spam", "spam"]
+add_spam()
+# ["spam", "spam", "spam"]
+```
+
+`menu` was created once when `def` is executed, and persists in the scope.
+
+## Type System
+
+```py
+def add(a, b):
+    return a + b
+
+add([1, 3], [4, 5])
+# [1, 3, 4, 5]
+
+add("The answer is", 54)
+# TypeError: Can't convert "int" object to str implicitly
+
+```
+
+## Scope
+
+- Local: Inside the current function
+- Enclosing: Any and all enclosing functions
+- Global: Top-level of module
+- Built-in: All built-in modules in Python
+
+# Collections
