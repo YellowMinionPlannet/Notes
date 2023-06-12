@@ -233,3 +233,104 @@ while True:
 ```
 
 # 3 Strings and Collections
+
+```python
+"first""second"
+# firstsecond
+
+'a new string'
+# a new string
+
+"""a multi-line
+string"""
+# a multi-line\nstring
+
+m = "a multi-line\nstring"
+print(m)
+#a multi-line
+#string
+
+"This is a scaped string \""
+# This is a scaped string"
+
+k = "A \\ in a string"
+print(k)
+# A \ in a string
+
+path = r'C:\Users\Merlin\Documents\Spells'
+print(path)
+# C:\Users\Merlin\Documents\Spells
+
+s = 'parrot'
+s[4]
+# 'o'
+
+type(s[4])
+# <class 'str'>
+
+c = 'oslo'
+c.capitalize()
+# 'Oslo'
+```
+
+## Bytes
+
+```python
+a = "helpmeout"
+b = b"helpmeout"
+c = a.encode("ASCII")
+
+if(b == c):
+    print("SAME!")
+
+# SAME!
+```
+
+## Lists
+
+```python
+[1, 9, 8]
+a = ["apple", "orange", "banana"]
+a[1] = 7
+a
+# ["applie", 7, "banana"]
+
+b = []
+b.append(1.83)
+b.append(2.37)
+```
+
+## Dictionaries
+
+```python
+d = {"alice": "777-9999-999", "lei": "010-6951-877"}
+d["alice"] = "000-0000-000"
+
+e = {}
+```
+
+## For-Loops
+
+```python
+cities = ["London", "Beijing", "New York"]
+for city in cities:
+    print(city)
+
+colors = {"crimson": 0xdc143c, "coral": 0xff7f50, "teal": 0x008080}
+for color in colors:
+    print(color, colors[color])
+```
+
+```python
+from urllib.request import urlopen
+with urlopen("http://sixty-north.com/c/t.txt") as story:
+    story_words = []
+    for line in story:
+        line_words = line.decode("utf-8").split()
+        for word in line_words:
+            story_words.append(word)
+
+story_words
+```
+
+# Modularity
