@@ -562,9 +562,30 @@ add("The answer is", 54)
 
 ## Scope
 
-- Local: Inside the current function
-- Enclosing: Any and all enclosing functions
-- Global: Top-level of module
-- Built-in: All built-in modules in Python
+variable names are determined follow order of:
+
+1. Local: Inside the current function
+2. Enclosing: Any and all enclosing functions
+3. Global: Top-level of module
+4. Built-in: All built-in modules in Python
+
+```py
+count = 0
+
+def set_count(num):
+    count = num
+
+def print_count():
+    print("count = ", count)
+
+print_count()
+# count = 0
+
+set_count(4)
+print_count()
+# count = 0
+```
+
+`count` in set_count is local and will have higher priority than global `count`. So it never set value for global `count`.
 
 # Collections
