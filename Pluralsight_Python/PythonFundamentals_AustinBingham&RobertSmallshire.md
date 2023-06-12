@@ -322,6 +322,7 @@ for color in colors:
 ```
 
 ```python
+# word.py ver1.0
 from urllib.request import urlopen
 with urlopen("http://sixty-north.com/c/t.txt") as story:
     story_words = []
@@ -330,7 +331,164 @@ with urlopen("http://sixty-north.com/c/t.txt") as story:
         for word in line_words:
             story_words.append(word)
 
-story_words
+for word in story_words:
+    print(word)
 ```
 
 # Modularity
+
+We can save our snippet into `words.py` file and import it from another REPL
+
+```python
+import word
+```
+
+It would be very easy to reuse if we put our logic into a function
+
+```python
+def square(x):
+    return x * x
+
+square(5)
+# 25
+
+def even_or_odd(n):
+    if n % 2 == 0:
+        print("even")
+        return
+    print("odd")
+
+w = even_or_odd(31)
+w is None
+# True, since the function return nothing.
+```
+
+## Destinguishing between Module Import and Module Execution
+
+```python
+# word.py ver2.0
+from urllib.request import urlopen
+
+def fetch_words():
+    with urlopen("http://sixty-north.com/c/t.txt") as story:
+        story_words = []
+        for line in story:
+            line_words = line.decode("utf-8").split()
+            for word in line_words:
+                story_words.append(word)
+
+    for word in story_words:
+        print(word)
+```
+
+```python
+import words
+words.fetch_words()
+```
+
+```python
+# word.py ver3.0
+from urllib.request import urlopen
+
+def fetch_words():
+    with urlopen("http://sixty-north.com/c/t.txt") as story:
+        story_words = []
+        for line in story:
+            line_words = line.decode("utf-8").split()
+            for word in line_words:
+                story_words.append(word)
+
+    for word in story_words:
+        print(word)
+
+if __name__ == "__main__":
+    fetch_words()
+else
+    print(__name__)
+```
+
+The last if statment will do :
+
+- if the word.py is imported, word will be printed
+- if the word.py is executed, the fetch_words function will be called
+
+## Main Functions and Command Line Arguments
+
+```python
+# word.py ver4.0
+import sys
+from urllib.request import urlopen
+
+def fetch_words(url):
+    with urlopen("http://sixty-north.com/c/t.txt") as story:
+        story_words = []
+        for line in story:
+            line_words = line.decode("utf-8").split()
+            for word in line_words:
+                story_words.append(word)
+        return story_words
+
+def print_items(items):
+    for item in items:
+        print(item)
+
+def main(url):
+    print_items(fetch_words(url))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])
+else
+    print(__name__)
+```
+
+## Documenting Your Code Using Docstrings
+
+```py
+# word.py ver5.0
+
+"""
+Retrieve a dn print words from a URL.
+
+Usage:
+    python3 word.py <URL>
+"""
+import sys
+from urllib.request import urlopen
+
+def fetch_words(url):
+    """Fetch a list of words from the URL
+    Args:
+        url: The URL of a UTF-8 text document.
+    Returns:
+        A list of strings containing the words from the document.
+    """
+    with urlopen(url) as story:
+        story_words = []
+        for line in story:
+            line_words = line.decode("utf-8").split()
+            for word in line_words:
+                story_words.append(word)
+        return story_words
+
+def print_items(items):
+    """Print items one per line.
+    Args:
+        An iterable series of printable items
+    """
+    for item in items:
+        print(item)
+
+def main(url):
+    """Print each word from a text document from a URL.
+    Args:
+        url: The URL of a UTF-8 text document.
+    """
+    print_items(fetch_words(url))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])
+else:
+    print(__name__)
+```
