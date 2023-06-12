@@ -589,3 +589,114 @@ print_count()
 `count` in set_count is local and will have higher priority than global `count`. So it never set value for global `count`.
 
 # Collections
+
+## Tuple
+
+```py
+t = ("Norway", 123.0, 3)
+t[0]
+# Norway
+
+t * 3
+# ("Norway", 123.0, 3, "Norway", 123.0, 3, "Norway", 123.0, 3)
+
+len(t)
+# 3
+
+for item in t:
+    print(item)
+# Norway
+# 123.0
+# 3
+
+t + (381.4, 265e9)
+# ("Norway", 123.0, 3, 381.4, 265e9)
+
+a = ((23, 1), (23, 2), (23, 5))
+
+e = (123,)
+type(e)
+# <class 'tuple'>
+
+e1 = ()
+type(e1)
+# <class 'tuple'>
+
+p = 1, 1, 1, 4, 5, 19
+p
+# (1, 1, 1, 4, 5, 19)
+
+def minmax(items):
+    return min(items), max(items)
+
+lower, upper = minmax([83, 33, 82, 89])
+
+(a, (b, (c, d))) = (4, (3, (2, 1)))
+a
+# 4
+b
+# 3
+c
+# 2
+d
+# 1
+
+# Swap in python
+a = "jelly"
+b = "bean"
+a , b = b, a
+a
+# "bean"
+b
+# "jelly"
+
+# tuple constructor
+tuple([3, 4, 5, 6])
+# (3, 4, 5, 6)
+
+tuple("lei")
+# ("l", "e", "i")
+
+5 in (3, 4, 18 248, 29999)
+# True
+5 not in (123, 239, 49, 5)
+# False
+```
+
+## String
+
+```py
+"New" + "found" + "land"
+# "Newfoundland"
+
+# Efficient way of join
+s = ";".join(['#45ff23', "#2321fa"])
+s
+# #45ff23;#2321fa
+s.split(";")
+# ['#45ff23', "#2321fa"]
+
+# Efficient way of concatenate strings
+''.join([]"high", "way"])
+# "highway"
+
+"unforgetable".partition("forget")
+# ("un", "forget", "able")
+
+place, _, food = "Boston-Pizza".partition("-")
+place
+# Boston
+food
+# Pizza
+
+"The age of {0} is {1}".format("Jim", 12)
+
+"The position is {latitude} {longitude}".format(latitude="60N",longitude="5E")
+# 'The position is 60N 5E'
+
+pos = (52.2, 23,1, 82.2)
+"Galactic position x={pos[0]} y={pos[1]} z={pos[2]}".format(pos=pos)
+
+import math
+"Math constants: pi={m.pi:.3f} e={m.e:.3f}".format(m=math)
+```
