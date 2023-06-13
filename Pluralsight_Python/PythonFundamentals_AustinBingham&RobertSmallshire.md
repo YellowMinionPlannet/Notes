@@ -700,3 +700,257 @@ pos = (52.2, 23,1, 82.2)
 import math
 "Math constants: pi={m.pi:.3f} e={m.e:.3f}".format(m=math)
 ```
+
+## Range
+
+```py
+range(5)
+for item in range(5):
+    print(item)
+# 0
+# 1
+# 2
+# 3
+# 4
+
+for item in range(5,10):
+    print(item)
+# 5
+# 6
+# 7
+# 8
+# 9
+
+list(range(3, 10, 2))
+# [3, 5, 7, 9]
+
+t=[6, 372, 8862, 148800, 2096886]
+for p in enumerate(t):
+    print(p)
+# (0, 6)
+# (1, 372)
+# (2, 8862)
+# (3, 148800)
+# (4, 2096886)
+
+for i, v in enumerate(t):
+    print("i={}, v={}".format(i, v))
+# i=0, v=6
+# i=1, v=372
+# i=2, v=8862
+# i=3, v=148800
+# i=4, v=2096886
+
+```
+
+## List
+
+```py
+t = "show how to index into sequences"
+s = t.split()
+s[1:4]
+# ["how", "to", "index"]
+
+s[:3]
+#["show", "how", "to"]
+
+full_slice = s[:]
+full_slice is s
+# False
+full_slice == s
+# True
+
+u = s.copy()
+v = list(s) # These two methods also copy the lists, and all of these three methods are shallow copy.
+
+a = [[1, 2], [8, 9]]
+b = a[:]
+
+a[0] = [8, 9]
+b[0]
+# [1, 2]
+a[1].append(5)
+a[1]
+# [3, 4, 5]
+b[1]
+# [3, 4, 5]
+
+
+```
+
+## List Repetition
+
+```py
+s = [[-1, 1]] * 5
+s[3].append(7)
+s
+# [[-1, 1, 7],[-1, 1, 7],[-1, 1, 7],[-1, 1, 7],[-1, 1, 7]]
+```
+
+## More on list
+
+```py
+w = "the quick brown fox jumps owver the lazy dog".split()
+
+i = w.index("fox")
+
+w.index("unicorn")
+# Error
+
+w = "jackdaws love my big sphinx of quartz".split()
+del u[3]
+
+u.remove("jackdaws")
+
+u.remove("pyramid")
+# Error
+
+a = "Iaccidentally the whole universe".split()
+a.insert(2, "destroyed")
+
+```
+
+## Growing list
+
+```py
+m = [2, 1, 3]
+n = [3, 10, 11]
+k = m + n
+k.extend([5, 0])
+k += [19, 20]
+```
+
+## Reversing and Sorting Lists
+
+```py
+x = [4, 0, 2, 1]
+x.sort()
+x.reverse()
+x.sort(reverse=True)
+
+h = "Hi World"
+h.sort(key=len)
+
+y = sorted(x)
+q = reversed(x)
+list(q) # reversed return iterator instead of list
+```
+
+## Dictionary
+
+```py
+names_and_ages = [("Alice", 32), ("Bob", 48)]
+d = dict(names_and_ages)
+phonetic = dict(a="alfa", b="bravo")
+
+g = (c="Chao")
+
+phonetic.update(g) # Extend dictionary
+
+for key in phonetic:
+    print(phonetic[key])
+
+for value in phonetic.values():
+    print(value)
+
+for key in phonetic.keys():
+    print(key)
+
+for key, value in colors.items():
+    print("{key} => {value}".format(key=key, value=value))
+
+from pprint import pprint as pp
+pp(phonetic)
+```
+
+## Set
+
+```py
+s = {1, 2, 3}
+type(s)
+# <class 'set'>
+
+e = set()
+
+s = set([2, 3, 4, 2, 129]) # remove duplicate items
+s
+#{2, 3, 4, 129}
+
+s.add(54)
+
+s.update([23, 21])
+
+s.remove(23) # raise error if 23 not in the set
+s.discard(23) # does not raise error
+
+s1 = {1, 2, 3}
+s2 = {1, 3, 4}
+
+s1.union(s2)
+# {1, 2, 3, 4}
+s1.intersection(s2)
+# {1, 3}
+s1.difference(s2)
+# {2}
+s2.difference(s1)
+# {4}
+s1.symmetic_difference(s2)
+# {2, 4}
+s1.issubset(s2)
+s1.issuperset(s2)
+s1.isdisjoint(s2)
+```
+
+## Collection Protocal
+
+| Protocol         | methods                                                  | collections                               |
+| ---------------- | -------------------------------------------------------- | ----------------------------------------- |
+| Container        | in/not in                                                | str, list, range, tuple, bytes, set, dict |
+| Sized            | len()                                                    | str, list, range, tuple, bytes, set, dict |
+| Iterable         | for in                                                   | str, list, range, tuple, bytes, set, dict |
+| Sequence         | seq[index]/seq.index(item)/seq.count(item)/reversed(seq) | str, list, range, tuple, bytes            |
+| Mutable Sequence |                                                          | list                                      |
+| Mutable Set      |                                                          | set                                       |
+| Mutable Mapping  |                                                          | dict                                      |
+
+## Handling Exceptions
+
+```py
+# exeptional.py ver1.0
+def convert(s):
+    x = int(s)
+    return x
+
+```
+
+```py
+
+from exceptional import convert
+convert("33")
+convert("Hello World")
+# Error
+```
+
+```py
+# exceptional.py ver2.0
+def convert(s):
+    x = -1
+    try:
+        x = int(s)
+        print("Conversion succeeded")
+    except (ValueError, TypeError):
+        print("Conversion failed")
+    return x
+```
+
+```py
+# exceptional.py ver3.0
+def convert(s):
+    x = -1
+    try:
+        x = int(s)
+        print("Conversion succeeded")
+    except (ValueError, TypeError) as e:
+        print("Conversion error: {}".format(str(e)), file=sys.stderr)
+    return x
+```
