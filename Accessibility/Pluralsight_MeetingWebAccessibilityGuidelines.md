@@ -71,3 +71,7 @@ For each guideline and criteria, there are techniques which are advisory and suf
   </body>
 </html>
 ```
+
+# Narrator, Windows Voice Testing Tool
+
+`Window + ctrl + enter`
