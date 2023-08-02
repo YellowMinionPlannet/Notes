@@ -167,4 +167,36 @@ These are properties in page properties in edit mode need to be noted:
 - Closed User Group: user access control, determine if user need to provide credentials to access
 - Permissions: define author's permission to this page
 
+## Managing Digital Assets
+
+1. Assets console
+2. Create new folder
+3. Create Files
+
 # Site Management and Publishing
+
+## Organizing Site Structure
+1. Sites Console
+2. Drag to reordering pages
+3. Move also can change name
+
+## Versioning Pages
+1. Sites Console
+2. Select page
+3. Left Rail
+4. Timeline
+5. Save a version
+6. Edit page again
+7. Refresh
+8. Goes to timeline again
+9. Save a version
+10. select previous version and revert to this version.
+
+## Workflows
+
+1. Sites console
+2. Select page
+3. Edit mode
+4. Page Information
+5. Start workflow
+6. pick a workflow
