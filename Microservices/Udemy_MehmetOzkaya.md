@@ -85,3 +85,25 @@ db.Products.insertMany([
 #### Show all collections
 
 `show collections`
+
+# About Architecture
+
+## Simple Data-Driven
+
+Application Layer => Domain Model Layer => Infrastructure Layer
+
+|Name|Description|
+|-|-|
+|Application Layer|Entry pint, Exposes endpoints and enforces validation of data|
+|Domain Model Layer|Contains business rules and logic.|
+|Infrastructure Layer|Persistence of business state|
+
+## Repository Pattern
+
+API => Business Object => Repository => Database
+
+### Repository layer
+
+* An Abstraction layer between business layer and database context.
+* Easy to add unit test and Mocking data.
+
