@@ -26,6 +26,10 @@
 
 `docker ps`
 
+### Check if image is downloaded
+
+`docker images`
+
 ### Check MongoDB logs
 
 `docker logs -f shopping-mongo`

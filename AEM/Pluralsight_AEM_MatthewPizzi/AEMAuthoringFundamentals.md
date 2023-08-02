@@ -1,18 +1,131 @@
+# Introducing Touch UI
+
+## Touch UI Overview
+
+- Optimized for mobile and desktop, mouse/ touch interactive, responsive.
+- AEM supports mobile(Tablet) and desktop operation to edit and publish websites.
+
+### Interacting with Touch UI
+
+|Mobile|Desktop|
+|-|-|
+|Tap|Click|
+|Touch and Hold| Double Click|
+|Swipe|Hover|
+
+## Upper Header Bar
+
+![upper_header](./UpperHeader.png?raw=true)
+
+### Project Navigation
+
+Goes to Projects, Sites, Assets etc.
+
+Or goes to tools, like Workflow, Operations etc.
+
+### Solutions
+
+Marketing Cloud Solutions, Analytics, or other features.
+
+### Parent Hiearchy
+
+When browse within sites console, use this to navigate to different Hiearchy levels
+
+### View switcher
+
+Column View, Card View, List View etc.
+
+### Action Bar
+
+When select items in Sites console, by clicking the check icons in Card View, There will be a action bar at the position upper of Parent Hiearchy. Action bar only appear in Card View.
+
+### Create button
+
+Depends on which console you at.
+
+### Left Rail
+
+Depends on which console you at. In Sites console, Timline, References, Filter
+
+## Project console
+
+Create project/folder
+
+## Sites console
+
+- Create/view/manage website, Edit, publish.
+
+Create button feature depends on the hiearchy or content you select. 
+
+## Assets console
+
+- Import manage digital resource
+
+## Mobile console
+
+- Manage mobile applications
+
+## Forms console
+
+- Manage forms and assets, 
+
+## Screens console
+
+- Manage screen sizes, maybe the adaptive mode of layouting?
+
+## Page Toolbar and Content Frame
+
+In Sites Console, when editing page by clicking edit button at action bar, there are two main element, Page Toolbar and Content Frame.
+
+### Page Toolbar
+
+You can select Edit/Scaffolding(create form, template)/Developer(Test)/Design(Define components available)/Targeting(How to use analytics and recommandations)/LiveCopyStatus mode, and Preview mode(mock website as it is published)/Anotate(show comments and reviews)
+
+#### Side Panel button
+
+Select assets/ components
+
+#### Page information
+
+Properties, Workflow, Publish page
+
+### Content Frame
+
+Container Holders, which allow adding components. Or you can use side panel buttons directly.
+
+#### Component tool bar
+
+Hover on component, it will appear.
+
+
+
 # Basic Authoring Skills
 
 ## Elements of AEM Page Creation
 
 - Page is the basic unit of creating websites in AEM
-- Page can be created by a Template
-- Within a page you can use components to fill out the page, to check all the components, go to main page of Author Instance, Tool => General => Components.
+- Page can be created by a Template, Template defines default components
+- Within a page you can use components to fill out the page, to check all the components, go to main page of Author Instance, Tool => General => Components console.
 
 ## Key Fields for Page Creation
 
 1. Title, required, displayed to the author, and will be displayed at the top of the Content Frame when editing.
-2. Name, optional, will be used to create URL
+2. Name, optional, will be used to create URL, you need to fill this to control url created or will be created by title.
 3. Template
    - Editable template: Created and configured by template author
    - Static template: Created and configured by developers
+
+## Creating Pages
+
+1. Sites Console
+2. Create page
+3. Select template
+4. Fill out the key fields
+5. Create
+
+## Editing Pages
+
+
 
 ## Understanding Responsive Pages
 
