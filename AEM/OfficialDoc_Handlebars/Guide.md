@@ -185,3 +185,26 @@ Handlebars.registerHelper("with", function (context, options) {
     <div class="body">After the jump</div>
 </div>
 ```
+
+# Built-in Helpers
+## #if
+```hbs
+<div class="entry">
+{{#if author}}
+<h1>{{firstName}} {{lastName}}</h1>
+{{/if}}
+</div>
+```
+
+```json
+  "author": true,
+  "firstName": "Yehuda",
+  "lastName": "Katz",
+```
+
+```output
+<div class="entry">
+<h1>Yehuda Katz</h1>
+</div>
+```
+

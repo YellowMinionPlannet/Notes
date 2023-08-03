@@ -1,0 +1,4 @@
+context:
+    someData:
+        text: BOOM!
+        merge: MERGE!
