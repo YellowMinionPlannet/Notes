@@ -1,0 +1,21 @@
+context:
+    modifier: default
+    closeButtonText: close
+    message: This is the default banner
+    values:
+        - add
+        - update
+variants:
+    - name: warning
+      context:
+          modifier: alert
+          message: This is a warning banner
+          values:
+              - remove
+    - name: success
+      context:
+          modifier: success
+          message: This is a success banner
+          values:
+              - remove
+              - add

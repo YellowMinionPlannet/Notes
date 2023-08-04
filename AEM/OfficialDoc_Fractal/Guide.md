@@ -3,6 +3,7 @@
 We can use `{{}}` in the template to access anything under context.
 
 ```hbs
+<!-- example.hbs -->
 <p>{{text}}</p>
 ```
 
@@ -17,15 +18,21 @@ context:
 
 # View Template
 
-We can use handlebars in fractal.
-
+We can use handlebars in fractal. 
 ```hbs
 {{> '@example'}}
 ```
 
+```output
+
+```
+
+This way will not pull the referenced partial context data in, so the output is empty.
+
+
 ## Using render helper
 
-But in this way, we cannot pass data into the referenced partials.
+But in this way, we cannot pass data and pull the context data into the referenced partials.
 
 So, we can use `render` helper built in fractal.
 
@@ -222,3 +229,53 @@ context:
 
 # Naming & Referencing
 
+# Statuses
+
+# Components
+
+# Creating a Component
+
+# Preview Layouts
+
+# Variants
+
+## Three ways of creating variants
+
+### By configuration files
+
+```hbs
+<!-- button.hbs -->
+<input type="button" value="{{_self.name}}"/>
+```
+```yml
+# button.config.yml
+variants:
+    - name: success
+    - name: warning
+```
+
+There will be three components in the fractal to display.
+
+```output
+<input type="button" value="default"/>
+<input type="button" value="success"/>
+<input type="button" value="warning"/>
+```
+
+### By view templates
+
+Just create button.hbs and button--success.hbs and button--warning.hbs.
+
+### By mixed method
+
+Just mix both method.
+
+> Note: The variant will aggregate configuration in the default ones.
+
+# Including sub-components
+
+There are 3 ways of doing this.
+
+## using render helper
+## using handlebar partial
+## using handlebar partial and reference partial context data in configuration file
