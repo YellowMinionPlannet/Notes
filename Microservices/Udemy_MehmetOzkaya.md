@@ -90,9 +90,9 @@ db.Products.insertMany([
 
 `show collections`
 
-# About Architecture
+## About Architecture
 
-## Simple Data-Driven
+### Simple Data-Driven
 
 Application Layer => Domain Model Layer => Infrastructure Layer
 
@@ -102,12 +102,31 @@ Application Layer => Domain Model Layer => Infrastructure Layer
 |Domain Model Layer|Contains business rules and logic.|
 |Infrastructure Layer|Persistence of business state|
 
-## Repository Pattern
+### Repository Pattern
 
 API => Business Object => Repository => Database
 
-### Repository layer
+#### Repository layer
 
 * An Abstraction layer between business layer and database context.
 * Easy to add unit test and Mocking data.
+
+## Docker core concept
+
+`Dockerfile` is used to build docker image into container. It will be runed with `docker build` command. see docker notes.
+
+`docker-compose.yml` is used build multiple images into container. It will be runed with `docker compose` command. see docker notes.
+
+### Docker file commands concepts
+
+* `FROM` will tell docker to build image from a existing image, usually we need to specify referenced library in this command. For example, when we build .net program, we need dotnet sdk image.
+
+* `WORKDIR` will define the directory in `COPY`, `RUN`, `CMD`, `ENTRYPOINT`, `ADD` commands. For `COPY`, it will configure the destination directory. 
+
+* `COPY` will copy files from one spot (source directory) to another spot (destination directory). The source directory is defined within context parameter when processing build.
+
+### Volumes and Bind mounts
+
+Pluralsight Course: Developing Docker Apps: Core Principles.
+
 
