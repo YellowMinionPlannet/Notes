@@ -1,0 +1,46 @@
+.checkmark {
+  width: 50em;
+  height: 50em;
+  box-sizing: border-box;
+  margin-top: 10em;
+}
+
+.wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2px;
+}
+
+.checkmark_span{  
+  width: 10em;
+  height: 20em;
+  transform: rotate(-45deg);
+  border-left: 1em solid black;
+  border-right: 1em solid black;
+  border-top: 1em solid black;
+}
+
+.checkmark_span::after{
+  content: "";
+  position: absolute;
+  left: 20em;
+  top: 10em;
+  width: 9em;
+  height: 30em;
+  transform: rotate(90deg);
+  border-left: 1em solid black;
+  border-right: 1em solid black;
+  border-top: 1em solid black;
+}
+
+.checkmark_square{
+
+  width: 10em;
+  height: 10em;
+  position: absolute;
+  left: -1em;
+  top: 20em;
+  border-bottom: 1em solid black;
+  border-left: 1em solid black;
+}

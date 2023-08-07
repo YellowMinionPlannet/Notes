@@ -36,3 +36,44 @@ Package like felix webconsole(host a webpage for felix) and other features.
 ## Summary to Karaf framework
 
 Users can also bundle package by Karaf which has dependency awareness. It uses `localhost:8181`.
+
+# Create client library (reference js/css)
+
+1. Create a node named `zurbfoundation` under `/app`, choose cq:ClientLibraryFolder for Type.
+
+2. Create folders named `source` and `style` under `/zurbfoundation` folder. Copy `foundation.css` into style folder, and `foundation.js` into source folder.
+
+3. Create `js.txt` and `css.txt` at the `/zurbfoundation` folder. Within css.txt,
+
+```
+#base=style
+foundation.css
+```
+
+4. At zurbfoundation folder/node, we need to add properties named `categories` and values added as `zurb.foundation`.
+
+5. within `/components/mainPageComponent.html`
+
+```html
+<!DOCTYPE html>
+<html data-sly-use.clientlib="/lib/granite/sightly/templates/clientlib.html">
+  <head>
+    <title>This is a Test Title</title>
+    <sly data-sly-call="${clientlib.css @ categories='zurb.foundation'}" />
+    <sly data-sly-call="${clientlib.js @ categories='zurb.foundation'}" />
+  </head>
+  <body>
+    <h1>This is the Test Page</h1>
+  </body>
+</html>
+```
+
+## To add client library dependency
+
+If that library dependency is within `/etc` folder.
+
+1. at `/app/components/zurbfoundation` node/folder, add properties named `dependencies` and values `cq.jquery`(cq.jquery is the library folder categories property).
+
+now we can see the html included jquery library.
+
+# Createing a simple component from scratch
