@@ -7,11 +7,11 @@
 
 ### Interacting with Touch UI
 
-|Mobile|Desktop|
-|-|-|
-|Tap|Click|
-|Touch and Hold| Double Click|
-|Swipe|Hover|
+| Mobile         | Desktop      |
+| -------------- | ------------ |
+| Tap            | Click        |
+| Touch and Hold | Double Click |
+| Swipe          | Hover        |
 
 ## Upper Header Bar
 
@@ -55,7 +55,7 @@ Create project/folder
 
 - Create/view/manage website, Edit, publish.
 
-Create button feature depends on the hiearchy or content you select. 
+Create button feature depends on the hiearchy or content you select.
 
 ## Assets console
 
@@ -67,7 +67,7 @@ Create button feature depends on the hiearchy or content you select.
 
 ## Forms console
 
-- Manage forms and assets, 
+- Manage forms and assets,
 
 ## Screens console
 
@@ -96,8 +96,6 @@ Container Holders, which allow adding components. Or you can use side panel butt
 #### Component tool bar
 
 Hover on component, it will appear.
-
-
 
 # Basic Authoring Skills
 
@@ -176,11 +174,13 @@ These are properties in page properties in edit mode need to be noted:
 # Site Management and Publishing
 
 ## Organizing Site Structure
+
 1. Sites Console
 2. Drag to reordering pages
 3. Move also can change name
 
 ## Versioning Pages
+
 1. Sites Console
 2. Select page
 3. Left Rail
@@ -200,3 +200,75 @@ These are properties in page properties in edit mode need to be noted:
 4. Page Information
 5. Start workflow
 6. pick a workflow
+
+# Creating and Managing Templates
+
+## Template Types
+
+| Editable                                                 | Static                                       |
+| -------------------------------------------------------- | -------------------------------------------- |
+| created and maintained by authors                        | Defined and maintained by developers         |
+| Define structure content and design                      | Same structure as the page                   |
+| Maintain a connection between the template and the pages | No connection with page once page is created |
+
+## Modes of the Template Editor
+
+- Structure: building structure, lock / unlock component, if locked content cannot be edited by site author
+
+- Initial Content: define initial content
+
+- Layouting: to adjust layout corresponding differnt devices
+
+## Content Policies
+
+Define which components are allowed for the container. This is within the template editor. Design mode can also choose allowed components but it's triggered from page editor.
+
+## Using template editor
+
+- Left rail can open left panel and can have component and assets preloaded.
+
+- To make component unlocked, click the component and click unlock on the tool bar.
+
+- To define content policy, click policy on tool bar.
+
+- To create a new policy,
+
+  1.  click the Add button when you at policy dialog.
+  2.  create
+  3.  click the component again
+  4.  click brush on the tool bar
+  5.  manage allowed components in the dialog
+
+- To enable the template, in the template console, use card view, select the draft template and click enable.
+
+## Editing the template
+
+If you try to edit the enabled editable template, the change will be effective to any page that is related to that template.
+
+## Adding Initial Content
+
+## Layout Mode
+
+# Advanced Authoring Skills
+
+## Design Mode
+
+Allow page author to choose allowed components within container, and the change of policy will affect all pages that reference that template.
+
+## Content Fragments
+
+it's like content template, if you update the content fragment, all page reference this will be updated too.
+
+Content fragment contains contents and versions of contents which called variations. You can choose different variation when you editing page.
+
+## Workflows
+
+## Launches
+
+Site console, card view, left top create launch.
+
+After launch created, select the referenced site, and click left rail, references, lauches. Go to page. So that you can edit the page, then select the page again, lauches, promote launch.
+
+## Projects
+
+## Taxonomy
