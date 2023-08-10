@@ -110,3 +110,214 @@ node name begins with lower case letter.
 6. Browse localhost:4502/content/hello-world
 
 ## Understanding the Sling Resolution Process
+
+Resource has 3 common properties, Path, Name, ResourceType. (resource means node in content)
+
+So when request comming in, the content item/node will map the request into the rendering script / servlet. This is determined by
+
+1. the properties on content node
+2. HTTP Method
+3. naming convention in the URL
+
+### Steps to Resolve URL request
+
+1. Decompose the URL
+2. Search for servlet or vanity URL redirect
+3. Search for a node indicated by the URL
+4. Resolve the resource
+5. Resolve the rendering script/servlet
+6. Create rendering chain
+7. Invoke rendering chain
+
+For example:
+http://myhost/tools/spy.printable.a4.html/a/b?x=12
+
+- `/tools/spy` is the content path, locate content node in JCR
+- `printable.a4` is the selector,
+- `html` is the extension, extension decide content format, and specifies which script to be used
+- `a/b` is the suffix, additional information
+- `x=12` is the param, dynamic content
+
+Another example:
+http://myhost/tools/spy.html
+
+1. Check for redirection rule or servlet
+2. Search for tools/spy node
+3. Find node's sling:resourceType, locate the script
+4. nothing found, raise 404
+
+Another example:
+http://localhost:4502/content/hello-world.html
+
+1. There are no redirection / servlet for this url
+2. goes to the content/hello-world node
+3. find the node's sling:resourceType, locate libs/training/components/structure/contentpage, THEN, /apps/training/components/structure/contentpage
+4. .html leads to contentpage.html
+
+Priority of locating rendering scripts
+/content/hello-world.blue.html and we have three scripts in contentpage node in /apps/training/components/structure/contentpage node:
+
+1. GET.html
+2. contentpage.html
+3. contentpage.blue.html
+
+The priority order will be:
+
+1. contentpage.blue.html
+2. contentpage.html
+3. GET.html
+
+> Each node in content is exposed as a HTTP Resource.
+
+![slingResolution](slingResolution.jpg?raw=true)
+
+## Sling Resolution Demo
+
+# Templates
+
+When page is created, which must be done based on selecting one of the template, the sling:resourceType is also copied from template to the page. The initial content in template is stored in jcr:content node tree.
+
+### Common properties and Attributes of a template
+
+- Label, name of the template
+- sling:resourceType
+- jcr:title
+- jcr:description
+- ranking
+- allowedPaths
+- allowedParents
+- allowedChildren
+- thumnail.png
+
+### Demo
+
+1. /apps/training/template create template, with resourceType: training/components/structure/contentpage
+2. allowedPaths: /content(/.\*)?
+
+   > NOTE, this template node has jcr:primaryType valued cq:Template
+
+3. Create a page in AEM Site console, choose our newly created template as base
+   > NOTE, this create a node in /content folder, this node has jcr:content node which has jcr:primaryType valued cq:PageContent and has cq:template valued /apps/training/templates/contentpage, and sling:resourceType valued training/components/structure/contentpage
+
+## Restrict Template Use
+
+## Content Structure
+
+## Site Structure
+
+# Introduction to HTL
+
+## HTL Syntax
+
+- Block statments: `data-sly-\*`
+  - sly tag: `<sly data-sly-test.varone="${properties.yourProp}" />`, this will not show in the result(Html format), but the data will be included
+  - Use: `<div data-sly-use.nav="navigation.js">${nav.foo}</div>`
+  - Unwrap: `<div data-sly-unwrap><p>rendering<p></div>`
+  - List: `<dl data-sly-list="${currentPage.listChildren}"`>
+- Expressions: `${}`
+- Comment: `<!--/* An HTL Comment */-->`
+- Options: `${'example.com/path/page.html' @ scheme='http'}`
+
+## Rendering Basic Page Content
+
+| Enumerable              | Java Backed        |
+| ----------------------- | ------------------ |
+| properties              | component          |
+| pageProperties          | curentDesign       |
+| inheritedPageProperties | currentPage        |
+|                         | currentSession     |
+|                         | request - response |
+|                         | resource           |
+|                         | wcmmode            |
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <h1>Hello World!!</h1>
+    <h3>Sling PropertiesObject</h3>
+    <p>Page Title : ${properties.jcr:title}</p>
+
+    <h3>Page Details</h3>
+    <p>currentPage Title: ${currentPage.Title}</p>
+    <p>currentPage Name: ${currentPage.Name}</p>
+    <p>currentPage Path: ${currentPage.Path}</p>
+    <p>currentPage Depth: ${currentPage.Depth}</p>
+
+    <h3>Node Details</h3>
+    <p>currentNode Name: ${currentNode.Name}</p>
+    <p>currentNode Path: ${currentNode.Path}</p>
+    <p>currentNode Depth: ${currentNode.Depth}</p>
+  </body>
+</html>
+```
+
+properties will retrieve properties in jcr:content node of corresponding content node that url resolved to.
+
+To get to know details about HTL global object, browse [Global Object](https://experienceleague.adobe.com/docs/experience-manager-htl/content/global-objects.html?lang=en)
+
+If it's Java backed object, goes to Java API Documentation and find that object.
+[Java API Doc]()
+
+## Modularize Page Components
+
+Create header.html, footer.html, body.html, the goal is combine these files into contentpage.html.
+
+> NOTE, newly created 3 files has jcr:primaryType valued nt:file. contentpage.html has jcr:primaryType: valued cq:Page.
+
+# Inheritance
+
+Inherited component will inherit rendering scripts, dialog boxes and other element from base component. Local rendering scripts, dialog boxes and other element will have previliage than inherited ones.
+
+There 3 types of hierarchies in AEM.
+
+1. Resource type hierarchy, through sling:resourceSuperType property
+2. Container hierarchy,
+3. Include hierarchy
+
+## Inheriting the foundation page component
+
+steps of investigating resource type hierarchy
+
+1. find sling:resourceSuperType
+2. follow super type path
+3. take a look at base component
+
+First find path in /apps, then /libs.
+
+## Finding initial Rendering Scripts
+
+The closest parent's scripts, dialogs, other elements has priority when resolve the inheritence.
+
+# Developing Structure Components
+
+### Terminology to clarify
+
+In AEM the global content, like css/js files are called design(ner)s.
+
+### Demo of design
+
+Create structure component, which cannot be removed by author, using data-sly-resource.
+
+```html
+<div
+  data-sly-resource="${'site-topnav' @ resourceType='training/components/structure/site-topnav'}"
+></div>
+```
+
+To call java file /javascript file, we need to use data-sly-use.variable
+
+```html
+<div data-sly-use.topnav="topnav.js">${topnav.root.path}</div>
+```
+
+## Logging in AEM
+
+Tools > Web console > Sling > Log support > Add Logger with Log File valued logs/training.log, and Logger valued apps.training.
+
+Now we can goes to docker, author image -> opt -> aem -> crx-quickstart -> logs -> training.log and check the log file.
+
+## Component Dialog Boxes
