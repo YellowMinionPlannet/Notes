@@ -321,3 +321,60 @@ Tools > Web console > Sling > Log support > Add Logger with Log File valued logs
 Now we can goes to docker, author image -> opt -> aem -> crx-quickstart -> logs -> training.log and check the log file.
 
 ## Component Dialog Boxes
+
+Every components within dialog should have sling:resourceType valued
+(libs/)granite/ui/components/foundation/XXXX and jcr:primaryType valued nt:unstructured.
+
+Every cq:dialog node should have jcr:priamryType valued nt:unstructured, and sling:resourceType valued /cq/gui/components/authoring/dialog.
+
+Every Components that works as a field in a form, should have a fieldLabel property on the node, which is the label of the field. And fieldDescription act as tool tip. And name property on the node is the most important, it will map to the property name that store this field information.
+
+For example:
+
+We first need to use data-sly-resource=${'title' @ resourceType = 'training/components/structure/title'} to include our title component.
+
+Under the component node, copy cq:dialog node from /libs/wcm/foundation/components/title/cq:dialog node to our component.
+
+On the cq:dialog's title node, name property valued with `./jcr:title` means, it will store jcr:title property on the content/pluralsight-trainng/en/products/jcr:content/title node. This jcr:title can also be visited in rendering script like HTL.
+
+```html
+<!-- body.html -->
+<div
+  class="we-Header"
+  data-sly-resource="${'title' @ resourceType='training/components/structure/title'}"
+></div>
+```
+
+```html
+<!-- training/components/structure/title.html -->
+<h1 data-sly-use.title="title.js">${title.text}</h1>
+```
+
+```js
+// training/components/structure/title.js
+"use strict";
+
+use(function () {
+  var CONST = {
+    PROP_TITLE: "jcr:title",
+    PROP_TAG_TYPE: "type",
+  };
+
+  var title = {};
+
+  // The actual title content retrieved from the property title
+  // or, the pageProperties title, or, the currentPage.name
+  title.text =
+    properties.get(CONST.PROP_TITLE) ||
+    pageProperties.get(CONST.PROP_TITLE) ||
+    currentPage.name;
+
+  return title;
+});
+```
+
+cq:editConfig node is for editing components on the page instead of the dialog box.
+
+## Design Dialog Boxes
+
+It is used in Design mode, and once the property is set, it will affect all design related pages. For example, at root page, properties, advanced, design property set to etc/designs/training/
