@@ -235,3 +235,311 @@ required="{Boolean}true" step="{Long}10"
 Using cq:template is powerful when you need some properties already populated when the component is first initialized. (You need some logic that check some property when the component is rendered to the page which means you drag the component to the page).
 
 ## Demo
+
+First we create a component named "prepopulate-me",
+
+```xml
+<!-- ui.apps\src\main\content\jcr_root\apps\aem-advanced-dialog\components\contents\prepopulate-me\_cq_dialog\.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Prepopulate Component"
+    sling:resourceType="cq/gui/components/authoring/dialog">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+        <items jcr:primaryType="nt:unstructured">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <items jcr:primaryType="nt:unstructured">
+                            <select jcr:primaryType="nt:unstructured"
+                                sling:resourceType="/libs/granite/ui/components/coral/foundation/form/select"
+                                name="./position"
+                                fieldLabel="Enter Text Here">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <selectone jcr:primaryType="nt:unstructured"
+                                            value="horizontal"
+                                            text="Horizontal"/>
+                                    <selecttwo jcr:primaryType="nt:unstructured"
+                                               value="vertical"
+                                               text="Vertical"/>
+                                </items>
+                            </select>
+                    </items>
+            </container>
+        </items>
+    </content>
+</jcr:root>
+
+```
+
+```xml
+<!-- ui.apps\src\main\content\jcr_root\apps\aem-advanced-dialog\components\contents\prepopulate-me\.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Component"
+    jcr:title="Tabbed Dialog"
+    componentGroup="aem-advanced-dialogs"/>
+```
+
+```html
+<!-- ui.apps\src\main\content\jcr_root\apps\aem-advanced-dialog\components\contents\prepopulate-me\prepopulate-me.html -->
+<style>
+  .style-me ul li {
+    position: absolute;
+  }
+
+  .style-me.horizontal ul li {
+    position: relative;
+    display: inline-block;
+    padding: 0px 20px;
+    border-right: 1px solid #bebebe;
+  }
+
+  .style-me.horizontal ul {
+    float: none;
+    text-align: center;
+    list-style: none;
+    position: relative;
+  }
+
+  .style-me.horizontal p {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .style-me.vertical ul {
+    float: left;
+    position: relative;
+    width: 100px;
+    padding: 0;
+  }
+
+  .style-me.vertical p {
+    float: left;
+    width: 300px;
+    padding: 20px;
+  }
+
+  .style-me.vertical ul li {
+    position: relative;
+    border-bottom: 1px solid #e9e9e9;
+    padding: 5px;
+  }
+  .style-me.vertical ul {
+  }
+
+  li.no-border {
+    border: none !important;
+  }
+</style>
+
+<div class="style-me ${properties.position}">
+  <ul>
+    <li>Java</li>
+    <li>C++</li>
+    <li>JavaScript</li>
+    <li>HTML</li>
+    <li class="no-border">CSS</li>
+  </ul>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+    non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </p>
+</div>
+```
+
+So before we do anything, the rendering script has a logic that check the properties.position, which is property can be selected within the dialog. But it will not have value before we open dialog and set it. Here comes cq:template.
+
+1. Create a \_cq_template folder and create .content.xml file.
+2.
+
+```xml
+<!-- ui.apps\src\main\content\jcr_root\apps\aem-advanced-dialog\components\contents\prepopulate-me\_cq_template\.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    position="vertical">
+    <tyler jcr:primaryType="nt:unstructured"
+        name="Tyler"/>
+</jcr:root>
+```
+
+Then we can see :
+
+1. vertical is prepopulate to position property when we create prepopulate-me component.
+2. There is a extra tyler node under the newly created prepopulate-me component and with name property valued Tyler.
+
+# Dialog Input Validation and Custom JavaScript
+
+## Adding Javascript via cq.authoring.dialog
+
+Using cq.authoring.dialog will be adding javascript to all the dialog in AEM, including those predefined dialog in AEM.
+
+## Demo
+
+Create a folder in /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/clientlibs/ named cq-authoring-dialog-clientlib. It has properties jcr:primaryType valued cq:ClientLibraryFolder, allowProxy="{Boolean}true", categories="[cq.authoring.dialog]".
+
+```xml
+<!-- /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/clientlibs/cq-authoring-dialog-clientlib/.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    allowProxy="{Boolean}true"
+    categories="[cq.authoring.dialog]"
+    />
+```
+
+```txt
+<!-- /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/clientlibs/cq-authoring-dialog-clientlib/js.txt -->
+#base=js
+js.js
+```
+
+```js
+// /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/clientlibs/cq-authoring-dialog-clientlib/js/js.js
+console.log("I was added through the cq.authoring.dialog global clientlibrary");
+
+$(document).on("foundation-contentloaded", function (e) {
+  var container = e.target;
+
+  console.log(
+    "foundation-contentloaded was fired from the global cq.authoring.dialog method."
+  );
+  console.log(container);
+});
+```
+
+## By IncludeClientlibs u can add js to specific dialog
+
+1. Create folder named include-clientlibs-clientlib,
+2. the difference is the .content.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    allowProxy="{Boolean}true"
+    categories="[pluralsight.includeme]"
+    />
+```
+
+3. /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/components/content/prepopulate-me/\_cq_dialog/.content.xml
+
+```xml
+<!-- /ui.apps/src/main/content/jcr_root/apps/aem-advanced-dialogs/components/content/prepopulate-me/\_cq_dialog/.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Prepopulate Component"
+    sling:resourceType="cq/gui/components/authoring/dialog">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+        <items jcr:primaryType="nt:unstructured">
+            <include-me jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                js="pluralsight.includeme"/>
+                <!-- here is the including logic of js only, we can use css="pluralsight.includeme" or categories="pluralsight.includeme" to include css only or include js and css-->
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <items jcr:primaryType="nt:unstructured">
+                            <select jcr:primaryType="nt:unstructured"
+                                sling:resourceType="/libs/granite/ui/components/coral/foundation/form/select"
+                                name="./position"
+                                fieldLabel="Enter Text Here">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <selectone jcr:primaryType="nt:unstructured"
+                                            value="horizontal"
+                                            text="Horizontal"/>
+                                    <selecttwo jcr:primaryType="nt:unstructured"
+                                               value="vertical"
+                                               text="Vertical"/>
+                                </items>
+                            </select>
+                    </items>
+            </container>
+        </items>
+    </content>
+</jcr:root>
+```
+
+## To add customized js to validate inputs
+
+Create a node in .../app/aem-advanced-dialog/components/content/input-validation,
+create a \_cq_dialog node under it,
+
+```xml
+<!-- .../app/aem-advanced-dialog/components/content/input-validation/_cq_dialog/.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Input Validation"
+    sling:resourceType="cq/gui/components/authoring/dialog">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+        <items jcr:primaryType="nt:unstructured">
+            <container
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                    <items jcr:primaryType="nt:unstructured">
+                        <textfield jcr:primaryType="nt:unstructured"
+                            sling:resourceType="/libs/granite/ui/components/coral/foundation/form/textfield"
+                            name="./input"
+                            fieldLabel="Enter Text Here">
+                            <granite:data must-contain="pluralsight"/>
+                            <!-- data-must-contain attribute value -->
+                        </textfield>
+                    </items>
+            </container>
+        </items>
+    </content>
+</jcr:root>
+
+```
+
+```xml
+<!-- .../app/aem-advanced-dialog/components/content/input-validation/valid-js/.content.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:ClientLibraryFolder"
+    allowProxy="{Boolean}true"
+    categories="[cq.authoring.dialog]"
+    />
+
+```
+
+```js
+$(window)
+  .adaptTo("foundation-registry")
+  .register("foundation.validation.validator", {
+    selector: "[data-must-contain]",
+    validate: function (el) {
+      var mustContain = el.getAttribute("data-must-contain");
+
+      console.log("validating text contains pluralsight");
+      console.log("input must contain " + mustContain);
+
+      var input = el.value;
+
+      if (input.indexOf(mustContain) === -1) {
+        return (
+          "The field must contain " +
+          mustContain +
+          ". It current value is " +
+          el.value +
+          "."
+        );
+      }
+    },
+  });
+```
+
+# Toggleable Dialog Form Fields
