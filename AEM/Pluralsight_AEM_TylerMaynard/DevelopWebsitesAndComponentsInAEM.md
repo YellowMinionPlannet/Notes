@@ -378,3 +378,21 @@ cq:editConfig node is for editing components on the page instead of the dialog b
 ## Design Dialog Boxes
 
 It is used in Design mode, and once the property is set, it will affect all design related pages. For example, at root page, properties, advanced, design property set to etc/designs/training/
+
+# Advanced Course Content
+
+# Introduction and the Responsive Grid
+
+Paragraph System component break the page into parts, author can drag other components into the paragraph system component and edit the paragraph system component as a whole.
+
+There are 3 types of paragraph system component:
+
+1. parsys
+2. iparsys
+3. responsive grid (layout container)
+
+# Advanced Sling Functionality
+
+There is overlay and resource merger to customize or extend original functionality in AEM.
+
+# Component Part 1
