@@ -1,3 +1,11 @@
+# Template Authoring
+
+left rail right button, edit template(page template).
+
+Pages (Multiple) => (1) Template (1) => (Multiple) components (1) => (1) component policy.
+
+1 template can inherit to multiple pages. 1 template can have multiple allowed component, each of which has one policy. So two different template can have same type of allowed compoent but with different component policies.
+
 # Global Object
 
 The traditional flow of MVC in AEM
@@ -150,7 +158,7 @@ Now we need to use the array in HTL
 <sly
   data-sly-use.model="com.adobe.aem.guides.wknd.core.models.ArticleListModel"
 >
-  ${modle.articleRootPath}
+  ${model.articleRootPath}
   <sly data-sly-list.array="${model.array}">
     <div>
       <h2>${array.path}</h2>
@@ -162,3 +170,116 @@ Now we need to use the array in HTL
 ```
 
 # Add CSS to AEM component
+
+```html
+<sly
+  data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+  data-sly-call="${clientlib.all @ categories='wknd.articlelist'}"
+/>
+<div class="cmp-articlelist">
+  <h1 class="cmp-articlelist__heading">This is the Article List component</h1>
+  <div
+    class="cmp-articlelist__cards-container"
+    data-sly-use.model="com.adobe.aem.guides.wknd.core.models.ArticleListModel"
+  >
+    ${model.articleRootPath}
+    <sly data-sly-list.array="${model.array}">
+      <div class="cmp-articlelist__card">
+        <div class="cmp-articlelist__card-title">${array.title}</div>
+        <div class="cmp-articlelist__card-description">
+          ${array.description}
+        </div>
+        <div class="cmp-articlelist__card-btn-container">
+          <a class="cmp-articlelist__card-btn" href="${array.path}"
+            >Explore more...</a
+          >
+        </div>
+      </div>
+    </sly>
+  </div>
+</div>
+<style>
+  .cmp-articlelist__cards-container {
+    display: flex;
+  }
+  .cmp-articlelist__card {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 350px;
+    height: 330px;
+  }
+  .cmp-articlelist__card-btn {
+    padding: 15px 40px;
+    background-color: #5e7263;
+    color: #fff;
+    text-align: center;
+  }
+</style>
+```
+
+Create clinetlibs node as jcr:primaryType: cq:ClinetLibraryFolder, under articlelist component node. css folder, js folderand, .content.xml, css.txt, js.txt under clientlibs.
+
+```txt
+<!-- css.txt -->
+#base=css
+articlelist.css
+```
+
+```css
+.cmp-articlelist__cards-container {
+  display: flex;
+}
+.cmp-articlelist__card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 350px;
+  height: 330px;
+}
+.cmp-articlelist__card-btn {
+  padding: 15px 40px;
+  background-color: #5e7263;
+  color: #fff;
+  text-align: center;
+}
+```
+
+# Add CSS Variations to AEM Component
+
+cq:design_dialog must be valid, and we can select our componnet's policy at Edit Template (button at left rail).
+
+```scss
+.cmp-articlelist--grey-background {
+  .cmp-articlelist__card {
+    background-color: grey;
+  }
+}
+
+.cmp-articlelist--white-background {
+  .cmp-articlelist__card {
+    background-color: white;
+  }
+}
+
+.cmp-articlelist__cards-container {
+  display: flex;
+}
+.cmp-articlelist__card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 350px;
+  height: 330px;
+}
+.cmp-articlelist__card-btn {
+  padding: 15px 40px;
+  background-color: #5e7263;
+  color: #fff;
+  text-align: center;
+}
+```
+
+We create style within a group, may be called background-color/theme/whatever, and style name as name that displays to the author at bruch button, and class name is the cmp-articlelist--grey-background/cmp-articlelist--white-background.
+
+That brush selected will inject the class to the root of the component div tag.
