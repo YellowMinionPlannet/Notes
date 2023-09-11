@@ -34,3 +34,36 @@ So, only if there are both jcr:title and jcr:description properties, the h1 and 
 ```
 
 ### Special Contexts
+
+# data-sly-template
+
+If template is at the same page of data-sly-call
+
+```
+<template data-sly-template.one>blah</template>
+<div data-sly-call="${one}"></div>
+
+```
+
+If different page.
+
+```
+<div data-sly-use.lib="templateLib.html" data-sly-call="${lib.one}"></div>
+<div data-sly-call="${lib.two @ title=properties.jcr:title, resource=resource.parent}"></div>
+```
+
+```
+//templateLib.html
+<template data-sly-template.two="${@ title, resource}">
+    <div> Title = ${title} </div>
+    <div> Resource = ${resource.name} </div>
+</template>
+
+<template data-sly-template.one>
+	<h1>This is Template II !!!!</h1>
+</template>
+
+<template data-sly-template.haha>
+<h1>Within Template !!!! ${properties.haha}</h1>
+</template>
+```
