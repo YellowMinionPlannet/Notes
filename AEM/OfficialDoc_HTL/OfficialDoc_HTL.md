@@ -29,6 +29,8 @@ So, only if there are both jcr:title and jcr:description properties, the h1 and 
 
 ### HTL Comments
 
+```
 <!--/* An HTL Comment */-->
+```
 
 ### Special Contexts
