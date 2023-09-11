@@ -1,9 +1,31 @@
-<p>{{ text }}</p>
-
-{{#if merge}}
-<p>{{ merge}}</p>
-{{/if}}
+<p>{{text}}</p>
 
 {{#if original}}
-<p>{{ original}}</p>
+  <p>{{original.lie}}</p>
 {{/if}}
+
+{{json.myJson}}
+
+{{uid}}
+{{getVar "json-myJson"}}
+{{setVar "json-myJson" "{'text': 'lier'}"}}
+
+{{!-- {{#if original}}
+  <p>{{original}}</p>
+{{/if}}
+
+{{#if glyph}}
+  <h1>{{glyph.position}}</h1>
+{{/if}}
+
+{{#if glyph}}
+  <div>WOOW!{{glyph}}</div>
+{{/if}}
+
+{{#if position}}
+  <div>{{position}}</div>
+{{/if}}
+
+{{#if haha}}
+  <h1>{{haha}}</h1>
+{{/if}} --}}

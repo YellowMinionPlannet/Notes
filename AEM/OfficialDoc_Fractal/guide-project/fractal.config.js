@@ -9,7 +9,11 @@ const path = require("path");
  * Require the Fractal module
  */
 const fractal = (module.exports = require("@frctl/fractal").create());
+const helpers = require("./helpers")(fractal);
+const hbs = require("@frctl/handlebars")({ helpers });
 
+fractal.components.engine(hbs);
+fractal.docs.engine(hbs);
 /*
  * Give your project a title.
  */

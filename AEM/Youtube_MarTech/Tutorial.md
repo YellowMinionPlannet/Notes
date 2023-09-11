@@ -283,3 +283,31 @@ cq:design_dialog must be valid, and we can select our componnet's policy at Edit
 We create style within a group, may be called background-color/theme/whatever, and style name as name that displays to the author at bruch button, and class name is the cmp-articlelist--grey-background/cmp-articlelist--white-background.
 
 That brush selected will inject the class to the root of the component div tag.
+
+# Introduction to AEM Sling Servlet
+
+In traditional web application/application server. There will be a Framework at the very outside the app, which is responsible to identify which servlet container need to be invoked. and servlet container is responsible to identify which servlet, to create, init, execute, and destroy.
+
+In AEM, the creation of servlet is done by OSGI framework which is the ultra outside of the app, these servlet is passed to sling and servlet container. Sling can locate which servlet by the request path, and servlet container will execute, and destroy the servlet.
+
+So the servlet code is like:
+
+```java
+@Component(service = {Servlet.class}) // indicate this is a OSGI component
+@SlingServletResourceTypes(
+  //The first 3 things help Sling to identify this servlet
+  resourceTypes="sling/servlet/default",
+  selectors = "myServlet",
+  extensions = "json",
+  methods = HttpConstants.METHOD_POST
+)
+public class MyServlet extends SlingAllMethodsServlet{
+  public static final Logger LOGGER = LoggerFactory.getLogger(MyServlet.class);
+  @Override
+  protected void doPost(final SlingHttpSrevletRequest req, final SlingHttpServletResponse resp) throws ServletException, IOException{
+    LOGGER.debug("Servlet Code Started!!");
+  }
+}
+//SlingSafeMethodsServlet Readonly servlet,
+//SlingAllMethodsServlet supports post put delete, which extends SlingSafeMethodsServlet.
+```

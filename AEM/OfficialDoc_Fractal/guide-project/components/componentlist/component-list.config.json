@@ -1,0 +1,9 @@
+{
+  "title": "Component List",
+  "context": {
+    "something": {
+      "a": "a",
+      "b": "b"
+    }
+  }
+}

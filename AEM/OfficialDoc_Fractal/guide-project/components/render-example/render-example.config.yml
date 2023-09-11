@@ -1,4 +1,11 @@
 context:
-    someData:
-        text: BOOM!
-        merge: MERGE!
+  glyph:
+    position: append
+    glyph: play-solid
+    haha: haha
+  someData:
+    text: BOOM!
+    original:
+      lie: lier!
+    json:
+      myJson: somerandomguy
