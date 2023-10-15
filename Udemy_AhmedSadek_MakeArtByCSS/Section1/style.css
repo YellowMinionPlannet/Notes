@@ -479,7 +479,7 @@ body{
   height: 58px;
   background-color: black;
   left:10px;
-  top:45%;
+  top:50%;
   border-radius: 0 0 115px 115px; /* topleft topright bottomleft bottomright */
   transform: rotate(30deg);
   overflow: hidden;
@@ -502,7 +502,7 @@ body{
   height: 58px;
   background-color: black;
   right:10px;
-  top:45%;
+  top: 50%;
   border-radius: 0 0 115px 115px; /* topleft topright bottomleft bottomright */
   transform: rotate(-30deg);
   overflow: hidden;
@@ -525,7 +525,7 @@ body{
   height: 16px;
   background-color: black;
   border-radius: 50%;
-  top:60%;
+  top:65%;
   left:50%;
   transform: translateX(-50%);
 }
@@ -536,7 +536,7 @@ body{
   height: 10px;
   background-color: black;
   border-radius: 50%;
-  top:75%;
+  top:80%;
   left:50%;
   transform: translateX(-50%);
 }
@@ -877,4 +877,212 @@ body{
   position: absolute;
   top: 0px;
   left:95px;
+}
+
+
+/* captain */
+.wrapper:nth-child(10){
+  background-color: #002b82;
+}
+
+
+.captain__c3{
+  width: 260px;
+  height: 260px;
+  background-color: #ff4040;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.captain__c2{
+  width: 210px;
+  height: 210px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.captain__c1{
+  width: 150px;
+  height: 150px;
+  background-color: #ff4040;;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.captain__center{
+  width: 100px;
+  height: 100px;
+  background-color: #306fd4;
+  border-radius: 50%;
+  position:relative;
+}
+
+.captain .arrow{
+  position: absolute;
+  border-top: 35px solid white;
+  border-left: 48px solid transparent;
+  border-right: 48px solid transparent;
+  border-bottom: 48px solid transparent;
+  width: 0;
+  height: 0;
+}
+
+.captain .top{
+  top: 35px;
+  left: 2px;
+}
+
+.captain .left{
+  top: 16px;
+  left: -24px;
+  transform: rotate(74deg);
+}
+
+.captain .right{
+  top: 16px;
+  right: -24px;
+  transform: rotate(-74deg);
+}
+
+/* gear */
+
+.gear{
+  width: 110px;
+  height: 110px;
+  background-color: #5dc59d;
+  border-radius: 50%;
+  position: relative;
+}
+
+.gear__inner{
+  width: 55px;
+  height: 55px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gear__bar{
+  width: 170px;
+  height: 40px;
+  background-color: #5dc59d;
+  border-radius: 7px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gear__bar:nth-child(2){
+  transform: translate(-50%, -50%) rotate(60deg);
+}
+
+.gear__bar:nth-child(3){
+  transform: translate(-50%, -50%) rotate(120deg);
+}
+
+/* astronaut */
+.wrapper:nth-child(12){
+  background-color: #233637;
+  position: relative;
+  z-index: -1;
+}
+
+.astronaut{
+  width: 300px;
+  height: 300px;
+  background-color: white;
+  border: 12px solid white;
+  border-radius: 50%;
+  position: relative;
+}
+
+.astronaut__face{
+  width: 260px;
+  height: 260px;
+  background-color: #0046A2;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+
+.astronaut__face--blue{
+  width: 285px;
+  height: 285px;
+  background-color: white;
+  border-radius: 50%;
+  border: 3px solid blue;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.astronaut__face--yellow{
+  width: 270px;
+  height: 270px;
+  background-color: white;
+  border: 3px solid yellow;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.astronaut__flash{
+  background-color: transparent;
+  height: 200px;
+  width: 150px;
+  position: absolute;
+  left: 30px;
+  top: 25px;
+  border-radius: 50%;
+  box-shadow: -15px 2px 3px 1px white;
+}
+
+.astronaut__face--light{
+  width: 300px;
+  height: 250px;
+  background-color: #0654A9;
+  border-radius: 50%;
+  position: absolute;
+  top: -60px;
+  left: -15px;
+}
+
+.astronaut__ear--left{
+  position: absolute;
+  width: 130px;
+  height:130px;
+  background: radial-gradient(#0046A2 50%, lightskyblue);
+  border-radius: 50%;
+  top: -30px;
+  left:-35px;
+  z-index: -1;
+}
+
+.astronaut__ear--right{
+  position: absolute;
+  width:130px;
+  height: 130px;
+  background: radial-gradient(#0046A2 50%, lightskyblue);
+  border-radius: 50%;
+  top: -30px;
+  right:-35px;
+  z-index: -1;
 }
