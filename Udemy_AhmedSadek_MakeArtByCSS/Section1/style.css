@@ -5,13 +5,10 @@
   --diamond__border--bottom: #55ddb9;
 }
 
-*{
-  /* box-sizing: border-box !important; */
-}
-
 body{
   margin: 0;
   padding: 0;
+  position: relative;
 }
 
 .wrapper{
@@ -1052,7 +1049,7 @@ body{
   left: 30px;
   top: 25px;
   border-radius: 50%;
-  box-shadow: -15px 2px 3px 1px white;
+  box-shadow: -15px 2px 3px 0 white;
 }
 
 .astronaut__face--light{
@@ -1085,4 +1082,342 @@ body{
   top: -30px;
   right:-35px;
   z-index: -1;
+}
+
+.wrapper:nth-child(13){
+
+}
+
+.git{
+  width: 150px;
+  height: 150px;
+  background-color: #f05033;
+  border-radius: 15px;
+  position: relative;
+  transform: rotate(45deg);
+}
+
+.git__line1{
+  width: 110px;
+  height: 12px;
+  background-color: white;
+  position: absolute;
+  top: 40px;
+}
+
+.git__line1:before{
+  content:"";
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  left: 30px;
+  top: -8px;
+}
+
+.git__line1:after{
+  content:"";
+  width: 30px;
+  height: 30px;
+  background-color: white;;
+  border-radius: 50%;
+  position: absolute;
+  left: 90px;
+  top: -8px;
+}
+
+.git__line2{
+  width: 90px;
+  height: 12px;
+  background-color: white;
+  position: absolute;
+  top: 70px;
+  left: 30px;
+  transform: rotate(45deg);
+}
+.git__line2:before{
+  content:"";
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  left: 70px;
+  top: -8px;
+}
+
+.wrapper:nth-child(14){
+  
+}
+
+.google__wrap{
+  width: 150px;
+  height: 150px;
+  position: relative;
+}
+
+.google__top{
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-top: 30px solid #e33e2b;
+  border-right: 30px solid transparent;
+  border-bottom: 30px solid #24a14b;
+  border-left: 30px solid #f1b500;
+  border-radius: 50%;
+  top: -30px;
+  left:-30px;
+}
+
+.google__half{
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  border: 30px solid transparent;
+  border-right: 30px solid #3a7cec;
+  transform: rotate(45deg);
+  border-radius: 50%;
+  top: -30px;
+  left:-30px;
+  z-index: -1;
+}
+
+.google__line{
+  width: 100px;
+  height: 30px;
+  background-color: #3a7cec;
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  border-bottom-right-radius: 15px;
+}
+
+.wrapper:nth-child(15){
+
+}
+
+.instagram{
+  height: 200px;
+  width: 200px;
+  border-radius: 60px;
+  background: radial-gradient(circle at 30% 107%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instagram__square{
+  width: 140px;
+  height: 140px;
+  background-color: transparent;
+  border: 12px solid white;
+  border-radius: 45px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instagram__circle--big{
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  border: 12px solid white;
+  border-radius: 50%;
+}
+
+.instagram__circle--small{
+  width: 15px;
+  height: 15px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.wrapper:nth-child(16){
+  background-color: #69506d;
+}
+
+.watermelon{
+  width: 320px;
+  height: 160px;
+  background-color: #fd6c64;
+  border-left: 20px solid #5af5b6;
+  border-bottom: 20px solid #5af5b6;
+  border-right: 20px solid #5af5b6;
+  border-bottom-left-radius: 200px;
+  border-bottom-right-radius: 200px;
+}
+
+.watermelon span{
+  width: 10px;
+  height: 10px;
+  background-color: #262626;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 20px;
+}
+
+.watermelon span:nth-child(7),
+.watermelon span:nth-child(12),
+.watermelon span:nth-child(13),
+.watermelon span:nth-child(14){
+  opacity: 0;
+}
+
+.wrapper:nth-child(17){
+
+}
+
+.adidas{
+  width:206px;
+  height: 120px;
+  background-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.adidas div{
+  width: 46px;
+  height: 150px;
+  background-color: #111;
+  position: absolute;
+
+  transform: rotate(-31deg);
+}
+
+.adidas__shape--1{
+  top:86px;
+  left: 36px;
+}
+
+.adidas__shape--2{
+  top: 45px;
+  left: 82px;
+}
+
+.adidas__shape--3{
+  top: 4px;
+  left: 129px;
+}
+
+.wrapper:nth-child(18){
+  background-color: #222;
+}
+
+.brackets{
+  width: 200px;
+  height: 175px;
+  background-color: white;
+  border-radius: 31px;
+  position: relative;
+  box-shadow: 0 0 0 28px #28a9e1,
+              0 28px 0 28px #115a91;
+}
+
+.brackets:before{
+  content: "";
+  width: 50%;
+  height: 44%;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 28px solid #4d4d4d;
+}
+
+.brackets:after{
+  content:"";
+  width: 10%;
+  height: 100%;
+  background-color: white;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.wrapper:nth-child(19){
+  background-color: #fff09b;
+}
+
+.donut{
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.donut__body{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #f77778;
+  border: 2px solid #003459;
+  border-radius: 50%;
+}
+
+.donut__body:before{
+  content:"";
+  position: absolute;
+  width:93%;
+  height: 93%;
+  background-color: #faa7a8;
+  top: 3px;
+  right:3px;
+  border-radius: 50%;
+}
+
+.donut__body:after{
+  content:"";
+  position:absolute;
+  width: 30%;
+  height: 30%;
+  background-color: #fff09b;
+  border: 2px solid #003459;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.donut__face{
+  width: 36px;
+  height: 16px;
+  position: absolute;
+  border: 3px solid #003459;
+  border-top: 0;
+  border-bottom-left-radius: 100px;
+  border-bottom-right-radius: 100px;
+  top: 44px;
+  left: 84px;
+}
+
+.donut__face:before{
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #003459;
+  border-radius: 50%;
+  position: absolute;
+  top: -20px;
+  left: -12px;
+  box-shadow: 48px 0 0 0 #003459;
+}
+
+.donut__highlight{
+  width: 40px;
+  height: 40px;
+  border: 8px solid white;
+  border-top: 0;
+  border-right: 0;
+  position: absolute;
+  left: 50px;
+  top: 105px;
+  border-bottom-left-radius: 50px;
+  opacity: 0.5;
 }
