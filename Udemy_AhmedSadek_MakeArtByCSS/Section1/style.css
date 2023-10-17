@@ -2095,3 +2095,157 @@ body{
   top: -32px;
   z-index: 0;
 }
+
+.wrapper:nth-child(21){
+  background-color: #333;
+}
+
+.figma{
+  width:180px;
+  height: 270px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.figma__part{
+  width: 90px;
+  height: 90px;
+  flex: 0 0 50%;
+}
+
+.figma__part-1{
+  background-color: #ee4e2a;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.figma__part-2{
+  background-color: #fb7266;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+.figma__part-3{
+  background-color: #a061fa;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+.figma__part-4{
+  background-color: #2ebdfa;
+  border-radius: 50%;
+}
+.figma__part-5{
+  background-color: #00ce84;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.wrapper:nth-child(22){
+  background-color: #333;
+}
+
+.react{
+  width: 300px;
+  height: 100px;
+  border: 3px solid #61dafb;
+  border-radius: 50%;
+  position:relative;
+}
+
+.react:before{
+  content:"";
+  position: absolute;
+  left:0;
+  top: 0 ;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #61dafb;
+  border-radius: 50%;
+  transform: rotate(60deg);
+}
+
+.react:after{
+  content:"";
+  position: absolute;
+  left:0;
+  top: 0 ;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #61dafb;
+  border-radius: 50%;
+  transform: rotate(-60deg);
+}
+
+.react__circle{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background-color: #61dafb;
+  border-radius: 50%;
+}
+
+.wrapper:nth-child(23){
+  background-color: #262626;
+}
+
+.lg{
+  width: 500px;
+  height: 500px;
+  background-color: #e31837;
+  border-radius: 50%;
+  position: relative;
+}
+
+.lg__line-1{
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-radius: 50%;
+  border: 20px solid white;
+  border-right-color: transparent;
+}
+
+.lg__line-2{
+  position: absolute;
+  width: 150px;
+  height: 20px;
+  background-color: white;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+}
+
+.lg__circle{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  top:120px;
+  left: 130px;
+}
+
+.lg__line3{
+  position: absolute;
+  width: 20px;
+  height: 250px;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.lg__line4{
+  position: absolute;
+  width: 70px;
+  height: 20px;
+  background-color: white;
+  top: 370px;
+  left: 240px;
+}
