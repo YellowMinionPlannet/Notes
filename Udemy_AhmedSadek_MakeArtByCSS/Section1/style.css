@@ -1812,7 +1812,7 @@ body{
   border-right: 46px solid transparent;
   border-bottom: 190px solid transparent;
   position: absolute;
-  top: -200px;
+  top: -194px;
   left: -45px;
 }
 
@@ -1822,7 +1822,7 @@ body{
     height: 80px;
     background-color: var(--lion-color-red-light);
     border-radius: 50%;
-    top: -127px;
+    top: -120px;
     left: -17px;
     box-shadow: 0 2px 0 2px var(--lion-color-red-dark);
 }
@@ -1848,10 +1848,6 @@ body{
  
   box-shadow: 0 0 0 8px var(--lion-color-blue),
               0 0 0 10px var(--lion-color-red-dark);
-}
-
-.lion__drop{
-
 }
 
 .lion__upperhead{
@@ -2003,4 +1999,99 @@ body{
   position: absolute;
   top:0;
   right: 0;
+}
+
+.lion__eyebrow--left{
+  width: 200px;
+  border-top: 15px solid white;
+  border-top-left-radius: 150%;
+  border-top-right-radius: 150%;
+  position: absolute;
+  z-index: 0;
+  top: 90px;
+  left: 20px;
+  transform: rotate(34deg);
+}
+
+.lion__eyebrow--right{
+  width: 200px;
+  border-top: 15px solid white;
+  border-top-left-radius: 150%;
+  border-top-right-radius: 150%;
+  position: absolute;
+  z-index: 0;
+  top: 90px;
+  right: 20px;
+  transform: rotate(-34deg);
+}
+
+.lion__drop--layer2{
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--lion-color-blue);
+  border-radius: 50%;
+  top: 6px;
+  left:4px;
+  z-index: 2;
+}
+
+.lion__drop--layer2:after{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid var(--lion-color-blue);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  top: -14px;
+}
+
+.lion__drop--layer1{
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: var(--lion-color-yellow);
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+ 
+  z-index: 1;
+}
+
+.lion__drop--layer1:after{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 16px solid transparent;
+  border-bottom: 16px solid var(--lion-color-yellow);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  top: -26px;
+    left: 0px;
+}
+
+.lion__drop{
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-color: var(--lion-color-blue-light);
+  border-radius: 50%;
+  top: 37px;
+  left: -6px;
+}
+
+.lion__drop:after{
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid var(--lion-color-blue-light);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  top: -32px;
+  z-index: 0;
 }
