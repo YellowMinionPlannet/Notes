@@ -52,18 +52,21 @@ body{
 .hour-hand{
   height: 30px;
   transform: translate(-50%, -100%) rotate(45deg);
+  /* animation: clock-hand 360s linear 0s infinite normal none; */
 }
 
 .min-hand{
   height: 40px;
   width: 3px;
   transform: translate(-50%, -100%) rotate(160deg);
+  /* animation: clock-hand 30s linear 0s infinite normal none; */
 }
 
 .second-hand{
   height: 47px;
   width: 2px;
   transform: translate(-50%, -100%) rotate(-40deg);
+  /* animation: clock-hand .5s linear 0s infinite normal none; */
 }
 
 .clock-ear-left{
@@ -231,4 +234,22 @@ body{
   bottom: 50%;
   right: 5%;
   border-radius: 50px 50px 0 0;
+}
+
+@keyframes clock-hand {
+  0%{
+    transform: translate(-50%, -100%) rotate(0deg);
+  }
+  25%{
+    transform: translate(-50%, -100%) rotate(90deg);
+  }
+  50%{
+    transform: translate(-50%, -100%) rotate(180deg);
+  }
+  75%{
+    transform: translate(-50%, -100%) rotate(270deg);
+  }
+  100%{
+    transform: translate(-50%, -100%) rotate(360deg);
+  }
 }
