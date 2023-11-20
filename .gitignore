@@ -1,2 +1,3 @@
 **/node_modules
+**/dist
 Book_Inside_MSBuild_Engine/src/CustomTask/obj
