@@ -18,6 +18,8 @@ fractal.set("project.title", "Lei's Component Library"); // title for the projec
 fractal.web.set("builder.dest", "build"); // destination for the static export
 fractal.docs.set("path", `${__dirname}/src/docs`); // location of the documentation directory.
 fractal.components.set("path", `${__dirname}/src/components`); // location of the component directory.
+fractal.web.set("static.path", __dirname + "/public");
+fractal.components.set("default.preview", "@preview");
 
 // any other configuration or customisation here
 
@@ -47,7 +49,7 @@ gulp.task("fractal:start", function () {
     sync: true,
   });
   server.on("error", (err) => logger.error(err.message));
-  return server.start().then(() => {
+  server.start().then(() => {
     logger.success(`Fractal server is now running at ${server.url}`);
   });
 });
@@ -74,8 +76,15 @@ gulp.task("fractal:build", function () {
 });
 
 gulp.task("default", function () {
+  const server = fractal.web.server({
+    sync: true,
+  });
+  server.on("error", (err) => logger.error(err.message));
+  server.start().then(() => {
+    logger.success(`Fractal server is now running at ${server.url}`);
+  });
   gulp.watch(
     ["./src/components/**/*.scss", "./src/**/*.hbs"],
-    gulp.series(["sass", "fractal:start"])
+    gulp.series(["sass"])
   );
 });
