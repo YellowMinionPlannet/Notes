@@ -40,6 +40,31 @@
       "context": {
         "animation": "animation-swipe-in--right"
       }
+    },{
+      "name": "cross-in",
+      "context":{
+        "animation": "animation-cross-in"
+      }
+    },{
+      "name": "cross-in--horizontal",
+      "context":{
+        "animation": "animation-cross-in--horizontal"
+      }
+    },{
+      "name": "cross-in--vertical",
+      "context":{
+        "animation": "animation-cross-in--vertical"
+      }
+    },{
+      "name": "stretch",
+      "context":{
+        "animation": "animation-stretch"
+      }
+    },{
+      "name": "swipe-in--top",
+      "context":{
+        "animation": "animation-swipe-in--top"
+      }
     }
   ]
 }
