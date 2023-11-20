@@ -8,9 +8,142 @@ body {
   align-items: center;
 }
 
-a {
-  text-decoration: underline;
-  background-color: red;
-  font-size: 100px;
+html {
+  font-size: 10px;
+}
+
+.button {
+  --button-background-color: #fff200;
+  --button-color: #272727;
+  --button-border-width: 0.5rem;
+  --button-border-style: solid;
+  --button-border-color: var(--button-color);
+  --button-font-size: 4.5rem;
+  --button-font-family: sans-serif;
+  text-decoration: none;
+  color: var(--button-color);
+  font-family: var(--button-font-family);
+  font-size: var(--button-font-size);
+  border: var(--button-border-width) var(--button-border-style) var(--button-border-color);
+  padding: 4rem 8rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.animation-rotate-in:hover:before {
+  transform: rotate(0deg);
+}
+.animation-rotate-in:before {
+  content: "";
+  background-color: var(--button-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  transform-origin: bottom left;
+  transition: transform 1s;
+  z-index: -1;
+}
+.animation-rotate-in--top-left:before {
+  content: "";
+  background-color: var(--button-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  transform-origin: top left;
+  transition: transform 1s;
+  z-index: -1;
+}
+.animation-rotate-in--top-left:hover:before {
+  transform: rotate(0deg);
+}
+.animation-rotate-in--top-right:before {
+  content: "";
+  background-color: var(--button-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(90deg);
+  transform-origin: top right;
+  transition: transform 1s;
+  z-index: -1;
+}
+.animation-rotate-in--top-right:hover:before {
+  transform: rotate(0deg);
+}
+.animation-rotate-in--bottom-right:before {
+  content: "";
+  background-color: var(--button-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(90deg);
+  transform-origin: bottom right;
+  transition: transform 1s;
+  z-index: -1;
+}
+.animation-rotate-in--bottom-right:hover:before {
+  transform: rotate(0deg);
+}
+
+.animation-swipe-in {
+  --button-background-color: #351435;
+  --button-color: #351435;
+  --button-border-width: 0.3rem;
+  padding: 4rem 8rem;
+  transition: color 1s;
+}
+.animation-swipe-in:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--button-background-color);
+  z-index: -1;
+  transform: translateX(-100%);
+  transition: transform 1s;
+}
+.animation-swipe-in:hover:before {
+  transform: translateX(0);
+}
+.animation-swipe-in:hover {
+  color: white;
+}
+
+.animation-swipe-in--right {
+  --button-background-color: #351435;
+  --button-color: #351435;
+  --button-border-width: 0.3rem;
+  padding: 4rem 8rem;
+  transition: color 1s;
+}
+.animation-swipe-in--right:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--button-background-color);
+  z-index: -1;
+  transform: translateX(100%);
+  transition: transform 1s;
+}
+.animation-swipe-in--right:hover:before {
+  transform: translateX(0);
+}
+.animation-swipe-in--right:hover {
+  color: white;
 }
 /*# sourceMappingURL=main.css.map */

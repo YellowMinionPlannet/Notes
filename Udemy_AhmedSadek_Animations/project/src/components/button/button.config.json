@@ -1,0 +1,45 @@
+{
+  "name": "button",
+  "preview": "@preview",
+  "context": {
+    "animation": ""
+  },
+  "variants": [
+    {
+      "name": "rotate-in",
+      "context": {
+        "animation": "animation-rotate-in"
+      }
+    },
+    {
+      "name": "rotate-in--bottom-right",
+      "context": {
+        "animation": "animation-rotate-in--bottom-right"
+      }
+    },
+    {
+      "name": "rotate-in--top-right",
+      "context": {
+        "animation": "animation-rotate-in--top-right"
+      }
+    },
+    {
+      "name": "rotate-in--top-left",
+      "context": {
+        "animation": "animation-rotate-in--top-left"
+      }
+    },
+    {
+      "name": "swipe-in",
+      "context": {
+        "animation": "animation-swipe-in"
+      }
+    },
+    {
+      "name": "swip-in--right",
+      "context": {
+        "animation": "animation-swipe-in--right"
+      }
+    }
+  ]
+}

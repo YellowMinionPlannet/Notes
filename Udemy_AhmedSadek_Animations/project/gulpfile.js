@@ -80,11 +80,12 @@ gulp.task("default", function () {
     sync: true,
   });
   server.on("error", (err) => logger.error(err.message));
-  server.start().then(() => {
-    logger.success(`Fractal server is now running at ${server.url}`);
-  });
-  gulp.watch(
-    ["./src/components/**/*.scss", "./src/**/*.hbs"],
-    gulp.series(["sass"])
-  );
+  return server
+    .start()
+    .then(() => {
+      logger.success(`Fractal server is now running at ${server.url}`);
+    })
+    .then(() => {
+      gulp.watch(["./src/**/*.*"], gulp.series(["fractal:build", "sass"]));
+    });
 });
