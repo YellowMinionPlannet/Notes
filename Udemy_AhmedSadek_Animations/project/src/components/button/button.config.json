@@ -40,30 +40,47 @@
       "context": {
         "animation": "animation-swipe-in--right"
       }
-    },{
+    },
+    {
       "name": "cross-in",
-      "context":{
+      "context": {
         "animation": "animation-cross-in"
       }
-    },{
+    },
+    {
       "name": "cross-in--horizontal",
-      "context":{
+      "context": {
         "animation": "animation-cross-in--horizontal"
       }
-    },{
+    },
+    {
       "name": "cross-in--vertical",
-      "context":{
+      "context": {
         "animation": "animation-cross-in--vertical"
       }
-    },{
+    },
+    {
       "name": "stretch",
-      "context":{
+      "context": {
         "animation": "animation-stretch"
       }
-    },{
+    },
+    {
       "name": "swipe-in--top",
-      "context":{
+      "context": {
         "animation": "animation-swipe-in--top"
+      }
+    },
+    {
+      "name": "glow",
+      "context": {
+        "animation": "animation-glow"
+      }
+    },
+    {
+      "name": "exchange",
+      "context": {
+        "animation": "animation-exchange"
       }
     }
   ]

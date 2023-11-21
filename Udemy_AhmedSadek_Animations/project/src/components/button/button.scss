@@ -1,5 +1,6 @@
 .button {
-  --button-background-color: #fff200;
+  --button-background-color: white;
+  --button-effect-background-color: #fff200;
   --button-color: #272727;
   --button-border-width: 0.5rem;
   --button-border-style: solid;
@@ -7,6 +8,7 @@
   --button-font-size: 4.5rem;
   --button-font-family: sans-serif;
 
+  background-color: var(--button-background-color);
   text-decoration: none;
   color: var(--button-color);
   font-family: var(--button-font-family);
@@ -25,7 +27,7 @@
 
   &:before {
     content: "";
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -40,7 +42,7 @@
   &--top-left {
     &:before {
       content: "";
-      background-color: var(--button-background-color);
+      background-color: var(--button-effect-background-color);
       position: absolute;
       top: 0;
       left: 0;
@@ -59,7 +61,7 @@
   &--top-right {
     &:before {
       content: "";
-      background-color: var(--button-background-color);
+      background-color: var(--button-effect-background-color);
       position: absolute;
       top: 0;
       left: 0;
@@ -78,7 +80,7 @@
   &--bottom-right {
     &:before {
       content: "";
-      background-color: var(--button-background-color);
+      background-color: var(--button-effect-background-color);
       position: absolute;
       top: 0;
       left: 0;
@@ -96,7 +98,7 @@
 }
 
 .animation-swipe-in {
-  --button-background-color: #351435;
+  --button-effect-background-color: #351435;
   --button-color: #351435;
   --button-border-width: 0.3rem;
 
@@ -109,7 +111,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     z-index: -1;
     transform: translateX(-100%);
     transition: transform 1s;
@@ -125,7 +127,7 @@
 }
 
 .animation-swipe-in--right {
-  --button-background-color: #351435;
+  --button-effect-background-color: #351435;
   --button-color: #351435;
   --button-border-width: 0.3rem;
 
@@ -138,7 +140,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     z-index: -1;
     transform: translateX(100%);
     transition: transform 1s;
@@ -153,17 +155,17 @@
   }
 }
 
-.animation-cross-in{
+.animation-cross-in {
   --button-color: #262626;
-  --button-background-color: var(--button-color);
+  --button-effect-background-color: var(--button-color);
 
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 
-  &:before{
+  &:before {
     content: "";
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -174,17 +176,17 @@
     z-index: -1;
   }
 
-  &:hover:before{
+  &:hover:before {
     transform: rotateX(0);
   }
 
-  &:hover{
+  &:hover {
     color: white;
   }
 
-  &:after{
+  &:after {
     content: "";
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -195,22 +197,22 @@
     z-index: -1;
   }
 
-  &:hover:after{
+  &:hover:after {
     transform: rotateX(0);
   }
 }
 
-.animation-cross-in--horizontal{
+.animation-cross-in--horizontal {
   --button-color: #262626;
-  --button-background-color: var(--button-color);
+  --button-effect-background-color: var(--button-color);
 
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 
-  &:before{
+  &:before {
     content: "";
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -221,27 +223,26 @@
     z-index: -1;
   }
 
-  &:hover:before{
+  &:hover:before {
     transform: rotateX(0);
   }
 
-  &:hover{
+  &:hover {
     color: white;
   }
-
 }
 
-.animation-cross-in--vertical{
+.animation-cross-in--vertical {
   --button-color: #262626;
-  --button-background-color: var(--button-color);
+  --button-effect-background-color: var(--button-color);
 
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 
-  &:before{
+  &:before {
     content: "";
-    background-color: var(--button-background-color);
+    background-color: var(---button-effect-background-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -252,17 +253,16 @@
     z-index: -1;
   }
 
-  &:hover:before{
+  &:hover:before {
     transform: rotateY(0);
   }
 
-  &:hover{
+  &:hover {
     color: white;
   }
-
 }
 
-.animation-stretch{
+.animation-stretch {
   --button-color: #e1332d;
   --button-border-width: 0.3rem;
 
@@ -270,23 +270,23 @@
   font-weight: 300;
   letter-spacing: -0.2rem;
   transition: all 0.5s;
-  
-  &:hover{
+
+  &:hover {
     --button-border-width: 0.7rem;
     font-weight: 900;
     letter-spacing: 0.7rem;
   }
 }
 
-.animation-swipe-in--top{
+.animation-swipe-in--top {
   --button-color: white;
-  --button-background-color: #f44336;
-  --button-border-width:0.3rem;
+  --button-effect-background-color: #f44336;
+  --button-border-width: 0.3rem;
   --button-border-color: red;
 
   background-color: #222;
 
-  &:before{
+  &:before {
     content: "YEAH!";
     color: var(--button-color);
     position: absolute;
@@ -294,7 +294,7 @@
     top: 0;
     height: 100%;
     width: 100%;
-    background-color: var(--button-background-color);
+    background-color: var(--button-effect-background-color);
     transform: translateY(-100%);
     transition: all 1s;
     display: flex;
@@ -302,7 +302,78 @@
     align-items: center;
   }
 
-  &:hover:before{
+  &:hover:before {
     transform: translateY(0);
   }
+}
+
+.animation-glow {
+  --button-border-color: white;
+  transition: background-color 1s;
+}
+
+.animation-glow:hover {
+  background-color: #f44336;
+}
+
+.animation-glow:before {
+  content: "";
+  background-color: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  position: absolute;
+  transform: translateX(-100%) rotate(45deg);
+  transition: all 1s;
+}
+
+.animation-glow:hover:before {
+  transform: translateX(100%) rotate(45deg);
+}
+
+.animation-exchange {
+  --button-background-color: #262626;
+  --button-border-width: 0.4rem;
+  --button-border-color: #262626;
+  --button-effect-background-color: #fffa65;
+}
+
+.animation-exchange:before {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--button-effect-background-color);
+  color: #262626;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+}
+
+.animation-exchange:after {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--button-effect-background-color);
+  color: #262626;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-100%, 100%);
+  transition: all 0.5s;
+}
+
+.animation-exchange:hover:before {
+  transform: translate(100%, -100%);
+}
+
+.animation-exchange:hover:after {
+  transform: translate(0, 0);
 }
