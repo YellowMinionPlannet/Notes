@@ -225,7 +225,7 @@ html {
 }
 .animation-cross-in--vertical:before {
   content: "";
-  background-color: var(---button-effect-background-color);
+  background-color: var(--button-effect-background-color);
   position: absolute;
   top: 0;
   left: 0;
@@ -351,5 +351,157 @@ html {
 
 .animation-exchange:hover:after {
   transform: translate(0, 0);
+}
+
+.animation-text-scale {
+  --button-color: #262626;
+  --button-border-color: #262626;
+  --button-effect-background-color: #262626;
+  transition: all 0.5s;
+  backface-visibility: hidden;
+}
+
+.animation-text-scale:before {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--button-effect-background-color);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(5);
+  opacity: 0;
+  transition: all 0.5s;
+  backface-visibility: hidden;
+}
+
+.animation-text-scale:hover:before {
+  transform: scale(1);
+  opacity: 1;
+  backface-visibility: hidden;
+}
+
+.animation-circle-in {
+  --button-border-color: tomato;
+  --button-color: tomato;
+  --button-background-color: none;
+  transition: all 0.5s;
+}
+
+.animation-circle-in:before {
+  --button-effect-background-color: tomato;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--button-effect-background-color);
+  border-radius: 0 0 50% 50%;
+  z-index: -1;
+  transition: all 0.5s;
+}
+
+.animation-circle-in:hover:before {
+  height: 190%;
+}
+
+.animation-rotate-3-layers {
+  --button-background-color: #f1c40f;
+  --button-color: white;
+  overflow: visible;
+  transition: all 0.5s;
+}
+
+.animation-rotate-3-layers:before {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2ce771;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotateX(270deg);
+  transform-origin: top;
+  transition: all 0.5s;
+}
+
+.animation-rotate-3-layers:hover:before, .animation-rotate-3-layers:hover:after {
+  transform: rotateX(0deg);
+}
+
+.animation-rotate-3-layers:after {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotateX(270deg);
+  transform-origin: top;
+  transition: all 0.5s;
+  transition-delay: 0.25s;
+}
+
+.animation-flip {
+  --button-color: transparent;
+  --button-border-color: #ff0;
+  overflow: visible;
+  letter-spacing: 0.4rem;
+}
+
+.animation-flip:before {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #363636;
+  color: #ff0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+}
+
+.animation-flip:hover:before {
+  left: 100%;
+  transform: scale(0) rotateY(360deg);
+  opacity: 0;
+}
+
+.animation-flip:after {
+  content: "Hover Me";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: #363636;
+  color: #ff0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s;
+  transform: scale(0) rotateY(0deg);
+  opacity: 0;
+}
+
+.animation-flip:hover:after {
+  left: 0;
+  transform: scale(1) rotateY(360deg);
+  opacity: 1;
 }
 /*# sourceMappingURL=main.css.map */

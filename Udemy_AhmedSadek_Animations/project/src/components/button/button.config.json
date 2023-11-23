@@ -82,6 +82,30 @@
       "context": {
         "animation": "animation-exchange"
       }
+    },
+    {
+      "name":"text-scale",
+      "context":{
+        "animation": "animation-text-scale"
+      }
+    },
+    {
+      "name": "circle-in",
+      "context":{
+        "animation": "animation-circle-in"
+      }
+    },
+    {
+      "name": "rotate-3-layers",
+      "context":{
+        "animation": "animation-rotate-3-layers"
+      }
+    },
+    {
+      "name": "flip",
+      "context": {
+        "animation": "animation-flip"
+      }
     }
   ]
 }
