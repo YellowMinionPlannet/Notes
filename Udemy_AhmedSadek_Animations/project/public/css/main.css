@@ -37,10 +37,10 @@ a {
   overflow: hidden;
 }
 
-.animation-rotate-in:hover:before {
+.button-rotate-in:hover:before {
   transform: rotate(0deg);
 }
-.animation-rotate-in:before {
+.button-rotate-in:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -53,7 +53,7 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-rotate-in--top-left:before {
+.button-rotate-in--top-left:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -66,10 +66,10 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-rotate-in--top-left:hover:before {
+.button-rotate-in--top-left:hover:before {
   transform: rotate(0deg);
 }
-.animation-rotate-in--top-right:before {
+.button-rotate-in--top-right:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -82,10 +82,10 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-rotate-in--top-right:hover:before {
+.button-rotate-in--top-right:hover:before {
   transform: rotate(0deg);
 }
-.animation-rotate-in--bottom-right:before {
+.button-rotate-in--bottom-right:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -98,17 +98,17 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-rotate-in--bottom-right:hover:before {
+.button-rotate-in--bottom-right:hover:before {
   transform: rotate(0deg);
 }
 
-.animation-swipe-in {
+.button-swipe-in {
   --button-effect-background-color: #351435;
   --button-color: #351435;
   --button-border-width: 0.3rem;
   transition: color 1s;
 }
-.animation-swipe-in:before {
+.button-swipe-in:before {
   content: "";
   position: absolute;
   left: 0;
@@ -120,20 +120,20 @@ a {
   transform: translateX(-100%);
   transition: all 1s;
 }
-.animation-swipe-in:hover:before {
+.button-swipe-in:hover:before {
   transform: translateX(0);
 }
-.animation-swipe-in:hover {
+.button-swipe-in:hover {
   color: white;
 }
 
-.animation-swipe-in--right {
+.button-swipe-in--right {
   --button-effect-background-color: #351435;
   --button-color: #351435;
   --button-border-width: 0.3rem;
   transition: color 1s;
 }
-.animation-swipe-in--right:before {
+.button-swipe-in--right:before {
   content: "";
   position: absolute;
   left: 0;
@@ -145,21 +145,21 @@ a {
   transform: translateX(100%);
   transition: all 1s;
 }
-.animation-swipe-in--right:hover:before {
+.button-swipe-in--right:hover:before {
   transform: translateX(0);
 }
-.animation-swipe-in--right:hover {
+.button-swipe-in--right:hover {
   color: white;
 }
 
-.animation-cross-in {
+.button-cross-in {
   --button-color: #262626;
   --button-effect-background-color: var(--button-color);
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 }
-.animation-cross-in:before {
+.button-cross-in:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -171,13 +171,13 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-cross-in:hover:before {
+.button-cross-in:hover:before {
   transform: rotateX(0);
 }
-.animation-cross-in:hover {
+.button-cross-in:hover {
   color: white;
 }
-.animation-cross-in:after {
+.button-cross-in:after {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -189,18 +189,18 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-cross-in:hover:after {
+.button-cross-in:hover:after {
   transform: rotateX(0);
 }
 
-.animation-cross-in--horizontal {
+.button-cross-in--horizontal {
   --button-color: #262626;
   --button-effect-background-color: var(--button-color);
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 }
-.animation-cross-in--horizontal:before {
+.button-cross-in--horizontal:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -212,21 +212,21 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-cross-in--horizontal:hover:before {
+.button-cross-in--horizontal:hover:before {
   transform: rotateX(0);
 }
-.animation-cross-in--horizontal:hover {
+.button-cross-in--horizontal:hover {
   color: white;
 }
 
-.animation-cross-in--vertical {
+.button-cross-in--vertical {
   --button-color: #262626;
   --button-effect-background-color: var(--button-color);
   letter-spacing: 0.2rem;
   position: relative;
   transition: color 1s;
 }
-.animation-cross-in--vertical:before {
+.button-cross-in--vertical:before {
   content: "";
   background-color: var(--button-effect-background-color);
   position: absolute;
@@ -238,14 +238,14 @@ a {
   transition: all 1s;
   z-index: -1;
 }
-.animation-cross-in--vertical:hover:before {
+.button-cross-in--vertical:hover:before {
   transform: rotateY(0);
 }
-.animation-cross-in--vertical:hover {
+.button-cross-in--vertical:hover {
   color: white;
 }
 
-.animation-stretch {
+.button-stretch {
   --button-color: #e1332d;
   --button-border-width: 0.3rem;
   text-transform: uppercase;
@@ -253,20 +253,20 @@ a {
   letter-spacing: -0.2rem;
   transition: all 0.5s;
 }
-.animation-stretch:hover {
+.button-stretch:hover {
   --button-border-width: 0.7rem;
   font-weight: 900;
   letter-spacing: 0.7rem;
 }
 
-.animation-swipe-in--top {
+.button-swipe-in--top {
   --button-color: white;
   --button-effect-background-color: #f44336;
   --button-border-width: 0.3rem;
   --button-border-color: red;
   background-color: #222;
 }
-.animation-swipe-in--top:before {
+.button-swipe-in--top:before {
   content: "YEAH!";
   color: var(--button-color);
   position: absolute;
@@ -281,21 +281,21 @@ a {
   justify-content: center;
   align-items: center;
 }
-.animation-swipe-in--top:hover:before {
+.button-swipe-in--top:hover:before {
   transform: translateY(0);
 }
 
-.animation-glow {
+.button-glow {
   --button-border-color: white;
   transition: all 1s;
 }
 
-.animation-glow:hover {
+.button-glow:hover {
   background-color: #f44336;
   color: white;
 }
 
-.animation-glow:before {
+.button-glow:before {
   content: "";
   background-color: white;
   top: 0;
@@ -307,18 +307,18 @@ a {
   transition: all 1s;
 }
 
-.animation-glow:hover:before {
+.button-glow:hover:before {
   transform: translateX(100%) rotate(45deg);
 }
 
-.animation-exchange {
+.button-exchange {
   --button-background-color: #262626;
   --button-border-width: 0.4rem;
   --button-border-color: #262626;
   --button-effect-background-color: #fffa65;
 }
 
-.animation-exchange:before {
+.button-exchange:before {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -333,7 +333,7 @@ a {
   transition: all 0.5s;
 }
 
-.animation-exchange:after {
+.button-exchange:after {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -349,15 +349,15 @@ a {
   transition: all 0.5s;
 }
 
-.animation-exchange:hover:before {
+.button-exchange:hover:before {
   transform: translate(100%, -100%);
 }
 
-.animation-exchange:hover:after {
+.button-exchange:hover:after {
   transform: translate(0, 0);
 }
 
-.animation-text-scale {
+.button-text-scale {
   --button-color: #262626;
   --button-border-color: #262626;
   --button-effect-background-color: #262626;
@@ -365,7 +365,7 @@ a {
   backface-visibility: hidden;
 }
 
-.animation-text-scale:before {
+.button-text-scale:before {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -383,20 +383,20 @@ a {
   backface-visibility: hidden;
 }
 
-.animation-text-scale:hover:before {
+.button-text-scale:hover:before {
   transform: scale(1);
   opacity: 1;
   backface-visibility: hidden;
 }
 
-.animation-circle-in {
+.button-circle-in {
   --button-border-color: tomato;
   --button-color: tomato;
   --button-background-color: none;
   transition: all 0.5s;
 }
 
-.animation-circle-in:before {
+.button-circle-in:before {
   --button-effect-background-color: tomato;
   content: "Hover Me";
   position: absolute;
@@ -415,19 +415,19 @@ a {
   z-index: 2;
 }
 
-.animation-circle-in:hover:before {
+.button-circle-in:hover:before {
   height: 190%;
   color: white;
 }
 
-.animation-rotate-3-layers {
+.button-rotate-3-layers {
   --button-background-color: #f1c40f;
   --button-color: white;
   overflow: visible;
   transition: all 0.5s;
 }
 
-.animation-rotate-3-layers:before {
+.button-rotate-3-layers:before {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -443,12 +443,12 @@ a {
   transition: all 0.5s;
 }
 
-.animation-rotate-3-layers:hover:before,
-.animation-rotate-3-layers:hover:after {
+.button-rotate-3-layers:hover:before,
+.button-rotate-3-layers:hover:after {
   transform: rotateX(0deg);
 }
 
-.animation-rotate-3-layers:after {
+.button-rotate-3-layers:after {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -465,14 +465,14 @@ a {
   transition-delay: 0.25s;
 }
 
-.animation-flip {
+.button-flip {
   --button-color: transparent;
   --button-border-color: #ff0;
   overflow: visible;
   letter-spacing: 0.4rem;
 }
 
-.animation-flip:before {
+.button-flip:before {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -487,13 +487,13 @@ a {
   transition: all 0.5s;
 }
 
-.animation-flip:hover:before {
+.button-flip:hover:before {
   left: 100%;
   transform: scale(0) rotateY(360deg);
   opacity: 0;
 }
 
-.animation-flip:after {
+.button-flip:after {
   content: "Hover Me";
   position: absolute;
   top: 0;
@@ -510,13 +510,13 @@ a {
   opacity: 0;
 }
 
-.animation-flip:hover:after {
+.button-flip:hover:after {
   left: 0;
   transform: scale(1) rotateY(360deg);
   opacity: 1;
 }
 
-.animation-3-dots {
+.button-3-dots {
   --button-color: green;
   --button-background-color: transparent;
   --button-border-color: transparent;
@@ -525,8 +525,8 @@ a {
   overflow: visible;
 }
 
-.animation-3-dots:before,
-.animation-3-dots:after {
+.button-3-dots:before,
+.button-3-dots:after {
   content: "";
   position: absolute;
   top: 50%;
@@ -540,31 +540,31 @@ a {
   opacity: 0;
 }
 
-.animation-3-dots:before {
+.button-3-dots:before {
   left: 0;
   box-shadow: -10rem 0 0 green;
 }
 
-.animation-3-dots:after {
+.button-3-dots:after {
   right: 0;
   box-shadow: 10rem 0 0 green;
 }
 
-.animation-3-dots:hover:before {
+.button-3-dots:hover:before {
   left: 50%;
   box-shadow: 3rem 0 0 green;
   transform: translateX(-50%) translateY(-50%);
   opacity: 1;
 }
 
-.animation-3-dots:hover:after {
+.button-3-dots:hover:after {
   right: 50%;
   box-shadow: -3rem 0 0 green;
   transform: translateX(50%) translateY(-50%);
   opacity: 1;
 }
 
-.animation-3-dots span {
+.button-3-dots span {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -577,17 +577,17 @@ a {
   z-index: -1;
 }
 
-.animation-3-dots:hover span {
+.button-3-dots:hover span {
   transform: scale(1);
   transition-delay: 0.3s;
 }
 
-.animation-3-dots:hover {
+.button-3-dots:hover {
   color: white;
   transition-delay: 0.4s;
 }
 
-.animation-blink-open {
+.button-blink-open {
   color: white;
   font-weight: bold;
   text-transform: uppercase;
@@ -597,7 +597,7 @@ a {
   --button-border-width: 0;
   overflow: visible;
 }
-.animation-blink-open:before {
+.button-blink-open:before {
   content: "";
   position: absolute;
   top: -1rem;
@@ -609,7 +609,7 @@ a {
   mix-blend-mode: multiply;
   transition: all 0.2s;
 }
-.animation-blink-open:after {
+.button-blink-open:after {
   content: "";
   position: absolute;
   top: 1rem;
@@ -621,19 +621,100 @@ a {
   mix-blend-mode: multiply;
   transition: all 0.2s;
 }
-.animation-blink-open:hover {
+.button-blink-open:hover {
   color: #272727;
 }
-.animation-blink-open:hover:before {
+.button-blink-open:hover:before {
   top: -1rem;
   left: 0;
   transform: perspective(100rem) rotateX(75deg);
   transform-origin: top;
 }
-.animation-blink-open:hover:after {
+.button-blink-open:hover:after {
   top: 1rem;
   left: 0;
   transform: perspective(100rem) rotateX(-75deg);
   transform-origin: bottom;
+}
+
+.button-splitted {
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  color: #f6b93b;
+  letter-spacing: 0.3rem;
+  padding: 2.5rem 5rem;
+  --button-border-color: #f6b93b;
+  transition: all 0.5s;
+}
+.button-splitted:before, .button-splitted:after,
+.button-splitted span:before,
+.button-splitted span:after {
+  content: "";
+  position: absolute;
+  width: 25%;
+  height: 100%;
+  background-color: #f6b93b;
+  z-index: -1;
+  transition: all 0.2s;
+}
+.button-splitted span:before {
+  top: 100%;
+  right: 25%;
+}
+.button-splitted span:after {
+  top: 0;
+  right: -25%;
+}
+.button-splitted:before {
+  top: 0;
+  left: -25%;
+}
+.button-splitted:after {
+  top: -100%;
+  left: 25%;
+}
+.button-splitted:hover {
+  color: #222;
+}
+.button-splitted:hover:before {
+  top: 0;
+  left: 0;
+}
+.button-splitted:hover:after {
+  top: 0;
+  left: 25%;
+}
+.button-splitted:hover span:before {
+  top: 0;
+  right: 25%;
+}
+.button-splitted:hover span:after {
+  top: 0;
+  right: 0;
+}
+.button-splitted--stripes span:before {
+  top: 100%;
+  right: 25%;
+}
+.button-splitted--stripes span:after {
+  top: -100%;
+  right: 0;
+}
+.button-splitted--stripes:before {
+  top: 100%;
+  left: 0;
+}
+.button-splitted--stripes:after {
+  top: -100%;
+  left: 25%;
+}
+.button-splitted--stripes-delayed span:before {
+  transition-delay: 0.2s;
+}
+.button-splitted--stripes-delayed span:after {
+  transition-delay: 0.3s;
+}
+.button-splitted--stripes-delayed:after {
+  transition-delay: 0.1s;
 }
 /*# sourceMappingURL=main.css.map */

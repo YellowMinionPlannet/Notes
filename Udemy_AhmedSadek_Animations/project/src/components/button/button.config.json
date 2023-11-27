@@ -9,103 +9,103 @@
     {
       "name": "rotate-in",
       "context": {
-        "animation": "animation-rotate-in"
+        "animation": "button-rotate-in"
       }
     },
     {
       "name": "rotate-in--bottom-right",
       "context": {
-        "animation": "animation-rotate-in--bottom-right"
+        "animation": "button-rotate-in--bottom-right"
       }
     },
     {
       "name": "rotate-in--top-right",
       "context": {
-        "animation": "animation-rotate-in--top-right"
+        "animation": "button-rotate-in--top-right"
       }
     },
     {
       "name": "rotate-in--top-left",
       "context": {
-        "animation": "animation-rotate-in--top-left"
+        "animation": "button-rotate-in--top-left"
       }
     },
     {
       "name": "swipe-in",
       "context": {
-        "animation": "animation-swipe-in"
+        "animation": "button-swipe-in"
       }
     },
     {
       "name": "swip-in--right",
       "context": {
-        "animation": "animation-swipe-in--right"
+        "animation": "button-swipe-in--right"
       }
     },
     {
       "name": "cross-in",
       "context": {
-        "animation": "animation-cross-in"
+        "animation": "button-cross-in"
       }
     },
     {
       "name": "cross-in--horizontal",
       "context": {
-        "animation": "animation-cross-in--horizontal"
+        "animation": "button-cross-in--horizontal"
       }
     },
     {
       "name": "cross-in--vertical",
       "context": {
-        "animation": "animation-cross-in--vertical"
+        "animation": "button-cross-in--vertical"
       }
     },
     {
       "name": "stretch",
       "context": {
-        "animation": "animation-stretch"
+        "animation": "button-stretch"
       }
     },
     {
       "name": "swipe-in--top",
       "context": {
-        "animation": "animation-swipe-in--top"
+        "animation": "button-swipe-in--top"
       }
     },
     {
       "name": "glow",
       "context": {
-        "animation": "animation-glow"
+        "animation": "button-glow"
       }
     },
     {
       "name": "exchange",
       "context": {
-        "animation": "animation-exchange"
+        "animation": "button-exchange"
       }
     },
     {
       "name": "text-scale",
       "context": {
-        "animation": "animation-text-scale"
+        "animation": "button-text-scale"
       }
     },
     {
       "name": "circle-in",
       "context": {
-        "animation": "animation-circle-in"
+        "animation": "button-circle-in"
       }
     },
     {
       "name": "rotate-3-layers",
       "context": {
-        "animation": "animation-rotate-3-layers"
+        "animation": "button-rotate-3-layers"
       }
     },
     {
       "name": "flip",
       "context": {
-        "animation": "animation-flip"
+        "animation": "button-flip"
       }
     },
     {
@@ -113,14 +113,47 @@
       "context": {
         "template": "button--with-span",
         "data": {
-          "animation": "animation-3-dots"
+          "animation": "button-3-dots"
         }
       }
     },
     {
       "name": "blink-open",
       "context": {
-        "animation": "animation-blink-open"
+        "animation": "button-blink-open"
+      }
+    },
+    {
+      "name": "splitted",
+      "context": {
+        "template": "button--with-span",
+        "data": {
+          "animation": "button-splitted",
+          "span-text": "Hover Me",
+          "text": ""
+        }
+      }
+    },
+    {
+      "name": "splitted--stripes",
+      "context": {
+        "template": "button--with-span",
+        "data": {
+          "animation": "button-splitted button-splitted--stripes",
+          "span-text": "Hover Me",
+          "text": ""
+        }
+      }
+    },
+    {
+      "name": "splitted--stripes-delayed",
+      "context": {
+        "template": "button--with-span",
+        "data": {
+          "animation": "button-splitted button-splitted--stripes button-splitted--stripes-delayed",
+          "span-text": "Hover Me",
+          "text": ""
+        }
       }
     }
   ]
