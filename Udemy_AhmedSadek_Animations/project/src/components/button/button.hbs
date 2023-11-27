@@ -1,1 +1,5 @@
-<a href="#" class="button{{~#if animation}} {{animation}}{{/if~}}">Hover Me</a>
+{{#if template}}
+{{render (strConcat "@" template) data merge=true}}
+{{else}}
+<a href="#" class="button{{~#if animation}} {{animation}}{{/if~}}">{{text}}</a>
+{{/if}}

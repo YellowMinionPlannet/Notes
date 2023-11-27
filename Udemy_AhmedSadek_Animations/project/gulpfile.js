@@ -14,6 +14,22 @@ const sourcemaps = require("gulp-sourcemaps");
 
 const fractal = require("@frctl/fractal").create();
 
+const helpers = {
+  strConcat: (str1, str2) => str1 + str2,
+};
+
+const partials = {};
+
+const hbs = require("@frctl/handlebars")({
+  helpers,
+  partials,
+});
+
+fractal.components.engine(
+  hbs
+); /* set as the default template engine for components */
+fractal.docs.engine(hbs);
+
 fractal.set("project.title", "Lei's Component Library"); // title for the project
 fractal.web.set("builder.dest", "build"); // destination for the static export
 fractal.docs.set("path", `${__dirname}/src/docs`); // location of the documentation directory.

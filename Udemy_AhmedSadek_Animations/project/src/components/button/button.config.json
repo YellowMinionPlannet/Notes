@@ -2,7 +2,8 @@
   "name": "button",
   "preview": "@preview",
   "context": {
-    "animation": ""
+    "animation": "",
+    "text": "Hover Me"
   },
   "variants": [
     {
@@ -84,20 +85,20 @@
       }
     },
     {
-      "name":"text-scale",
-      "context":{
+      "name": "text-scale",
+      "context": {
         "animation": "animation-text-scale"
       }
     },
     {
       "name": "circle-in",
-      "context":{
+      "context": {
         "animation": "animation-circle-in"
       }
     },
     {
       "name": "rotate-3-layers",
-      "context":{
+      "context": {
         "animation": "animation-rotate-3-layers"
       }
     },
@@ -105,6 +106,15 @@
       "name": "flip",
       "context": {
         "animation": "animation-flip"
+      }
+    },
+    {
+      "name": "3-dots",
+      "context": {
+        "template": "button--with-span",
+        "data": {
+          "animation": "animation-3-dots"
+        }
       }
     }
   ]
