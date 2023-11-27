@@ -287,11 +287,12 @@ a {
 
 .animation-glow {
   --button-border-color: white;
-  transition: background-color 1s;
+  transition: all 1s;
 }
 
 .animation-glow:hover {
   background-color: #f44336;
+  color: white;
 }
 
 .animation-glow:before {
