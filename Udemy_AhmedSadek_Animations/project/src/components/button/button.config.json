@@ -116,6 +116,12 @@
           "animation": "animation-3-dots"
         }
       }
+    },
+    {
+      "name": "blink-open",
+      "context": {
+        "animation": "animation-blink-open"
+      }
     }
   ]
 }
