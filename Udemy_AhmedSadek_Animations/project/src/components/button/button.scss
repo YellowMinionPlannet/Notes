@@ -422,7 +422,7 @@ a {
 
 .animation-circle-in:before {
   --button-effect-background-color: tomato;
-  content: "";
+  content: "Hover Me";
   position: absolute;
   top: 0;
   left: 0;
@@ -432,10 +432,16 @@ a {
   border-radius: 0 0 50% 50%;
   z-index: -1;
   transition: all 0.5s;
+  text-align: center;
+  vertical-align: middle;
+  color: transparent;
+  padding-top: 4rem;
+  z-index: 2;
 }
 
 .animation-circle-in:hover:before {
   height: 190%;
+  color: white;
 }
 
 .animation-rotate-3-layers {
