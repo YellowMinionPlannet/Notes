@@ -67,6 +67,7 @@ gulp.task("fractal:start", function () {
   server.on("error", (err) => logger.error(err.message));
   server.start().then(() => {
     logger.success(`Fractal server is now running at ${server.url}`);
+    fractal.watch();
   });
 });
 
@@ -100,6 +101,7 @@ gulp.task("default", function () {
     .start()
     .then(() => {
       logger.success(`Fractal server is now running at ${server.url}`);
+      fractal.watch();
     })
     .then(() => {
       gulp.watch(["./src/**/*.*"], gulp.series(["fractal:build", "sass"]));
