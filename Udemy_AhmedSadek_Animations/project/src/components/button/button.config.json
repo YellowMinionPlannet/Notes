@@ -155,6 +155,11 @@
           "text": ""
         }
       }
+    },{
+      "name": "with-frame",
+      "context":{
+        "animation": "button-with-frame"
+      }
     }
   ]
 }
