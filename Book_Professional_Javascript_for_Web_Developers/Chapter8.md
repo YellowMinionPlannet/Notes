@@ -45,7 +45,7 @@ There are two types of properties:
 
 - [[Configurable]] : true/false, by default true, which indicates the property can be removed by `delete`, the property's attributes can be changed, or the property can be changed into accessor property.
 
-- [[Enumerable]] : true/false, by default true, which indicates the property can be iterated by the `for-in` loop.
+- [[Enumerable]] : true/false, by default true, which indicates the property can be iterated by the `for-in` loop when accessing the object where these properites are belonging to.
 
 - [[Writable]] : true/false, by default true, property's value can be changed.
 
@@ -141,7 +141,7 @@ We can use `Object.getOwnPropertyDescriptor()` or `Object.getOwnPropertyDescript
 
 ### Merging Objects
 
-Object.assign() will merge object to destination object from src objects. When property with `src.propertyIsEnumerable(), src.hasOwnProperty()` returns true, Object.assign will execute accessor property's get function on src and set function on destination. And merge data property from src to destination as well.
+Object.assign() will merge object to destination object from src objects. When property with `src.propertyIsEnumerable() && src.hasOwnProperty()` returns true, and when the property is accessor property, Object.assign will execute accessor property's get function on src and set function on destination. And merge data property from src to destination as well.
 
 ```js
 dest = {
@@ -179,7 +179,117 @@ example:
 
 ### Enhanced Object Syntax
 
-待补
+#### Property Value Shorthand
+
+```js
+//Normal Syntax
+let name = "Matt";
+let person = {
+  name: name
+}
+```
+
+```js
+//Shorthand Syntax
+let name = "Matt";
+let person = {
+  name
+}
+```
+
+Another example
+
+```js
+//Normal Syntax
+function makePerson(a){
+  return{
+    name: a
+  }
+}
+```
+
+```js
+//Shorthand Syntax
+function makePerson(name){
+  return{
+    name
+  };
+}
+```
+
+#### Computed Property Keys
+To dynamically assign object's property keys.
+
+```js
+//Constructor example
+const nameKey = "name";
+const ageKey = "age";
+const jobKey = "job";
+
+let person = {};
+person[nameKey] = "Matt";
+person[ageKey] = 27;
+person[jobKey] = "Developer";
+```
+
+```js
+//Literal example
+const nameKey = "name";
+const ageKey = "age";
+const jobKey = "job";
+
+let person ={
+  [nameKey]: "Matt",
+  [ageKey]: 27,
+  [jobKey]: "Developer"
+}
+```
+
+You can even use property keys generator function to generate property keys.
+
+```js
+const nameKey = "name";
+const ageKey = "age";
+const jobKey = "job";
+let uniqueToken = 0;
+
+function getUniqueKey(key){
+  return `${key}_${uniqueToken++}`;
+}
+
+let person = {
+  [getUniqueKey(nameKey)]: "Matt",
+  [getUniqueKey(ageKey)]: 27,
+  [getUniqueKey(jobKey)]: "Developer"
+}
+
+console.log(person);
+```
+
+#### Concise Method Syntax
+
+```js
+//Normal Syntax
+let person = {
+  sayName: function(name) {
+    console.log(`My name is ${name}`);
+  }
+}
+```
+
+```js
+//Concise Sytax
+let person = {
+  sayName(name) {
+    console.log(`My name is ${name}`);
+  }
+}
+
+```
+
+> Review: 
+> - Function expressions: `const square = function(number) {return number * number;}`
+> - Function declarations: `function square(number) {return number * number;}`
 
 ### Object Destructuring
 
