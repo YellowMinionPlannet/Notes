@@ -155,10 +155,28 @@
           "text": ""
         }
       }
-    },{
+    },
+    {
       "name": "with-frame",
-      "context":{
+      "context": {
         "animation": "button-with-frame"
+      }
+    },
+    {
+      "name": "border-extending",
+      "context": {
+        "animation": "button-border-extending"
+      }
+    },
+    {
+      "name": "first-letter-rotate",
+      "context": {
+        "template": "button--with-span",
+        "data": {
+          "animation": "button-first-letter-rotate",
+          "span-text": "B",
+          "text": "utton"
+        }
       }
     }
   ]
