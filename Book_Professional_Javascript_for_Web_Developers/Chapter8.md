@@ -69,6 +69,8 @@ Object.defineProperty(person, "name", {
 // Error is caused by default value of configurable = false at Object.defineProperty firstly called.
 ```
 
+You can't change any attributes (except for writable) after you set configurable to false.
+
 #### Accessor Properties
 
 4 attirbutes to describe Accesor Property:
@@ -185,39 +187,40 @@ example:
 //Normal Syntax
 let name = "Matt";
 let person = {
-  name: name
-}
+  name: name,
+};
 ```
 
 ```js
 //Shorthand Syntax
 let name = "Matt";
 let person = {
-  name
-}
+  name,
+};
 ```
 
 Another example
 
 ```js
 //Normal Syntax
-function makePerson(a){
-  return{
-    name: a
-  }
+function makePerson(a) {
+  return {
+    name: a,
+  };
 }
 ```
 
 ```js
 //Shorthand Syntax
-function makePerson(name){
-  return{
-    name
+function makePerson(name) {
+  return {
+    name,
   };
 }
 ```
 
 #### Computed Property Keys
+
 To dynamically assign object's property keys.
 
 ```js
@@ -238,11 +241,11 @@ const nameKey = "name";
 const ageKey = "age";
 const jobKey = "job";
 
-let person ={
+let person = {
   [nameKey]: "Matt",
   [ageKey]: 27,
-  [jobKey]: "Developer"
-}
+  [jobKey]: "Developer",
+};
 ```
 
 You can even use property keys generator function to generate property keys.
@@ -253,15 +256,15 @@ const ageKey = "age";
 const jobKey = "job";
 let uniqueToken = 0;
 
-function getUniqueKey(key){
+function getUniqueKey(key) {
   return `${key}_${uniqueToken++}`;
 }
 
 let person = {
   [getUniqueKey(nameKey)]: "Matt",
   [getUniqueKey(ageKey)]: 27,
-  [getUniqueKey(jobKey)]: "Developer"
-}
+  [getUniqueKey(jobKey)]: "Developer",
+};
 
 console.log(person);
 ```
@@ -271,10 +274,10 @@ console.log(person);
 ```js
 //Normal Syntax
 let person = {
-  sayName: function(name) {
+  sayName: function (name) {
     console.log(`My name is ${name}`);
-  }
-}
+  },
+};
 ```
 
 ```js
@@ -282,18 +285,114 @@ let person = {
 let person = {
   sayName(name) {
     console.log(`My name is ${name}`);
-  }
-}
-
+  },
+};
 ```
 
-> Review: 
+> Review:
+>
 > - Function expressions: `const square = function(number) {return number * number;}`
 > - Function declarations: `function square(number) {return number * number;}`
 
 ### Object Destructuring
 
-待补
+Two equivalent code snippets:
+
+```js
+//Snippet 1
+let person = {
+  name: "Matt",
+  age: 27,
+};
+
+let personName = person.name;
+let personAge = person.age;
+console.log(personName); // Matt
+console.log(personAge); // 27
+```
+
+```js
+//Snippet 2
+let person = {
+  name: "Matt",
+  age: 27,
+};
+
+let { name: personName, age: personAge } = person;
+console.log(personName); // Matt
+console.log(personAge); // 27
+
+let { name, age } = person;
+console.log(name);
+console.log(age);
+```
+
+#### Nested Object Destructuring
+
+```js
+let person = {
+  name: "Matt",
+  age: 27,
+  job: {
+    title: "Software Engineer",
+  },
+};
+
+let {
+  job: { title },
+} = person; // declares a variable title and assign person.job.title.
+console.log(title);
+```
+
+#### Parameter Context Matching(Destructuring within Parameter List of Function)
+
+```js
+let person = {
+  name: "Matt",
+  age: 27,
+};
+
+function printPerson(foo, { name, age }, bar) {
+  console.log(arguments);
+  console.log(name, age);
+}
+
+function printPerson2(foo, { name: personName, age: personAge }, bar) {
+  console.log(arguments);
+  console.log(personName, personAge);
+}
+```
+
+### Rest Operator
+
+When destructuring from an object, you can partially destructure an object into some specific variables and "the rest", which represented using `...`
+
+```js
+const person = { name: "Matt", age: 27, job: "Engineer" };
+const { name, ...restData } = person;
+console.log(name); // Matt
+console.log(restData); // {age: 27, job: "Engineer"}
+```
+
+Rest operator works for nested destructuring, and will create shallow copy of "the rest", and also copy symbols.
+
+### Spread Operator
+
+When do a object literal, you can destructuring a object's properties using `...`
+
+```js
+const s = Symbol();
+const foo = { a: 1 };
+const bar = { [s]: 2 };
+const foobar = { ...foo, c: 3, ...bar };
+
+console.log(foobar); // {a: 1, c: 3, Symbol(): 2}
+```
+
+Spread Operator Rules:
+
+1. Order will be same as spreaded object's literal syntax
+2. When encounter duplicates, later property overwrites previous.
 
 ## Object Creation
 
@@ -349,6 +448,36 @@ When use `new` operator, the following will happen:
 5. If the constructor returns a non-null value, that value is returned. Otherwise, the new object that was just created is returned.
 
 6. _object is filled with `constructor` property that is pointing back to Person(constructor function)_
+
+```js
+//Function declaration is used here, Function expression also works in the same way.
+let Person = function (name, age, job) {
+  this.name = name;
+  this.age = age;
+  this.job = job;
+  this.sayName = function () {
+    console.log(this.name);
+  };
+};
+
+let person1 = new Person("Alice", 29, "Software Engineer");
+
+//Followings are all TRUE
+console.log(person1.__proto__ === Person.prototype);
+console.log(person1.__proto__.constructor === Person);
+console.log(person1.__proto__.constructor.prototype === person1.__proto__);
+
+console.log(Object.getOwnPropertyDescriptors(Person.prototype)); // {constructor: {wriatble: true, enumerable: false, configurable: true, value: function(){...}}}
+
+console.log(person1.__proto__.constructor === Person.prototype.constructor);
+console.log(Person.prototype.constructor === Person);
+
+console.log({}.__proto__.constructor === Object);
+
+console.log((() => {}).__proto__.constructor === Function);
+
+console.log(Object.__proto__.constructor === Function);
+```
 
 #### Constructors as Functions
 
