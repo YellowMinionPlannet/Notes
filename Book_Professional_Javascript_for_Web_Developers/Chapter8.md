@@ -477,6 +477,7 @@ console.log({}.__proto__.constructor === Object);
 console.log((() => {}).__proto__.constructor === Function);
 
 console.log(Object.__proto__.constructor === Function);
+console.log(Person.__proto__.constructor === Function);
 ```
 
 #### Constructors as Functions
