@@ -77,3 +77,49 @@ Questions that are "too hard" to "the state of art"
 ### Applications that integrate road general or expert knowledge
 
 # 3 Approaches to Natural Language Understanding - Rule-Based Systems, Machine Learning, and Deep Learning
+
+## Rule-based approaches
+
+Just like human learn foreign language, we study the rule of words:
+
+1. meaning of word
+2. order of word in sentence
+3. how prefix and suffix change the meaning of word
+
+This approach is implemented from 1950s to 1990s
+
+Following parts are the rules and data that relevant to this approach.
+
+### Words and lexicons
+
+Lexicon is set of information that describe a word.
+
+### Part-of-speech tagging
+
+We can also assign word's role when analyzing a sentence. For example, we can categorize words into verb and noun and preposition. But part-of-speech tagging(POS tagging) is more complicated in form of categories.
+
+Eg. "We would like to book a flight from Boston to London"
+
+| Word   | Part of speech | Meaning of part of speech label |
+| ------ | -------------- | ------------------------------- |
+| we     | PRP            | Personal pronoun                |
+| would  | MD             | Modal verb                      |
+| like   | VB             | verb, base form                 |
+| to     | TO             | To                              |
+| book   | VB             | Verb, base form                 |
+| a      | DT             | Determiner                      |
+| flight | NN             | Singular noun                   |
+| from   | IN             | Preposition                     |
+| Boston | NNP            | Proper noun                     |
+| to     | TO             | To                              |
+| London | NNP            | Proper noun                     |
+
+### Grammer
+
+Grammer rules, famous framework that includes Grammer Rules already. Eg. NLTK(Natural Language Toolkit) and spaCy.
+
+### Parsing
+
+![parsing.png](./Chap3_Parsing.png)
+
+### Semantic analysis
