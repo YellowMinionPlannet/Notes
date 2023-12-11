@@ -96,6 +96,9 @@ Lexicon is set of information that describe a word.
 
 ### Part-of-speech tagging
 
+Commonly used set of parts-of-speech for English:
+[Penn Treebank](https://catalog.ldc.upenn.edu/LDC99T42)
+
 We can also assign word's role when analyzing a sentence. For example, we can categorize words into verb and noun and preposition. But part-of-speech tagging(POS tagging) is more complicated in form of categories.
 
 Eg. "We would like to book a flight from Boston to London"
@@ -123,3 +126,7 @@ Grammer rules, famous framework that includes Grammer Rules already. Eg. NLTK(Na
 ![parsing.png](./Chap3_Parsing.png)
 
 ### Semantic analysis
+
+We find relationship betwwen words and their meaning.
+
+Useful link to find relationship betwwen words: [Wordnet](https://wordnet.princeton.edu)
