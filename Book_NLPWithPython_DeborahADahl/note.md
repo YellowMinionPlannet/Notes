@@ -205,3 +205,5 @@ The basic concept:
 4. weights on the neurons are adjusted to max classification accuracy.
 
 ## Pre-trained models
+
+The concept is that generic models are created by generic inputs, and then, we can **fine-tuning** that generic model into specific model.
