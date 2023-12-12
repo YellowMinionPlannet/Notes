@@ -130,3 +130,78 @@ Grammer rules, famous framework that includes Grammer Rules already. Eg. NLTK(Na
 We find relationship betwwen words and their meaning.
 
 Useful link to find relationship betwwen words: [Wordnet](https://wordnet.princeton.edu)
+
+### Pragmatic analysis
+
+It determines the meanings of words and phrases **in context**.
+
+eg.
+
+1. "We want to book a flight from Boston to London"
+2. "the flight needs to leave before 10 a.m."
+
+Here, the flight is determined to be the same flight. It's called **coreference**.
+
+A very important part of Pragmatic analysis is **named entity recognition(NER)**, which link the entities in the real world and the input texts.
+
+### Pipeline
+
+Usually the parts mentioned above is processed as a sequence of steps, which is called pipeline.
+
+## Traditional machine learning approaches
+
+The reason we have different approaches is because
+
+1. the rule-based approach is expensive. It involves either experts writing rules or time-consuming tasks of annotating sample texts.
+
+2. the rules may evolve with time passing.
+3. experts might not be perfect
+4. rules are not universally applicable to every text
+5. input texts might contain errors (eg. typos)
+
+So traditional machine learning approach is based on classification of documents.
+
+### Representing documents
+
+bag of words (BoW), means document should be represented as the set of words it contains.
+
+eg. we have 3 documents
+
+1. I'm looking for a nearby Chinese restaurant that's highly rated.
+2. An Italian restaurant within five miles of here
+3. Are there any inexpensive Middle Eastern places that aren't too far away?
+
+- The vocabulary of words is 29 items in three documents.
+- we can have table like
+
+| appearence count/word | a   | an  | any | are | aren't | away | Chinese | Eastern | ... |
+| --------------------- | --- | --- | --- | --- | ------ | ---- | ------- | ------- | --- |
+| one time              | 1   | 0   | 0   | 0   | 0      | 0    | 1       | 0       | ... |
+| two times             | 0   | 1   | 0   | 0   | 0      | 0    | 0       | 0       | ... |
+| three times           | 0   | 0   | 1   | 1   | 1      | 1    | 0       | 1       | ... |
+
+- Then we can use concept of **Vector**
+
+### Classification
+
+The more words that two documents have in common, the more similar they are in meaning.
+
+So similar documents we can put into same categories.
+
+Algorithms of classification:
+
+1. Naive Bayes and **support vector machine(SVMs)**
+2. Neural networks, **recurrent neural networks(RNNs)**
+
+## Deep learning approaches
+
+Neural networkds and large neural networks referred to as deep learning.
+
+The basic concept:
+
+1. they consist of layers of connected units, called neurons
+2. neurons are connected to each other to form a neural net
+3. If one neuron receives appropriate inputs it will fire connected ones, if those receives appropriate inputs too, it will get fired too.
+4. weights on the neurons are adjusted to max classification accuracy.
+
+## Pre-trained models
