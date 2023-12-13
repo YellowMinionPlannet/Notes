@@ -1,3 +1,34 @@
+# What is AEM?
+
+1. Content Management System:
+   1. what is the content (html structure and content within it)
+   2. What is the representation of content (CSS styles)
+2. Experience Management System:
+   fluent/not-biased experience
+   1. between desktops and mobiles
+   2. between touch and click operations
+3. Organization Specific Experience:
+   eg. like global business organization, would provide 15 services accross different countries and different cities within those countries.
+
+   The services and language might be different corresponding to the country/city.
+
+   AEM enable you to configure the same site and switching features on and off, and also providing localization.
+
+4. Experience Fragment:
+
+   AEM also able to classify customerers into groups, like classified by gender, age, etc. And provide "Experience Fragment" which perticularly fit in the classified customers.
+
+# AEM Architecture
+
+## Web Development Architecture
+
+![Web_Development_Architecture](./AEM_architecture_1.png)
+
+The flow when you visit a site:
+
+1. Client send out the http request
+2. If the url request a static page, Web Server will serve the static content directly.
+
 # Template Authoring
 
 left rail right button, edit template(page template).
