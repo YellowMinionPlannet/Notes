@@ -28,6 +28,100 @@ The flow when you visit a site:
 
 1. Client send out the http request
 2. If the url request a static page, Web Server will serve the static content directly.
+3. If the url requested page contains dynamic data, the request will goes to App Server.
+
+App server contains a framework, like .net asp.net core web api, will decide which "class" will be executed for that particular url and retrieve data from database and send back html format data to Web server, and Web server will do the rest.
+
+## AEM Web Development Architecture
+
+![AEM_Architecture](./AEM_architecture_2.png)
+
+When http request comes in, the Web server dispatch to the App server(Sling framework), and will goes to the content root node part of the JCR(Database). Under the same route address, you will find a node with jcr:content, jcr:content will contains a sling:resourceType which will tell sling framework the route address to find the corresponding code. Sling framework will execute the code and finally build a html format data back to the Web server.
+
+Also, if the resource requested is a page, then the jcr:content/root will contains all the components which composite the page. Each component will have its own node. The properties of that node will contain their own sling:resourceType, by which sling will find the corresponding code.
+
+At same time, we can see that JCR is a nosql database, it has property files and code files. Property file will map to the requested route address, and each property file has names of properties, and values of properties. And one of the important property is the sling:resourceType property which direct to the route address of code file.
+
+# AEM OSGI Container and it's purpose
+
+![OSGI](./AEM_OSGI.png)
+
+OSGI is to maintain modularity. It solves name collision, dependency, visibility of exposure issues.
+
+How it works is it plays as a message broker, when a OSGI Service 1(a module) is asking another module's content, it initialize the content and inject the initialized content.
+
+Also since the referencer and referencee are not tightly coupled, when one dependency is down, the OSGI will put all referencee into hold, and prevent the whole application down time.
+
+![OSGI_modularity](./AEM_OSGI_modularity.png)
+
+# AEM paths
+
+## Brief
+
+1. AEM Author
+2. AEM Frontend Developer
+3. AEM Backend Developer
+4. AEM Administrator
+
+## AEM Authoring skill set
+
+- AEM Dynamic Templates:
+
+  page could be dependent on a template, which will define set of available components,
+
+- Component Policy Creation:
+
+  component could have its own policy, like variation definition of componnent
+
+- Page Authoring
+- Multisite Management:
+
+  localization
+
+- Content Fragments & Experience Fragments
+
+_Advanced_
+
+- Domain knowledge
+
+  domain knowledge about the industry you are working within
+
+- Content Writing Skills
+- Page performance analysis
+
+## AEM Developer skill set
+
+- AEM Architecture
+- Sling Resolution
+- Authoring
+
+_FrontEnd_
+
+- HTML CSS JS JQuery
+- HTL Template Language
+- Sass
+- How AEM compiles CSS and JS Files
+
+- Context Hub & Personalization
+
+  Context Hub can provide geographic info / age info about the customer.
+
+- Frontend framework, such as React/Angular
+- how AEM SPA works
+
+_BackEnd_
+
+- Project Structure
+- Maven
+- Custom Component Creation
+- Sling Servlets
+- OSGI Services
+- Workflow Administration
+- Content Model Creation (For content fragment)
+
+- Java Microservices
+
+# AEM Templates & Components Authoring
 
 # Template Authoring
 
