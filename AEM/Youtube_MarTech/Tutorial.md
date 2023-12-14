@@ -123,13 +123,92 @@ _BackEnd_
 
 # AEM Templates & Components Authoring
 
-# Template Authoring
+https://aemcomponents.dev/
 
-left rail right button, edit template(page template).
+Documentation for buit-in components of AEM
 
-Pages (Multiple) => (1) Template (1) => (Multiple) components (1) => (1) component policy.
+![AEM_authoring](AEM_authoring.png)
 
-1 template can inherit to multiple pages. 1 template can have multiple allowed component, each of which has one policy. So two different template can have same type of allowed compoent but with different component policies.
+Page must be based on a template, that template could also be other pages' template. A template has multiple allowed components, the same component could be used in different templates, and that component could be assigned to only one component policy. Although, the component policy could be changed corresponds to different templates.
+
+- Entry of Sites:
+
+  localhost:4502/sites.html
+
+- Entry of Authored Components within Page:
+
+  Top-left 1st icon and content tree
+
+- Entry of Component Allowed Style
+
+  Hover component, click on brush
+
+- Entry of Editing Template
+
+  Top-left 2nd icon and Edit Template
+
+- Entry of Component Policy
+
+  Editing Template, click on configure button on component
+
+# AEM Author, Publish & Dispatcher
+
+## Authoring and Publishing
+
+![Authoring_flow](./AEM_authoring_flow.png)
+
+Once click on quick publish, the page content will packed into zip file by Replication Agents and send to the particular url in Publish Environment, that particular url has a servlet to be triggered and deploy the zip file to the Publish Environment and End user can see it.
+
+## Page Rendering Flow
+
+![page_rendering](AEM_page_rendering_flow.png)
+
+1. Once the url is entered, request is sent, it will visit the nearest CDN(Content Delivery Networks), which will work as cache of static files.
+2. If the CDN does not have the content, the request will visit Load Balancer, then the Dispatcher, a apache web server. Load Balancer will decide which Dispatcher is free.
+3. Dispatcher will have rewrite rules, which will map the end user url to the real private path in AEM Publish Instance.
+4. Dispatcher also cache HTML page
+5. If content is not cached, then visit AEM Publish Instance and try to render the page. And then cache it.
+6. Dispatcher also has allowed path configuration.
+7. Dispatcher also can do the load balancer among AEM Publish Instances.
+8. If the URL has dynamically elements, eg. parameters of query appears in the URL, dispatcher will also send request to the AEM Publish Instance.
+9. Also if dispatcher is configured that specific path is not able to serve by dispatcher, then the request will goes to the AEM Publisher.
+
+## Debug
+
+If the end user is not able to see the newly edited content, what should we do?
+
+1. Check if the CD Server has deployed the edited content?
+2. If deployed, the Author Instance can view the edited content correctly.
+3. Check if the edited content is published to the publish instance.
+4. Check if the Dispatcher cache is old version, if so, clear cache and make sure it read content from the latest Publish Instance.
+5. Check if there's issue with CDN
+
+# Dispatcher Configuration
+
+When the request cannot be served by CDN, it will send request to the Dispatcher. The Dispatcher, an apache server, will listen at particular port. This is configured by a httpd.config file.
+
+It has Three properties that are very important
+
+```
+ServerRoot "D:/aem/apache"
+Listen 8080
+LoadModule dispatcher_module modules/disp_apache2.2.dll
+
+<Directory />
+  <IfModule disp_apache2.c>
+    ModMimeUsePathInfo On
+    SetHandler dispatcher-handler
+  </IfModule>
+  Options FollowSymLinks
+  AllowOverride None
+  Order deny, allow
+  Deny from all
+</Directory>
+```
+
+> TODO: Need to drop here, finish in future
+
+# AEM Sling End to End Flow
 
 # Global Object
 
