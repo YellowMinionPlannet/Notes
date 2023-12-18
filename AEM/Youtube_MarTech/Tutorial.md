@@ -256,6 +256,27 @@ Render the HTL or anything if the resource is page.
 
 # AEM HTL Language Syntax Practice
 
+Goal of HTL
+
+1. Variable Setting
+
+```htl
+<p data-sly-set.x="${1}">${x}</p>
+<ul data-sly-list.x="${[1,2,3,4]}">
+  <li>${x}</li>
+</ul>
+
+<p data-sly-test="${x == 1}"></p>
+```
+
+2. If condition
+3. Operators
+4. Loops
+5. Function
+6. Include another file
+7. Display Context
+8. Global Objects
+
 # Global Object
 
 The traditional flow of MVC in AEM
