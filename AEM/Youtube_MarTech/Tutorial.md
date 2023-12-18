@@ -210,6 +210,52 @@ LoadModule dispatcher_module modules/disp_apache2.2.dll
 
 # AEM Sling End to End Flow
 
+![AEM_Sling_flow](./AEM_Sling_flow.png)
+
+When the request comes to the publish instance, the first thing get hit is OSGI Framework(container of everything), There would be OSGI HTTP Service runing which has Sling servlet registered. The Sling Main Servlet is the first Entry Point. HTTP Servlet Request & Response get wrapped as HTTP Sling Servlet Request & Response.
+
+![Sling_inside](./AEM_Sling_inside_flow.png)
+
+Inside Sling Framework,
+
+1. First check if Resource Resolver Factory is available
+2. Factory create resource resolver by Resource Provider, any backend resource can have resource resolver that fit in the interface. So sling is able to access any type of backend resource, not just JCR.
+3. Wrap resource resolver, inject into Sling servlet request.
+4. Resource Resolver has resolve method will return everything under requested URL.
+5. Sling Main servlet will see sling:resourceType and render the page.
+
+## Two types of resources
+
+When the Resource Resolver return the resource, there are two types of resources could be returned.
+
+1. page and its scripts(HTML, HTL, JS, CSS)
+2. A Custom Sling Servlet
+
+## Custom Sling Servlet Registration
+
+There are two ways of registering Sling Servlet
+
+![Sling_Servlet_register](./AEM_Sling_register.png)
+
+1. use the sling:resourceType property on the JCR node
+2. use the OSGI configuration
+
+## Page rendering
+
+Render the HTL or anything if the resource is page.
+
+# AEM Page Authoring & Component Development
+
+- Usage of left panel, view as published, and developer view.
+
+- Usage of experienceleague.adobe.com/docs/experience-manager-core-components: description/docs of components
+
+- Usage of cq:dialog node: is for the wrench icon for edit mode on component.
+
+- Usage of developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/: description/docs for dialog UIs.
+
+# AEM HTL Language Syntax Practice
+
 # Global Object
 
 The traditional flow of MVC in AEM
