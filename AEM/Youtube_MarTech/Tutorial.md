@@ -277,31 +277,49 @@ Goal of HTL
 7. Display Context
 8. Global Objects
 
-# Global Object
+# AEM HTL Global Objects
 
-The traditional flow of MVC in AEM
+![content_rendering_flow_with_dialog](AEM_content_rendering_flow_with_dialog.png)
 
-Browser => Controller => Sling Model => database => Sling Model => HTL => Controller => Browser
+1. When we create a component with authorable dialog, author save properties in dialog, that will pass to the JCR(database) node.
+2. In traditional way, the JCR node info will be mapped into Model and manipulated in Controller and send to the View, where HTL and Slightly resides. View will finally render out static content.
+   ![traditional_way](traditional_MVC_pattern.png)
+3. But in AEM there is the other way to do this. The Database could be accessed through View (HTL and Slightly) directly.
+   ![AEM_way](AEM_MVC_pattern.png)
 
-The global object flow
+Global objects are used when you access database from View.
 
-Browser => Controller => View => Global Object => View => Controller => Browser
+Let's see detailed exampole
 
-# Sling Model
+When we created a dialog for component, we will define the UI of that dialog using sling:resourceType, and also for name property on that UI node, we define the "address" of that UI's input.
+
+For example, if the name property valued "./jcr:title", then we can access this UI's input at `${properties.jcr:title}` with HTL syntax.
+
+Notice that, all input values will be saved under `/content/pageName/jcr:content/root/componentName/jcr:title`
+
+# AEM Global Object Continued
+
+# Sling Model and Slightly
 
 @Model tells sling that this is the Sling model used by specific resource(content folder resource).
 
-adaptables resource class will be adapted to something, and the resource class is adapt to a ValueMap, which is the source properties of current model.
+adaptables resource class is the input class, and it will be adapted to something else, adapters.
 
-@Inject means we inject property from the ValueMap to this model and get the property's value.
+We will see Adaptables = Resource.class within @Model annotation. This resource is the node resides at `/content/pageName/componentName`, and when this node is visited by a request, the sling:resourceType property will tell Sling where to find the script, which resides at `/apps/componentName`. Within that script, we have `data-sly-use.model="com.***.***.***.componentNameClass"`, within this componentNameClass, we have @Model annotation, wihch tells the Resource is adapted into ValueMap and the properties of ValueMap will be injected into componentNameClass.
 
-Every Injeced property is required by default. We can use defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL to set all injected property is optional, so no errors raised if property name not found.
+If you want to see all the adaptables and adapters in AEM, go to `localhost:4502/system/console/`, Click sling, and sling adapters.
+
+@Inject means we inject property from the content node to this model and get the property's value.
+
+Every Injeced property is required by default. We can use defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL to set all injected property is optional, so no errors raised if property name not found within the current class.
 
 @PostConstruct means the method will execute when all properties are injected.
 
 # QueryBuilder
 
-/libs/cq/search/content/querydebug.html
+`localhost:4502/libs/cq/search/content/querydebug.html`
+
+`experienceleague.adobe.com/docs/experience-manager-64/developing/platform/query-builder/querybuilder-api.html`
 
 ## Set root path
 
@@ -309,8 +327,10 @@ path=/content/wknd/us/en/articles
 
 ## Set which primaryType
 
+```
 path=/content/wknd/us/en/articles
 type=cq:Page
+```
 
 ## How does resource resolver works
 
