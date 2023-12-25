@@ -59,3 +59,13 @@ JCR is embeded to Experience Server based on [Apache Jackrabbit](https://jackrab
 3. If none, reture 404.
 
 - All scripts are located at `/apps` or `/libs`
+
+- Allowed Engines:
+  - HTML HTL .html
+  - javascript pages .esp, .ecma(server-side execution)
+  - Java Server Pages.jsp(server-side execution)
+  - Java Servlet Compiler .java(server-side execution)
+  - Javascript templates .jst (client-side execution)
+
+Where to get all allowed script engines?
+`localhost:4502/system/console/slingscripting`
