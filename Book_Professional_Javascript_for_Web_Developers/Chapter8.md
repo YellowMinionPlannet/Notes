@@ -68,7 +68,7 @@ Object.defineProperty(person, "name", {
 }); // Error: Cannot redefine property: name
 // Error is caused by default value of configurable = false at Object.defineProperty firstly called.
 ```
-
+If you don't set the attributes, their value would be false.
 You can't change any attributes (except for writable) after you set configurable to false.
 
 #### Accessor Properties
