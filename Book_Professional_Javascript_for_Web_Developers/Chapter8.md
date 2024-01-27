@@ -920,11 +920,152 @@ Call `constructor` method with new will do:
 
 If we define what to return in constructor, then the new object created in memory of Step 1 will be discarded.
 
+#### Understanding Classes as Special Functions
+
+The class identifier will be identifies as a function after declaration.
 
 ```js
+class Person{}
+
+console.log(typeof Person);//function
+```
+
+`instanceof` test if the instance's prototype chain has the targeted constructor's prototype.
+
+```js
+class Person{}
+
+let p = new Person();
+
+console.log(p instanceof Person);// true
+```
+
+There's something special about constructor method in class. If you create instance through constructor method but not class. Following will happen:
+
+```js
+class Person{}
+
+let p1 = new Person();
+
+console.log(p1.constructor === Person); //true
+console.log(p1 instanceof Person); //true
+console.log(p1 instanceof Person.constructor);// false
+
+let p2 = new Person.constructor();
+
+console.log(p2.constructor === Person); //false
+console.log(p2 instanceof === Person); // false
+console.log(p2 instanceof Person.constructor); //true
+```
+
+Classes are __first-class__ citizens in JS, which means they can be passed arround as you would any other object or function references.
+
+```js
+//first-class citizen
+let classList = [
+    class{
+        constructor(id){
+            this.id_ = id;
+            console.log("instance ${this.id_}");
+        }
+    }
+]
+
+function createInstance(classDefinition, id){
+    return new classDefinition(id);
+}
+
+let foo = createInstance(classList[0], 3141);
+
+
+
+let p = new class Foo{
+    constructor(x){
+        console.log(x);
+    }
+}("bar") //bar
 
 ```
 
+### Instance Prototype and Class Member
+
+#### Instance Members
+```js
+class Person{
+    constructor(){
+        this.name = "Lei";
+    }
+}
+
+const p1 = new Person();
+console.log(p1); // { name: "Lei" }
+```
+
+#### Class Field Declarations
+
+```js
+class PersonWithClassFields{
+    friendCount = 12;
+    constructor(){
+        console.log(this.friendCount); // 12
+    }
+}
+
+let p1 = new PersonWithClassFields();
+let p2 = new PersonWithClassFields();
+p1.friendCount = 1;
+console.log(p2); // { friendCount: 12}
+console.log(p1); // { friendCount: 1}
+```
+
+#### Prototype Methods and Accessors
+
+So method defined in class body will be on Class's prototype, but member data (primitives/object references) will be on instance.
+
+>Remember, we can use Object.prototype.hasOwnProperty() to verify if the method/property is on instance or is on prototype.
+
+```js
+class PersonWithClassFields{
+    friendCount = 12;
+    local(){
+        console.log("Hello Kitty");
+    }
+    constructor(){
+        console.log(this.__proto__.friendCount);
+        console.log(this.__proto__.local);
+    }
+}
+
+let p1 = new PersonWithClassFields();
+// undefined
+// local(){console.log("Hello Kitty")}
+let p2 = new PersonWithClassFields();
+p1.friendCount = 1;
+console.log(p2);
+console.log(p1);
+```
+
+```js
+class Person{
+    constructor(){
+      this.name_ = "Lei";
+    }
+    set name(newName){
+        this.name_ = newName;
+    }
+
+    get name(){
+        return this.name_;
+    }
+}
+
+const p = new Person();
+console.log(p.hasOwnProperty("name"));//false
+console.log(p.hasOwnProperty("name_"));//true
+
+console.log(Object.getOwnPropertyDescriptor(Person.prototype, "name")); //[...accessor description...]]
+console.log(Object.getOwnPropertyDescriptor(p, "name"));//undefined
+```
 
 推导
 
