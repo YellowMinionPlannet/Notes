@@ -878,12 +878,53 @@ console.log(anotherPerson.friends); // Lei Qin Rob
 
 ## Classes
 
-伪代码：
+### Class Definition Basics
+
+There are two types of syntax for class.
+
+```js
+// class declaration
+class Person{}
+
+// class expression
+const Animal = class{};
+```
+
+However, class declarations are not hoisted. (Function declarations are hoisted, which means the syntax will be "moved" to the top of the file).
+
+### Class Composition
+
+A class can include
+1. constructor method
+2. instance method
+3. getters
+4. setters
+5. static class method
+
+Empty class is accepted, and everything inside a class is in strict mode.
+
+### The Class Constructor
+
+Use `constructor` keyword to define a constructor method in class. If we don't define a constructor method, it is equivalent to define a empty constructor method in a class.
+
+#### Instantiation
+
+The instantiation process is identical to the function constructor, but using `new`` with a class will tell interpretor to use constructor function within the class to initiate a new instance.
+
+Call `constructor` method with new will do:
+1. A new object is crerated in memory.
+2. The new object's internal __proto__ object will point to the prototype property of constructor.
+3. The `this` value of the constructor is assigned to the new object.
+4. Code inside constructor is executed
+5. The constructor return the new object, or if the constructor defines what to return, then return the defined object.
+
+If we define what to return in constructor, then the new object created in memory of Step 1 will be discarded.
+
+
+```js
 
 ```
-instance.__proto__ === constructor.prototype
-constructor.prototype.__proto === super.prototype
-```
+
 
 推导
 
