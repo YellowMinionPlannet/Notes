@@ -751,8 +751,8 @@ console.log(
 
 #### Prototype and Instance Relationships
 
-`instanceof` return true if a Function(Constructor function) appears in its prototype chain.
-`isPrototypeOf` returns true if the prototype appears in the chain.
+`instanceof` return true if a Function(Constructor function)'s prototype appears in its prototype chain.
+`isPrototypeOf` returns true if the targeted object's prototype chain contains the current object that use this method.
 
 ```js
 console.log(instance instanceof Object); //true
@@ -1099,6 +1099,7 @@ Special behavior of private property at compile-time.
 - It is used by syntax `ClassName.StaticMethodName`.
 - It is only created once per class, which is same as prototype member.
 - In side static member, `this` refers to the class itself.
+- Usually it is intended to be used not centered on a specific instance.
 
 ```js
 class Person{
@@ -1125,6 +1126,70 @@ console.log(Person.species);//sapiens
 p.locate(); // instance
 Person.prototype.locate() // prototype
 person.local() // class
+```
+
+Static class methods can be useful as instance factories:
+
+```js
+class Person{
+    constructor(age){
+        this.age_ = age;
+    }
+
+    sayAge(){
+        console.log(this.age_);
+    }
+    static create(){
+        return new Person(Math.floor(Math.random() * 100));
+    }
+}
+
+console.log(Person.create());
+```
+
+#### Static Initialization Blocks
+
+To initialize static members, we can write *static initialization blocks*.
+
+```js
+class Person{
+    static name = "Alice";
+    static age;
+    static{
+        this.age = 30; // this refers to the class as mentioned before
+    }
+}
+```
+
+- Any number of blocks can be used in one class, and execution order follows the order of appearance.
+- The blocks must be evaluated synchronously.
+- The block scope is normal lexical scope.
+- `this` refers to the constructor object of the class.
+
+> lexical scope concept is related to function calling stack chain, it's about which variable should be used within a nested function if there's variable with the same name in outer context. 
+
+#### Iterator and Generator Methods
+
+> need to skip this part, will be back after studying Chapter 7.
+
+### Class Inheritance
+
+#### Inheritance Basics
+
+- ECMAScript uses single inheritance, which means one class can only extends one parent class.
+
+- You can inherit anything as long as it has constructor property and constructor has a prototype.
+
+```js
+function Person(){
+
+}
+
+class Engineer extends Person{}
+
+let e = new Engineer();
+console.log(e instanceof Engineer);//true
+console.log(e instanceof Person);//true
 
 ```
 
