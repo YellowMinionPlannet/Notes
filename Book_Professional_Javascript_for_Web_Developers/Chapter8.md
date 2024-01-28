@@ -1022,7 +1022,7 @@ console.log(p1); // { friendCount: 1}
 
 So method defined in class body will be on Class's prototype, but member data (primitives/object references) will be on instance.
 
->Remember, we can use Object.prototype.hasOwnProperty() to verify if the method/property is on instance or is on prototype.
+> Remember, we can use Object.prototype.hasOwnProperty() to verify if the method/property is on instance or is on prototype.
 
 ```js
 class PersonWithClassFields{
@@ -1066,6 +1066,69 @@ console.log(p.hasOwnProperty("name_"));//true
 console.log(Object.getOwnPropertyDescriptor(Person.prototype, "name")); //[...accessor description...]]
 console.log(Object.getOwnPropertyDescriptor(p, "name"));//undefined
 ```
+#### Private Class Members
+
+Use `#` prefix to declare private property.        
+```js
+class Person{
+    #name = "Alice";
+    age = 30;
+    
+    getName(){
+        return this.#name;
+    }
+}
+
+const person = new Person();
+console.log(person.age); //30
+console.log(person.getName()); //Alice
+console.log(person.#name); // SyntaxErorr
+console.log(person['age']); //30
+console.log(person['#name']); // undefined
+```
+
+Special behavior of private property at compile-time.
+
+- Private members are only accessible within the class.
+- Private members are not inherited by subclasses.
+- Private members cannot be accessed or overridden by methods/properties with the same name in derived classes.
+- Constructors cannot be private
+- Private member can only be declared in body.
+
+#### Static Class Methods and Accessors
+- It is used by syntax `ClassName.StaticMethodName`.
+- It is only created once per class, which is same as prototype member.
+- In side static member, `this` refers to the class itself.
+
+```js
+class Person{
+    //defined on the class
+    static species = "sapiens";
+
+    constructor(){
+        // Defined on each individual instance
+        this.locate = () +> console.log("instance", this);
+    }
+
+    //Defined on prototype
+    locate(){
+        console.log("prototype", this);
+    }
+    static locate(){
+        console.log("class", this);
+    }
+}
+
+let p = new Person();
+console.log(Person.species);//sapiens
+
+p.locate(); // instance
+Person.prototype.locate() // prototype
+person.local() // class
+
+```
+
+
 
 推导
 
