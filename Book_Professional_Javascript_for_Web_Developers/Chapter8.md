@@ -1193,6 +1193,33 @@ console.log(e instanceof Person);//true
 
 ```
 
+The `extends` keyword will have effect on both prototype and static(class) members.
+
+```js
+class Vehicle{
+    identifyPrototype(id){
+        console.log(id, this);
+    }
+    static identifyClass(id){
+        console.log(id, this);
+    }
+}
+
+class Bus extends Vehicle{
+}
+
+let y = new Vehicle();
+let b = new Bus();
+
+b.identifyPrototype('bus') // bus, Bus{}
+y.identifyPrototype('vehicle')// vehicle, vehicle{}
+
+Bus.identifyClass('bus')// bus, class Bus{}
+Vehicle.identifyClass('vehicle')// vehicle, class Vehicle{}
+```
+
+#### Constructors, HomeObjects, and super()
+
 
 
 推导
