@@ -449,7 +449,7 @@ The calculated default parameter is only invoked when function itself is invoked
     }
     ```
 
-## Spread Argument and Rest Parameter
+## Spread Arguments and Rest Parameters
 
 Spread Argument Sample
 
