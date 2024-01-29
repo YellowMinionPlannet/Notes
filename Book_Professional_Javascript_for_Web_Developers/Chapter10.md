@@ -203,6 +203,66 @@ console.log(propertyDescriptor.set.name); //set age
     doAdd(10, 2); // 20
     ```
 
+- `arguments` object always sync with the values of the corresponding named parameters.
+    ```js
+    function doAdd(num1, num2){
+        arguments[1] = 10;
+        console.log(arguments[0] + num2);
+    }
+    ```
+- The last point does not mean `arguments[1]` and `num2` both have same memory space. It just means that they are in sync.
+
+- And the effect of syncing only goes in one-way(only sync when you update `arguments` object)
+
+- `use strict` will change the behavior of syncing `arguments` to *named arguments*
+    ```js
+    function toAdd(num1, num2){
+        arguments[1] = 10;
+        console.log(num2);
+        console.log(arguments[0] + num2);
+    }
+
+    toAdd(20, 50);
+    // 10
+    // 30
+    ```
+    ```js
+    function toAdd(num1, num2){
+        arguments[1] = 10;
+        console.log(num2);
+        console.log(arguments[0] + num2);
+    }
+
+    toAdd(20);
+    // undefined
+    // NaN
+    ```
+    ```js
+    "use strict"
+    function toAdd(num1, num2){
+        arguments[1] = 10;
+        console.log(num2);
+        console.log(arguments[0] + num2);
+    }
+
+    toAdd(20);
+    // undefined
+    // NaN
+    ```
+    ```js
+    "use strict"
+    function toAdd(num1, num2){
+        arguments[1] = 10;
+        console.log(num2);
+        console.log(arguments[0] + num2);
+    }
+
+    toAdd(20, 50);
+    // 50
+    // 70
+    ```
+
+
 ### Arguments in Arrow Functions
 
 _arguments_ property is not allowed in arrow function, and be careful of the scope.
