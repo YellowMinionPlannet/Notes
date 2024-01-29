@@ -1220,67 +1220,263 @@ Vehicle.identifyClass('vehicle')// vehicle, class Vehicle{}
 
 #### Constructors, HomeObjects, and super()
 
-
-
-推导
+The derived class methods (constructor method and static method) can reference their parent class prototype through `super` keyword.
 
 ```js
-class Viehcle {}
+class Person{
+   static teach(){
+    console.log("teaching now...");
+  }
+}
 
-Viehcle.staticDum = "staticDumOfV";
-Viehcle.prototype.protoDum = "protoDumOfV";
+class Teacher extends Person{
+  constructor(){
+    super();
+    super.teach();
+  }
+  static testSuper(){
+    console.log(super['constructor']); // Function
+    console.log(super['teach']) // undefined
+  }
+}
 
-class Car extends Viehcle {}
-Car.staticDum = "staticDumOfCar";
-Car.prototype.protoDum = "protoDumOfCar";
+const teacher = new Teacher(); // teaching now...
+```
 
-class Mini extends Car {}
-Mini.staticDum = "staticDumOfMini";
-Mini.prototype.protoDum = "protoDumOfMini";
+```js
+class Person{
+   static teach(){
+    console.log("teaching now...");
+  }
+}
 
-const c = new Car();
-console.dir(c);
-console.dir(Car);
+class Teacher extends Person{
+  constructor(){
+    super();
+  }
+  static testSuper(){
+    console.log(super['constructor']); // Function
+    super['teach'](); //teaching now...
+  }
+}
 
-const v = new Viehcle();
-console.dir(v);
-console.dir(Viehcle);
+const teacher = new Teacher();
 
-const mini = new Mini();
-console.dir(mini);
-console.dir(Mini);
+Teacher.testSuper();
+```
 
-console.log(c.__proto__ === Car.prototype);
-console.log(Car.prototype.__proto__ === Viehcle.prototype);
-console.log(v.__proto__ === Viehcle.prototype);
-// v is same type as Car.prototype
+Several Notes about `super` keyword:
+- `super` keyword cannot be referenced by itself, which means you can do `super()` or `super['propertyName']` or `super.propertyName`.
+- `super()` will invoke the parent class constructor and assign resulting instance to `this`
+    ```js
+    class Bus extends Vehicle{
+        constructor(){
+            super();
+            console.log(this instanceof Vehicle);
+        }
+    }
 
-console.log(Car.__proto__ === Viehcle); // Viehcle(instance) is Car(instance)'s proto, is Car(instance)'s constructor's prototype
-console.log(Viehcle.__proto__ === Function.prototype);
-console.log(Function.prototype.__proto__ === Object.prototype);
+    new Bus(); // true
+    ```
+- If you decline to define a constructor function in derived class, `super()` will be implicitly invoked and all arguments passed to the derived class constructor will be passed to parent constructor(super).
+    ```js
+    class Vehicle{
+        constructor(licensePlate){
+            this.licensePlate = licensePlate;
+        }
+    }
 
-function SuperType() {}
+    class Bus extends Vehicle{}
 
-SuperType.staticDum = "staticDumOfSUPER";
-SuperType.prototype.protoDum = "protoDumOfSUPER";
+    console.log(new Bus('1337H4X')); // Bus {licensePlate: '1337H4X'}
+    ```
+- You cannot reference `this` keyword in constructor before invoking `super()`.
+    ```js
+    class Vehicle{}
+    class Bus extends Vehicle{
+        constructor(){
+            console.log(this); // ERROR
+        }
+    }
+    ```
+- If derived class explicitly define a constructor, you must either invoke `super()` or return an object from the constructor.
+    ```js
+    class Vehicle{}
+    class Car extends Vehicle{}
+    class Bus extends Vehicle{
+        constructor(){
+            super();
+        }
+    }
+    class Van extends Vehicle{
+        construtor(){
+            return {};
+        }
+    }
+    ```
 
-function SubType() {}
-SubType.prototype = new SuperType();
+#### Abstract Base Classes
 
-SubType.staticDum = "staticDumOfSUB";
-SubType.prototype.protoDum = "protoDumOfSUB";
+`new` keyword can be used as `new.target` to check what is the conjuction used with `new` keyword. This is very useful when you want to create a *abstract base class* which is not explicitly supported by ECMAScript.
 
-const sub = new SubType();
-console.dir(sub);
-console.dir(SubType);
-const sup = new SuperType();
-console.dir(sup);
-console.dir(SuperType);
+```js
+//This is a Abstract Base Class
+class Vehicle{
+    constructor(){
+        console.log(new.target);
+        if(new.target === Vehicle){
+            throw new Error("Vehicle cannot be directly instantiated");
+        }
+    }
+}
 
-console.log(sub.__proto__ === SubType.prototype);
-console.log(SubType.prototype.__proto__ === SuperType.prototype);
-console.log(sup.__proto__ === SuperType.prototype);
+class Bus extends Vehicle{}
 
-console.log(SuperType.__proto__ === Function.prototype);
-console.log(SubType.__proto__ === Function.prototype);
+new Bus();
+new Vehicle();// Error
+```
+
+`this` keyword can also be used in parent class constructor to check if the derived class's prototype contains particular member. That's because prototype exists before constructor is invoked.
+
+```js
+//Abstract Base Class
+class Vehicle{
+    constructor(){
+        if(new.target === Vehicle){
+            throw new Error("Vehicle cannot be directly instantiated");
+        }
+
+        if(!this.foo){
+            throw new Error("Inheriting class must define foo");
+        }
+        console.log("success!");
+    }
+}
+
+class Bus extends Vehicle{
+    foo(){}
+}
+
+class Van extends Vehicle{}
+
+new Bus(); // success
+new Van(); // Error: Inheriting class must define foo
+```
+
+#### Inheriting from Built-In Types
+
+```js
+class SuperArray extends Array{
+    shuffle(){
+        for(let i = this.length - 1; i > 0; i-- ){
+            const j = Math.floor(Math.random() * (i + 1));
+            [this[i], this[j]] = [this[j], this[i]];
+        }
+    }
+}
+
+let a = new SuperArray(1, 2, 3, 4, 5);
+
+console.log(a instanceof Array); // true
+console.log(a instanceof SuperArray); // true
+
+console.log(a); // [1,2,3,4,5]
+a.shuffle();
+console.log(a); // [3, 1, 4, 5, 2]
+```
+
+Some built-in types have methods defined in which a new object instance is returned. By default, the type of this object instance will match the type of the original instance.
+
+```js
+class SuperArray extends Array{}
+
+let a1 = new SuperArray(1, 2,3,4, 5);
+let a2 = a1.filter(x => !!(x%2));
+
+console.log(a1); // [1,2,3,4,5]
+console.log(a2); // [1,3,5]
+console.log(a1 instanceof SuperArray);//true
+console.log(a2 instanceof SuperArray);//true
+```
+
+Unless you override `Symbol.species` accessor.
+
+```js
+class SuperArray extends Array{
+    static get [Symbol.species](){
+        return Array;
+    }
+}
+
+let a1 = new SuperArray(1,2,3,4,5);
+let a2 = a1.filter(x => !!(x%2));
+
+console.log(a1);
+consoel.log(a2);
+console.log(a1 instanceof SuperArray);
+console.log(a2 instanceof SuperArray);//false
+```
+
+#### Class Mixins
+
+One common scenario is to bundle behavior from several different classes into a single class.
+
+```js
+class Vehicle{}
+
+let FooMixin = (SuperClass) => class extends SuperClass{
+    foo(){
+        console.log("foo");
+    }
+}
+let BarMixin = (SuperClass) => class extends SuperClass{
+    bar(){
+        console.log("bar");
+    }
+}
+let BazMixin = (SuperClass) => class extends SuperClass{
+    baz(){
+        console.log("baz");
+    }
+}
+
+class Bus extends FooMixin(BarMixin(BazMixin(Vehicle))) {};
+
+let b = new Bus();
+b.foo();
+b.bar();
+b.baz();
+```
+
+This could be flattened.
+
+```js
+class Vehicle{}
+
+let FooMixin = (SuperClass) => class extends SuperClass{
+    foo(){
+        console.log("foo");
+    }
+}
+let BarMixin = (SuperClass) => class extends SuperClass{
+    bar(){
+        console.log("bar");
+    }
+}
+let BazMixin = (SuperClass) => class extends SuperClass{
+    baz(){
+        console.log("baz");
+    }
+}
+
+function mix(BaseClass, ...Mixins){
+    return Mixins.reduce((accumulator, current)=> current(accumulator), BaseClass);
+}
+
+class Bus extends mix(Vehicle, FooMixin, BarMixin, BazMixin){}
+
+let b = new Bus();
+b.foo();
+b.bar();
+b.baz();
 ```
