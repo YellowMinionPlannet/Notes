@@ -532,9 +532,11 @@ console.log(data[0].name); // Zeck
 
 ## Function Internals
 
+In ECMAScript 5 `arguments` and `this` are special objects that exists inside a function. For ECMAScript 6, `new.target` is also introduced.
+
 ### arguments
 
-when declares function through _function_ keyword, we can use _arguments_ property. There's a property called _callee_ on arguments ponits back to the function itself. So when we implement a recursive function, we can decouple it with _callee_.
+when declares function through `function` keyword, we can use `arguments` property. There's a property called `callee` on arguments points back to the function itself. So when we implement a recursive function, we can decouple it with `callee`.
 
 ```js
 function factorial(num) {
@@ -620,7 +622,7 @@ console.log(inner);
 
 ### new.target
 
-If function are executed with _new_ keyword new.target will be the intance of function itself.
+If function are executed with `new` keyword new.target will be the intance of function itself.
 
 ```js
 function King() {
@@ -636,7 +638,7 @@ new King(); // f King
 
 ### apply vs. call
 
-_apply_ will allow you to pass a arguments object / array of arguments, where _call_ will only allow spread values.
+`apply` will allow you to pass an arguments object / array of arguments and `this` value, where `call` will only allow to pass `this` value and spread arguments.
 
 ```js
 function sum(num1, num2) {
@@ -655,7 +657,7 @@ function callSum(num1, num2) {
 
 ### bind
 
-bind this to a object and return a new function instance.
+bind `this` to a function and return that binded function as a new function.
 
 ```js
 let o = {
@@ -670,10 +672,296 @@ let objectSayColor = sayColor.bind(o);
 objectSayColor(); // blue
 ```
 
+`toLocaleString()` and `toString()` methods inherited from Object will show unstable contents due to different browsers. Try use `valueOf()`, which returns function itself.
+
 ## Function Expressions
+
+*function declaration* is hoisted, and *function expression* is not.
+
+```js
+sayHi();
+function sayHi(){
+    console.log("Hi!");
+}
+
+sayHello();
+let sayHello = function(){
+    console.log("Hi!");
+}
+```
+
+```js
+let sayHi;
+if(condition){
+    sayHi = function (){
+        console.log("Hi!");
+    }
+}else{
+    sayHi = function(){
+        console.log("Yo!");
+    }
+}
+```
 
 ## Recursion
 
+Remember `arguments.callee` is only available under unstrict mode? Here is the snippet that will work in both unstrict mode and strict mode.
+
+```js
+const factorial = (function f(num){
+    if(num <= 1){
+        return 1;
+    }else{
+        return num * f(num - 1);
+    }
+});
+```
+
+This is called *named function expression*. `f()` is created and assigned to the variable `factorial`. and f remains the same.
+
 ## Tail Call Optimization
 
+What is *tail call*?
+```js
+function outerFunction()[
+    return innerFunction();
+]
+```
+
+So when outer function is returning result of a inner function, it is called *tail call*.
+
+Prior to the ES6, these are the steps:
+1. Execution reaches `outerFunction` body, first stack frame is pushed onto stack
+2. Body of `outerFunction` executes, return statement is reached. To evaluate the return statement, `innerFunction` must be evaluated.
+3. Execution reaches `innerFunction` body, second stack frame is pushed onto stack.
+4. Body of `innerFunction` executes, and its returned value is evaluated.
+5. Return value is passed back to `outerFunction` which inturn can return that value.
+6. Stack frames poped off the stack.
+
+With ES6, steps are:
+1. Execution reaches `outerFunction` body, first stack frame is pushed onto stack
+2. Body of `outerFunction` executes, return statement is reached. To evaluate the return statement, `innerFunction` must be evaluated.
+3. Engine recognizes that first stack frame can safely be poped off the stack since the return value of `innerFunction` is also the return value of `outerFunction`.
+4. `outerFunction` stack frame is popped off the stack.
+5. Execution reaches `innerFunction` body, stack frame is pushed onto the stack.
+6. Body of `innerFunction` executes, and its returned value is evaluated.
+7. `innerFunction` stack frame is popped off the stack.
+
+### Tail Call Optimization Requirements
+So how does the "engine recognizes that first stack frame can safely be popped off"?
+
+- The code is executing in strict mode.
+- The return value of the outer function is the invoked tail call function
+- There is no further execution required after the tail call function returns.
+- The tail call funciton is not a closure that refers to variables in outer function's scope.
+
+Here are the snippet that violates the rules.
+```js
+"use strict";
+
+// tail call is not returned
+function outerFunction(){
+    innerFunction();
+}
+
+// tail call is not directly returned
+function outerFunction(){
+    let innerFunctionResult = innerFunction();
+    return innerFunctionResult;
+}
+
+// further execution after tail call returns
+function outerFunction(){
+    return innerFunction().toString();
+}
+
+// tail call is a closure
+function outerFunction()[
+    let foo = "bar";
+    function innerFunction (){return foo;}
+    return innerFunction();
+]
+```
+
+Optimized snippets:
+```js
+"use strict";
+
+function outerFunction(a, b){
+    return innerFunciton(a, b);
+}
+
+function outerFunction(a, b){
+    if(a > b){
+        return a;
+    }
+    return innerFunction(a + b);
+}
+
+function outerFunction(condition){
+    return condition ? innerFunctionA(): innerFunctionB();
+}
+```
+
+Try this snippet carefully, it will swamp your browser.
+```js
+function fib(){
+    if(n < 2){
+        return n;
+    }
+    return fib(n-1) + fib(n-2);
+}
+
+fib(1000);
+```
+This will not meet optimization requirements. So, what we can do is:
+```js
+"use strict";
+
+function fib(n){
+    return fibImpl(0, 1, n);
+}
+
+function fibImpl(a, b, n){
+    if(n === 0){
+        return a;
+    }
+    return fibImpl(b, a + b, n - 1);
+}
+```
 ## Closures
+
+*closures* means function that have access to variables from another function's scope. Usually, this is achieved by creating funciton inside another funciton.
+
+```js
+funciton createComparisonFunction(propertyName){
+    return function(object1, object2){
+        let value1 = object1[propertyName]; //highlighted
+        let value2 = object2[propertyName]; //highlighted
+
+        if(value1 < value2){
+            return -1;
+        }else if(value1 > value2){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+}
+
+let compare = createComparisonFunction("name");
+let result = compare({name: "Nicholas"}, {name: "Matt"});
+```
+
+The highlighted lines are referencing `propertyName` which comes from outer function's scope. Even the innerFunction is returned and is used ealswhere, it still catch the reference of outer function's variable. There fore its scope chain includes the scope of outer function.
+
+Try to review Chapter 4: Variables, Scope and Memory.
+
+![closure](closure.png)
+
+Therefore the snippet above will not release the `createComparisonFunction`'s activation object because the returned anonymous function's execution context's scope chain referencing it.
+
+We can do this
+```js
+funciton createComparisonFunction(propertyName){
+    return function(object1, object2){
+        let value1 = object1[propertyName]; //highlighted
+        let value2 = object2[propertyName]; //highlighted
+
+        if(value1 < value2){
+            return -1;
+        }else if(value1 > value2){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+}
+
+let compareNames = createComparisonFunction("name");
+let result = compareNames({name: "Nicholas"}, {name: "Matt"});
+compareNames = null; //memory reclaimed.
+```
+
+## The `this` Object
+
+Remember that when function is called `this` and `arguments` are available within the function. But if you want the closure to reference them, you need to first store them in a accessible variable. Or the inner function cannot access to these special objects after being returned.
+
+```js
+window.identity = "The Window";
+
+let object = {
+    identity: "My Object",
+    getIdentityFunc(){
+        return function(){
+            return this.identity;
+        }
+    }
+}
+
+console.log(object.getIdentityFunc()());// The Window
+```
+
+```js
+window.identity = "The Window";
+
+let object = {
+    identity: "My Object",
+    getIdentityFunc(){
+        let that = this;
+        return function(){
+            return that.identity;
+        }
+    }
+}
+
+console.log(object.getIdentityFunc()());// My Object
+```
+
+Before going further, this snippet must be noted.
+```js
+let f;
+
+console.log((f = 1 + 2));//3
+```
+
+So when we slightly changed the syntax, the result would be totally different.
+```js
+window.identity = "The Window";
+let object = {
+    identity: "My Object",
+    getIdentity(){
+        return this.identity;
+    }
+}
+
+object.getIdentity(); // My Object
+(object.getIdentity)(); // My Object
+(object.getIdentity = object.getIdentity)(); // The Window
+```
+
+### Memory Leaks
+Consider the snippet below:
+```js
+function assignHandler(){
+    let element = document.getElementById('someElement');
+    element.onclick = () => console.log(element.id);
+}
+```
+There are 2 issues with this snippet:
+1. closure is created because the anonymous arrow function is referencing `element` within assignHandler.
+2. circular reference, element. (Please see Chapter 13 for Events)
+
+How to fix it:
+```js
+function assignHandler(){
+    let element = document.getElementById('someElement');
+    let id = element.id;
+
+    element.onclick = () => console.log(id);
+
+    element = null;
+}
+```
+
+## Immediately Invoked Function Expressions
