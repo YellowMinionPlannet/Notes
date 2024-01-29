@@ -418,21 +418,36 @@ The calculated default parameter is only invoked when function itself is invoked
 
 ### Default Prameter Scope and Temporal Dead Zone
 
-The later parameter can reference the earlier and cannot reference the laterer and body of function
+- The following snippets are identical
+    ```js
+    function makeKing(name="Henry", numerals="VIII"){
+        return `King ${name} ${numerals}`;
+    }
 
-```js
-function makeKing (name = "Henry", numeral = name){
+    console.log(makeKing());//King Henry VIII
+    ```
+    ```js
+    function makeKing(){
+        let name = "Henry";
+        let numerals = "VIII";
 
-}
-//ERROR
-function makeKing1 (name = numeral , numeral = "V"){
+        return `King ${name} ${numerals}`;
+    }
+    ```
+- The later parameter can reference the earlier parameter, and cannot reference the laterer, and cannot reference the variable in body of the function.
+    ```js
+    function makeKing (name = "Henry", numeral = name){
 
-}
-//ERROR
-function makeKing2( name = "Henry", numeral = v){
-    let v = "VII":
-}
-```
+    }
+    //ERROR
+    function makeKing1 (name = numeral , numeral = "V"){
+
+    }
+    //ERROR
+    function makeKing2( name = "Henry", numeral = v){
+        let v = "VII":
+    }
+    ```
 
 ## Spread Argument and Rest Parameter
 
