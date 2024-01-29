@@ -280,8 +280,19 @@ foo(5); // 5
 
 ## No Overloading
 
-Because the arguments is just array, so there's no signatures differentiation.
-The upper case is no different that the later:
+Because there's no signatures differentiation, it is impossible to do overloading in ECMAScript. If there were two functions with the same identifier, the latter would win.
+```js
+function addSomeNumber(num){
+    return num + 100;
+}
+
+function addSomeNumber(num){
+    return num + 200;
+}
+
+addSomeNumber(100); //300
+```
+And to comprehend this, the following two snippet is identical.
 
 ```js
 function addSomeNumber(num) {
@@ -304,40 +315,106 @@ addSomeNumber = function (num) {
 
 ## Default Parameter Values
 
-Good sample about _argument_ property and default parameter
+Good samples about `arguments` property and default parameter
 
 ```js
-function makeKing(name = "Henry") {
-  name = "Louis";
-  console.log(`King ${arguments[0]}`);
+function makeKing(name = "Henry"){
+    return `King ${name} VIII`;
 }
 
-makeKing(); // King undefined
-makeKing("Humuhumunukunukuapuaa"); // King Humuhumunukunukuapuaa
-makeKing("Henry"); // King Henry
+console.log(makeKing("Louis"));//King Louis VIII
+console.log(makeKing());//King Henry VIII
 ```
-
-Good sample about arrow function and default parameter
-
 ```js
-let numeral = ["I", "II", "III", "IV", "V"];
-let order = 0;
-
-function getNumeral() {
-  return numeral[order++];
+function makeKing(name = "Henry", numerals = "VIII"){
+    return `King ${name} ${numerals}`;
 }
 
-const makeKing = (name = "Henry", numeral = getNumeral()) => {
-  console.log(`King ${name} ${numeral}`);
-};
-
-makeKing(); // King Henry I
-makeKing("Humuhumunukunukuapuaa"); // King Humuhumunukunukuapuaa II
-makeKing(undefined, undefined); // King Henry III
-makeKing(); // King Henry IV
-makeKing(); // King Henry V
-makeKing(); // King Henry undefined
+console.log(makeKing());//King Henry VIII
+console.log(makeKing("Louis"));//King Louis VIII
+console.log(makeKing(undefined, "VI"));//King Henry VI
 ```
+
+- `arguments` property preserves the values as arguments were passed when the function is invoked.
+    ```js
+    function makeKing(name = "Henry"){
+        name = "Lei";
+        return `King ${arguments[0]}`;
+    }
+
+    console.log(makeKing()); //King Henry
+    console.log(makeKing("Louis"));//King Louis
+    ```
+- Several Interesting snippet
+    ```js
+    function makeKing(name){
+        arguments[0] = "Lei";
+        return `King ${name}`;
+    }
+
+    console.log(makeKing());
+    console.log(makeKing("Louis"));
+    //King undefined
+    //King Lei
+    ```
+
+    ```js
+    function makeKing(name = "Henry"){
+        arguments[0] = "Lei";
+        return `King ${name}`;
+    }
+
+    console.log(makeKing());
+    console.log(makeKing("Louis"));
+    //King Henry
+    //King Louis
+    ```
+
+    ```js
+    "use strict"
+    function makeKing(name = "Henry"){
+        arguments[0] = "Lei";
+        return `King ${name}`;
+    }
+
+    console.log(makeKing());
+    console.log(makeKing("Louis"));
+    //King Henry
+    //King Louis
+    ```
+
+    ```js
+    "use strict"
+    function makeKing(name){
+        arguments[0] = "Lei";
+        return `King ${name}`;
+    }
+
+    console.log(makeKing());
+    console.log(makeKing("Louis"));
+    //King undefined
+    //King Louis
+    ```
+- Default parameter could be calculated before invoking the function.
+
+    ```js
+    let romanNumerals = ["I", "II", "III", "IV", "V", "VI"];
+    let ordinality = 0;
+
+    function getNumerals() {
+        return romanNumerals[ordinality++];
+    }
+
+    function makeKing(name="Henry", numerals=getNumerals()){
+        return `King ${name} ${numerals}`;
+    }
+
+    makeKing(); // King Henry I
+    makeKing("Louis", "XVI"); // King Louis XVI
+    makeKing(); // King Henry II
+    makeKing(); // King Henry III
+    ```
+The calculated default parameter is only invoked when function itself is invoked without argument is not provided.
 
 ### Default Prameter Scope and Temporal Dead Zone
 
