@@ -1,28 +1,55 @@
 # Chapter 10 Functions
 
-Function-declaration syntax:
+Each function is an instance of the `Function` type. And that instance is also a object.
 
 ```js
-function sum(num1, num2) {
-  return num1 + num2;
+function sum(num1, num2){
+    return num1 + num2;
 }
 ```
+What happens here:
+- This is a *function-declaration* syntax
+- variable sum is defined and initialized to be a function.
 
-Function expression syntax:
+1. Function-declaration syntax:
 
-```js
-let sum = function (num1, num2) {
-  return num1 + num2;
-};
-```
+    ```js
+    function sum(num1, num2) {
+    return num1 + num2;
+    }
+    ```
 
-Another way to create function:
+2. Function expression syntax:
 
-```js
-let sum = new Function("num1", "num2", "return num1 + num2");
-```
+    ```js
+    let sum = function (num1, num2) {
+    return num1 + num2;
+    };
+    ```
+
+3. Another way to create function:
+
+    ```js
+    let sum = new Function("num1", "num2", "return num1 + num2");
+    ```
+    This is not recommended due to the performance, but it's a good way to comprehend that function is an object and function name is just a pointer.
 
 ## Arrow Functions
+
+Anywhere a *function-expression* is valid to be used, an arrow function is also valid.
+
+```js
+let arrowSum = (a, b) =>{
+    return a + b;
+}
+
+let functionExpressionSum = function(a, b){
+    return a + b;
+}
+
+console.log(arrowSum(5, 8));
+console.log(functionExpressionSum(5, 8));
+```
 
 Valid syntax:
 
@@ -30,29 +57,52 @@ Valid syntax:
 let double = (x) => {
   return 2 * x;
 };
-let triple = (x) => {
+let triple = x => {
   return 3 * x;
 };
-let quadruple = (x) => 4 * x;
+let getRandom = () => {return Math.random();};
+
+let sum = (a, b) => {return a + b;};
+
+let inline = (x) => 3 * x;
+
+let value = {};
+let setName = (x) => x.name = "Matt";
+setName(value);
+console.log(value.name); //Matt
+
+//Invalid syntax
+//let multiply = a, b => {return a * b;};
 ```
 
-_arrow function does not allow use of argument super or new.target, cannot be used as constructor, and does not have a prototype_
+- Curly braces is not required in arrow function. 
+- Using curly braces is called the *block body* syntax and behaves in the same way as a normal function expression. 
+- If curly braces is omitted, it's called *concise body* syntax. And this syntax only allows single line of code. 
+- Arrow function does not allow the use of `arguments` `super` or `new.target`, cannot be used as constructor, and does not have a `prototype`.
 
 ## Function Names
 
-Function name is a pointer point to the function object.
-
-ECMAScript 6 expose a read-only _name_ property that describes the function. If a function is unnamed _name_ property will be "anonymous"
-
+- Function name is a pointer that points to the function object. So function can have multiple names.
 ```js
-function sum(num1, num2) {
-  return num1 + num2;
+function sum(num1, num2){
+    return num1 + num2;
 }
 
-let anotherSum = sum;
-sum = null;
-console.log(anotherSum(10, 10)); // 20
+console.log(sum(10, 10)); //20
 
+let anotherSum = sum;
+console.log(anotherSum(10, 10)); //20
+
+sum = null;
+console.log(anotherSum(10, 10)); //20
+```
+
+- ECMAScript 6 expose a read-only `name` property that describes the function. This is just identifier or stringified variable name that reference the function. If a function is unnamed, `name` property will be "anonymous"
+
+- If a function is unnamed, then `name` returns a empty string
+- If a function is created using the function constructor, it will be identified as "anonymous"
+
+```js
 function foo() {}
 let bar = function () {};
 let baz = () => {};
@@ -63,7 +113,7 @@ console.log(baz.name); // baz
 console.log(new Function().name); // anonymous
 ```
 
-There would be prefix of _name_ property, if the function initiated with bind or is a getter or setter.
+- There would be prefix of `name` property, if the function initiated with bind or is a getter or setter.
 
 ```js
 funciton foo(){}
@@ -87,18 +137,71 @@ console.log(propertyDescriptor.set.name); //set age
 
 ## Understanding Arguments
 
-Inside funtion you can use _arguments_ property to manipulate arguments that passed in the function. _arguments_ keeps in sync with the named arguments, however, this _arguments_ are different from the named arguments(actual arguments that passed in). Change in named arguments will not affect values in _arguments_ property.
+- Arguments concept is loosely defined in ECMAScript function. If you define a function with 2 arguments, you can pass in one or three or none number of arguments and interpreter won't complain.
 
-```js
-function doAdd(num1, num2) {
-  arguments[1] = 10;
-  console.log(num1 + arguments[1]);
-}
+- The arguments itself will be represented as array in function, if you use `function` keyword to define function, which means it's not a arrow function, you can access a `arguments` object to retrieve such array.
 
-doAdd(); //NaN
-doAdd(1); // 11
-doAdd(10, 2); // 20
-```
+- The `arguments` object acts like an array, but it's not an instance of Array type.
+    
+    ```js
+    function sayHi(name, message){
+        console.log("Hello" + name + ", " + message);
+    }
+    //Could be re-written into
+    function sayHi(){
+        console.log("Hello" + arguments[0] + ", " + arguments[1]);
+    }
+    ```
+- *Named arguments*, like the name and message arguments within syntax`function sayHi(name, message){}`, is not required. And *named arguments* does not create a function signature.
+
+- `arguments` object also has `length` property.
+    ```js
+    function howManyArgs(){
+        console.log(arguments.length);
+    }
+
+    howManyArgs("string", 45); //2
+    howManyArgs(); //0
+    howManyArgs(12); //1
+    ```
+    ```js
+    function doAdd(){
+        if(arguments.length === 1){
+            return arguments[0] + 10;
+        }
+        else if(arguments.length === 2){
+            return arguments[0] + arguments[1]
+        }
+    }
+
+    console.log(doAdd(10)); // 20
+    console.log(doAdd(30, 20)); // 50
+    ```
+- `arguments` property can work with *named arguments*
+    ```js
+    function doAdd(num1, num2){
+        if(arguments.length === 1){
+            return num1 + 10;
+        }
+        else if(arguments.length === 2){
+            return arguments[0] + num2;
+        }
+    }
+
+    console.log(doAdd(10)); // 20
+    console.log(doAdd(30, 20)); // 50
+    ```
+
+    ```js
+    function doAdd(num1, num2) {
+    arguments[1] = 10;
+    console.log(num1 + arguments[1]);
+    }
+
+    doAdd(); //NaN
+    doAdd(1); // 11
+    doAdd(10, 2); // 20
+    ```
 
 ### Arguments in Arrow Functions
 
