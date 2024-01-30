@@ -53,11 +53,11 @@ function double(value, success, failure){
     }, 1000);
 }
 
-const sucessCallback = (x) => console.log(`sucess: ${x}`);
+const sucessCallback = (x) => console.log(`success: ${x}`);
 const failureCallback = (x) => console.log(`failure: ${x}`);
 
-double(3, successCallback, failureCallback);
-double('b', successCallback, failureCallback);
+double(3, successCallback, failureCallback); // success: 
+double('b', successCallback, failureCallback); // failure: 
 ```
 
 #### Nesting Asynchronous Callbacks
@@ -80,7 +80,7 @@ const successCallback = (x) => {
 }
 const failureCallback = (e) => console.log(`failure: ${e}`);
 
-double(3, successCallback, failureCallback);
+double(3, successCallback, failureCallback);// 12
 ```
 
 ## Promises
