@@ -1,19 +1,28 @@
 # Chapter 4 Variables, Scope, and Memory
 
+In JavaScript, variable is loosely typed, a vairable is just name for a particular value at a particular time. A variable's value and data type can change during the lifetime of a script.
+
 ## Primitive and Reference Values
 
 1. Primitive - Undefined, Null, Boolean, Number, String, Symbol
-2. Reference
+2. Reference - objects stored in memory.
+
+Primitive variables are said to be accessed by value, which means you are manipulating the actual value stored in memory.
+
+Reference variables are said to be accessed by reference, because you are not directly manipulate the object stored in memory, but are working on a reference to that object.
 
 ### Dynamic Properties
-
-Initiation of a primitive type can be achieved using only the primitive literal form. If you create primitive type using new keyword, you are creating a Object.
+Only reference values can have properties deined dynamically for later use.
 
 ```js
 let name = "Nicholas";
 name.age = 27;
 console.log(name.age):// undefined
+```
 
+Using `new` keyword is to create an object.
+
+```js
 let name1 = "Nicholas";
 let name2 = new String("Matt");
 name1.age = 27;
@@ -27,7 +36,7 @@ console.log(typeof name2); // Object
 
 ### Copying Values
 
-value variable is copied by value, where reference variable is copied by reference.
+Primitive variable is copied by value, where reference variable is copied by reference.
 
 ```js
 let obj1 = new Object();
@@ -38,11 +47,23 @@ console.log(obj2.name); // "Nicholas"
 
 ### Argument Passing
 
-Function's arguments are passed by value. Primitives are copied by value, references are copied by reference value.
+Function's arguments are passed by value. Primitives are copied by value, references are copied by reference value(location of memory).
+
+```js
+function setName(obj){
+    obj.name = "Nicholas"
+    obj = new Object();
+    obj.name = "Greg";
+}
+
+let person = new Object();
+setName(person);
+console.log(person.name); // "Nicholas"
+```
 
 ### Determining Type
 
-_typeof_ operator can best determine if variable is string, number, boolean or undefined. It returns object if variable is null / object.
+`typeof` operator can best determine if variable is string, number, boolean or undefined. It returns object if variable is null / object.
 
 ```js
 let s = "Nicholas";
@@ -62,6 +83,4 @@ console.log(typeof o); // object
 
 ## Execution Context and Scope
 
-Each context has an associated object variable and it is not acessible by code.
 
-Refer to Jonas Javascript Notes of **Execution Contexts and Call Stacks** for this part.
