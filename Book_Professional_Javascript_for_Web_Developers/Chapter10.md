@@ -965,3 +965,244 @@ function assignHandler(){
 ```
 
 ## Immediately Invoked Function Expressions
+It's shorthanded name is IIFE. 
+```js
+(function(){})();
+```
+It is used for block scope variable when needed. Because the anonymous function is wrapped in parentheses, so it's interpreted as function expression. Then it's called immediately and released in memory. Therefore, even we use `var` keyword within IIFE, it's interpreted as block scoped variable.
+
+Samples of block scope variable.
+```js
+{
+    let i;
+    for(i = 0; i < count; i++){
+        console.log(i);
+    }
+}
+console.log(i); // throw error.
+```
+```js
+for(let i = 0; i < count; i++){
+    console.log(i);
+}
+
+console.log(i); // throw error.
+```
+
+Usage scenario:
+```js
+let divs = document.querySelectorAll('div');
+
+for(var i = 0; i < divs.length; ++i){
+    divs[i].addEventListener('click', function(){
+        console.log(i);
+    });
+}
+```
+The result of above snippet will be printing `div.length` for every div. Because the `var i` still available outside the `for` loop, and for sure, after `for` loop execution, that `i` is nothing but `div.length`.
+
+Before ES6, here is the solution.
+```js
+let divs = document.querySelectorAll('div');
+
+for(var i = 0; i < divs.length; ++i){
+    divs[i].addEventListener('click', (function(frozenCounter){
+       return function(){
+            console.log(frozenCounter);
+       } 
+    })(i));
+}
+```
+
+So in current version,
+
+```js
+let divs = document.querySelectorAll('div');
+for(let i = 0; i < divs.length; ++i){
+    divs[i].addEventListener('click', function(){
+        console.log(i);
+    })
+}
+```
+
+This is not working, be awared:
+```js
+let divs = document.querySelectorAll('div');
+let i;
+for(i = 0; i < divs.length; ++i){
+    divs[i].addEventListener('click', function(){
+        console.log(i);
+    })
+}
+```
+
+## Private Variables
+*Private variables* include function `arguments`, local variables, and functions defined inside other function.
+
+*Privileged method* is a public method that can access to *private variables*. It is a *closure*.
+
+For example:
+```js
+function MyObject(){
+    //private variables and private functions
+    let privateVariable = 10;
+    function privateFunction(){
+        return false;
+    }
+
+    //privileged methods
+    this.publicMethod = function(){
+        privateVariable++;
+        return privateFunction();
+    }
+}
+```
+
+```js
+function Person(name){
+    this.getName = function(){
+        return name;
+    }
+    this.setName = function(value){
+        name = value;
+    }
+}
+
+let person = new Person('Nicholas');
+console.log(person.getName());// Nicholas
+person.setName('Greg');
+console.log(person.getName());// Greg
+```
+
+### Static Private Variables
+The flaw of last snippet is that the methods are defined on instance. So if we try to define methods on `prototype`, we can do this:
+```js
+(function(){
+    let privateVariable = 0;
+
+    function privateFunction(){
+        return false;
+    }
+
+    MyObject = function(){}
+
+    MyObject.prototype.publicMethod = function(){
+        privateVariables++;
+        return privateFunction();
+    }
+})();
+```
+
+Remember that `MyObject`, without declaration, is a global variable.
+
+```js
+(function(){
+  let name = '';
+  Person = function(value){
+    name = value;
+    this.getName = function(){
+      return name;
+    }
+    this.setName = function(value){
+      name = value;
+    }
+  }
+})();
+
+let person1 = new Person('Nicholas');
+console.log(person1.getName());
+let person2 = new Person('Matt');
+console.log(person2.getName()); // Matt
+console.log(person1.getName()); // Matt
+```
+```js
+(function(){
+  let name = '';
+  Person = function(value){
+    name = value;
+  }
+  Person.prototype.getName = function(){
+    return name;
+  }
+  Person.prototype.setName = function(value){
+    name = value;
+  }
+})();
+
+let person1 = new Person('Nicholas');
+console.log(person1.getName());
+let person2 = new Person('Matt');
+console.log(person2.getName()); // Matt
+console.log(person1.getName()); // Matt
+```
+
+### The Module Pattern
+It uses singletons and mix that concept with private variables and privileged methods.
+
+Singleton snippet
+```js
+let singleton = {
+    name: value,
+    method(){
+
+    }
+}
+```
+
+A module pattern:
+```js
+let singleton = function(){
+    let privateVariable = 10;
+    function privateFunction(){
+        return false;
+    }
+
+    return {
+        publicProperty = true,
+        publicMethod(){
+            privateVariable++;
+            return privateFunction();
+        }
+    };
+}();
+```
+A more practical sample for module pattern:
+```js
+let application = function(){
+    let components = new Array();
+
+    components.push(new BaseComponent());
+
+    return{
+        getComponentsCount(){
+            return components.length;
+        }
+        registerComponent(component){
+            if(typeof component == 'object'){
+                component.push(component);
+            }
+        }
+    }
+}();
+```
+
+### The Module-Augmentation Pattern
+```js
+let application = function(){
+    let components = new Array();
+    components.push(new BaseComponent());
+
+    let app = new BaseComponent();
+    
+    app.getComponentCount = function(){
+        return components.length
+    }
+    app.registerComponent = function(component){
+        if(typeof component == 'object'){
+            components.push(component);
+        }
+    }
+
+    return app;
+}();
+```
