@@ -1,4 +1,4 @@
-# Chapter 4 Variables, Scope, and Memory
+# 4 Variables, Scope, and Memory
 
 In JavaScript, variable is loosely typed, a vairable is just name for a particular value at a particular time. A variable's value and data type can change during the lifetime of a script.
 
@@ -298,3 +298,36 @@ function problem(){
 
 ### Performance
 ### Managing Memory
+
+Remember to *dereference* variable as long as they are out of context by setting its value to `null`. This does not make sure the garbage collection happens, but will make sure when next time GC happens, the dereferenced variable will be reclaimed.
+
+```js
+function createPerson(name){
+    let localPerson = new Object();
+    localPerson.name = name;
+    return localPerson;
+}
+
+let globalPerson = createPerson('Nicholas');
+
+globalPerson = null;//dereference
+```
+
+#### Performance Boosts with `const` and `let` Declarations
+#### Hidden Classes and the `delete` Operation
+
+#### Memory Leaks
+Two snippet that have Memory Leak
+```js
+let name = 'Jake';
+setInterval(() => {console.log(name)}, 100);
+```
+
+```js
+let outer = function(){
+    let name = 'Jake';
+    return function(){
+        return name;
+    }
+}
+```

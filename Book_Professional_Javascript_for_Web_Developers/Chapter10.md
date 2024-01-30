@@ -1,4 +1,4 @@
-# Chapter 10 Functions
+# 10 Functions
 
 Each function is an instance of the `Function` type. And that instance is also a object.
 
