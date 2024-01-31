@@ -206,3 +206,68 @@ try{
 ```
 
 ### Promise Instance Methods
+Promise instance methods bridge the gap between synchronous and asynchronous code paths. Thay can:
+1. access data returned from async operation
+2. handle success and failure outcomes from promises
+3. serially evaluate promises
+4. add functions that only execute once the promise enters terminal state.
+
+#### Implementing the Thenable Interface
+Thenable interface looks like something:
+```js
+class MyThenable{
+    then(){
+
+    }
+}
+```
+This interface will be revisited in later sections
+
+#### `Promise.prototype.then()`
+So this method accepts two optional handler, they corrspondingly handle fulfilled and rejected state.
+```js
+function onResolved(id){
+    setTimeout(console.log, 0, id, 'resolved');
+}
+
+function onRejected(id){
+    setTimeout(console.log, 0, id, 'rejected');
+}
+
+let p1 = new Promise((resolve, reject) => setTimeout(resolve, 3000));
+let p2 = new Promise((resolve, reject) => setTimeout(reject, 3000));
+
+p1.then(() => onResovled('p1'),
+        () => onRejected('p1'));
+p2.then(() => onResolved('p2'),
+        () => onRejected('p2'));
+// p1 resolved
+// p2 rejected
+```
+
+Any non-function type argument to `then()` will be ignored silently.
+```js
+function onResolved(id){
+    setTimeout(console.log, 0, id, 'resolved');
+}
+
+function onRejected(id){
+    setTimeout(console.log, 0, id, 'rejected');
+}
+
+let p1 = new Promise((resolve, reject) => setTimeout(resolve, 3000));
+let p2 = new Promise((resolve, reject) => setTimeout(reject, 3000));
+
+p1.then('gobbeitygook');
+
+p2.then(null, () => onRejected('p2'));
+```
+
+`Promise.then()` will return a ***new*** promise instance.
+```js
+let p1 = new Promise(() => {});
+let p2 = p1.then();
+setTimeout(console.log, 0, p1);// Promise pending
+setTimeout(console.log, 0, p2);// Promise pending
+setTimeout(console.log, 0, p1 === p2); //false
+```
