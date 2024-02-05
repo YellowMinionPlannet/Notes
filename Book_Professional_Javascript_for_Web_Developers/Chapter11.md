@@ -428,3 +428,125 @@ setTimeout(() => setTimetout(console.log, 0, p2), 200); // Promise resolved: foo
 ```
 
 #### Non-Reentrant Promise Methods
+*non-reentrant* means the execution for handler of a settled promise, either *onResolved* handler or *onRejected* handler, will happen after the synchronous code follows the attaching logic.
+```js
+let p = Promise.resolve();
+
+p.then(() => console.log("onFufilled handler"));
+
+console.log("then() returns");
+// then() returns
+// onFufilled handler
+```
+
+Another example also demonstrates that *non reentrant* is guaranteed.
+```js
+let synchronousResolve;
+
+let p = new Promise((resolve) => {
+    synchronousResolve = function(){
+        console.log("1: invoking resolve()");
+        resolve();
+        console.log("2: resolve() returns");
+    };
+});
+
+p.then(() => console.log("4: then() handler executes"));
+
+synchronousResolve();
+console.log("3: synchronousResolve() returns");
+
+// 1: invoking resolve()
+// 2: resolve() returns
+// 3: synchronousResolve() returns
+// 4: then() handler executes
+```
+
+#### Sibling Handler Order of Execution
+If multiple handlers are attached to a promise, when that promise settles, the handlers will be executed as the order of attaching.
+```js
+let p1 = Promise.resolve();
+let p2 = Promise.reject();
+
+p1.then(() => console.asyncLog(1));
+p2.then(() => console.asyncLog(2));
+// 1
+// 2
+p2.then(null, () => console.asyncLog(3));
+p2.then(null, () => console.asyncLog(4));
+// 3
+// 4
+p2.catch(() => console.asyncLog(5));
+p2.catch(() => console.asyncLog(6));
+// 5
+// 6
+p1.finally(() => console.asyncLog(7));
+p1.finally(() => console.asyncLog(8));
+// 7
+// 8
+```
+
+#### Fulfilled Value and Rejected Reason Passing
+Passing the returned values from Promise can be achieved through the first argument of `resolve`/ `reject` function, and the returned value will be the sole parameter of `onFufilled` handler and `onRejected` handler.
+```js
+let p1 = new Promise((resolve, reject) => resolve("foo"));
+p1.then((value) => console.log(value)); // foo
+
+let p2 = new Promise((resolve, reject) => reject("bar"));
+p2.catch((reason) => console.log(reason));// bar
+
+let p1 = Promise.resolve("foo");
+p1.then((value) => console.log(value));
+
+let p2 = Promise.reject("bar");
+p2.catch((reason) => console.log(reason));
+```
+
+### Rejecting Promises and Rejection Error Handling
+Rejecting a promise and throwing errors in promise executor or handler will cause promise to reject. The logic should force a discontinuation of subsequent operations.
+```js
+let p1 = new Promise((resolve, reject) => reject(Error("foo")));
+let p2 = new Promise((resolve, reject) => {throw Error("foo")});
+let p3 = Promise.resolve().then(() => {throw Erorr("foo")});
+let p4 = Promise.reject(Error("foo"));
+
+console.asyncLog(p1);// Promise rejected Error: foo
+console.asyncLog(p2);// Promise rejected Error: foo
+console.asyncLog(p3);// Promise rejected Error: foo
+console.asyncLog(p4);// Promise rejected Error: foo  
+
+// ORDER:
+// p1, p2, p4, p3 
+// This is because resolve() and then() method needs to create addintional promise
+```
+
+Let's see the difference of Error handling in synchronous and asynchronous operations.
+```js
+throw Error("foo");
+console.log("bar"); // This will never executed
+
+Promise.reject(Error("foo"));
+console.log("bar"); // bar
+```
+
+```js
+// Correct
+Promise.reject(Error("error")).catch((e) => {});
+// Incorrect
+try{
+    Promise.reject(Error("foo"));
+}catch(e){
+
+}
+
+let p = new Promise((resolve, reject) => {
+    try{
+        throw Error("foo");
+    }catch(e){
+
+    }
+    resolve("bar");
+});
+
+console.log(p);// Promise fulfilled: bar
+```

@@ -534,7 +534,7 @@ console.log(data[0].name); // Zeck
 
 In ECMAScript 5 `arguments` and `this` are special objects that exists inside a function. For ECMAScript 6, `new.target` is also introduced.
 
-### arguments
+### `arguments`
 
 when declares function through `function` keyword, we can use `arguments` property. There's a property called `callee` on arguments points back to the function itself. So when we implement a recursive function, we can decouple it with `callee`.
 
