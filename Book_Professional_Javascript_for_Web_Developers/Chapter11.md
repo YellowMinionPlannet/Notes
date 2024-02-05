@@ -224,7 +224,9 @@ class MyThenable{
 This interface will be revisited in later sections
 
 #### `Promise.prototype.then()`
-So this method accepts two optional handler, they corrspondingly handle fulfilled and rejected state.
+So this method accepts two optional handler, they correspondingly handle fulfilled and rejected state:
+1. *onResolved* handler handles `resolve` state
+2. *onRejected* handler handles `reject` state
 ```js
 function onResolved(id){
     setTimeout(console.log, 0, id, 'resolved');
@@ -258,8 +260,9 @@ function onRejected(id){
 let p1 = new Promise((resolve, reject) => setTimeout(resolve, 3000));
 let p2 = new Promise((resolve, reject) => setTimeout(reject, 3000));
 
+// Non-function handlers are silently ignored, not recommended
 p1.then('gobbeitygook');
-
+// Skipping resolved handler
 p2.then(null, () => onRejected('p2'));
 ```
 
@@ -271,3 +274,157 @@ setTimeout(console.log, 0, p1);// Promise pending
 setTimeout(console.log, 0, p2);// Promise pending
 setTimeout(console.log, 0, p1 === p2); //false
 ```
+
+- If it's a fulfilled promise:
+- *onResolved* returns a new Promise and the return value of the handler is implicitly wrapped in `Promise.resolve()` to generate that new promise.
+- If no handler function is provided, then original `resolve()` is returned(a new promise).
+- If no `return` statement, the default return value is `undefined` and wrapped in a `Promise.resolve`
+
+```js
+let p1 = Promise.resolve("foo");
+let p2 = p1.then();//No handler is provided
+setTimeout(console.log, 0, p2);// Proimse resovled: foo
+
+let p3 = p1.then(() => undefined); // no return
+let p4 = p1.then(() => {}); // no return
+let p5 = p1.then(() => Promise.resolve());// no return
+
+setTimeout(console.log, 0, p3);// Promise resolved: undefined
+setTimeout(console.log, 0, p4);// Promise resolved: undefined
+setTimeout(console.log, 0, p5);// Promise resolved: undefined
+
+let p6 = p1.then(() => "bar");
+let p7 = p1.then(() => Promise.resolve("bar"));
+
+setTimeout(console.log, 0, p6);// Promise resolved: bar
+setTimeout(console.log, 0, p7);// Promise resolved: bar
+
+let p8 = p1.then(() => new Promise(() => {}));
+let p9 = p1.then(() => Promise.reject());
+
+setTimeout(console.log, 0, p8);// Promise pending
+setTimeout(console.log, 0, p9);// Promise rejected: undefined
+```
+
+- Throwing an exception will return a rejected promise
+```js
+let p10 = p1.then(() => {throw 'baz';});
+setTimeout(console.log, 0, p10); // Promise rejected: baz
+```
+
+- If returning a error, not throwing a error, will result in a resolved Promise with result of Error
+```js
+let p1 = Promise.resolve("baz");
+let p11 = p1.then(() => Error("qux"));
+setTimeout(console.log, 0, p11);// Promise resolved: Error: qux
+```
+
+- If it's a rejected promise:
+- Behavior is the same as fulfilled promise, however the result of rejected promise is implicitly wrapped in a `Promise.resolve` within the *onRejected* handler.
+```js
+let p1 = Promise.reject("foo");
+let p2 = p1.then();//No handler is provided
+setTimeout(console.log, 0, p2);// Proimse rejected: foo
+
+let p3 = p1.then(null, () => undefined); // no return
+let p4 = p1.then(null, () => {}); // no return
+let p5 = p1.then(null, () => Promise.resolve());// no return
+
+setTimeout(console.log, 0, p3);// Promise resolved: undefined
+setTimeout(console.log, 0, p4);// Promise resolved: undefined
+setTimeout(console.log, 0, p5);// Promise resolved: undefined
+
+let p6 = p1.then(null, () => "bar");
+let p7 = p1.then(null, () => Promise.resolve("bar"));
+
+setTimeout(console.log, 0, p6);// Promise resolved: bar
+setTimeout(console.log, 0, p7);// Promise resolved: bar
+
+let p8 = p1.then(null, () => new Promise(() => {}));
+let p9 = p1.then(null, () => Promise.reject());
+
+setTimeout(console.log, 0, p8);// Promise pending
+setTimeout(console.log, 0, p9);// Promise rejected: undefined
+```
+
+- Throwing an exception will return a rejected promise
+```js
+let p10 = p1.then(null, () => {throw 'baz';});
+setTimeout(console.log, 0, p10); // Promise rejected: baz
+```
+
+- If returning a error, not throwing a error, will result in a resolved Promise with result of Error
+```js
+let p1 = Promise.reject("baz");
+let p11 = p1.then(null, () => Error("qux"));
+setTimeout(console.log, 0, p11);// Promise resolved: Error: qux
+```
+
+#### `Promise.prototype.catch()`
+This is just a syntax sugar of `Promise.prototype.then(null, onRejected)`
+```js
+let p1 = new Promise(() => {});
+let p2 = p1.catch();
+setTimeout(console.log, 0, p1); // Promise pending
+setTimeout(console.log, 0, p2); // Promise pending
+setTimeout(console.log, 0, p1 === p2);// false
+```
+
+#### `Promise.prototype.finally()`
+If you have same logic for *onResolved* handler and *onRejected* handler, you can use `Promise.prototype.finally()` to avoid code duplication. Because it will accept one handler to execute as long as the promise is reaching fulfilled or rejected state.
+```js
+let p1 = new Promise(() => {});
+let p2 = p1.finally();
+setTimeout(console.log, 0, p1); // Promise pending
+setTimeout(console.log, 0, p2); // Promise pending
+setTimeout(console.log, 0, p1 === p2);// false
+```
+
+`Promise.prototype.finally()` acts differently than `Promise.prototype.catch()` and `Promise.prototype.then()`, 
+1. in most cases, for resolved case, **it will behave as a passthrough for the parent promise.**
+2. if throw error or return rejected promise within `Promise.prototype.finally()`, then pending or rejected is returned.
+```js
+let p1 = Promise.resolve("foo");
+
+let p2 = p1.finally(); // no handler provided
+setTimeout(console.log, 0, p2);// Promise resolved: foo
+
+let p3 = p1.finally(() => undefined); // no return value
+setTimeout(console.log, 0, p3);// Promise resolved: foo
+
+let p4 = p1.finally(() => {}); // no return value
+setTimeout(console.log, 0, p4);// Promise resolved: foo
+
+let p5 = p1.finally(() = Promise.resolve());// no return value
+setTimeout(console.log, 0, p5);// Promise resolved: foo
+
+let p6 = p1.finally(() => "bar"); 
+setTimeout(console.log, 0, p6);// Promise resolved: foo
+
+let p7 = p1.finally(() => Promise.resolve("bar"));
+setTimeout(console.log, 0, p7);// Proimse resolved: foo
+
+let p8 = p1.finally(() => Error("qux"));
+setTimeout(console.log, 0, p8);// Promise resolved: foo
+
+let p9 = p1.finally(() => new Promise(() => {}));
+let p10 = p1.finally(() => Promise.reject());
+
+setTimeout(console.log, 0, p9); // Promise pending
+setTimeout(console.log, 0, p10);// Promise rejected: undefined
+
+let p11 = p1.finally(() => {throw "baz";});
+setTimeout(console.log, 0, p11);// Promise rejected: baz
+```
+
+3. as long as the handler is passing a resolved promise, `Promise.prototype,finally()` will still act like a passthrough.
+```js
+let p1 = Promise.resolve("foo");
+
+let p2 = p1.finally(() => new Promise((resolve, reject) => setTimeout(() => resolve("bar"), 100)));
+
+setTimeout(console.log, 0, p2);// Promise pending
+setTimeout(() => setTimetout(console.log, 0, p2), 200); // Promise resolved: foo
+```
+
+#### Non-Reentrant Promise Methods
