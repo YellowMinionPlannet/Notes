@@ -550,3 +550,209 @@ let p = new Promise((resolve, reject) => {
 
 console.log(p);// Promise fulfilled: bar
 ```
+
+### Promise Chaining and Composition
+Combining multiple promises has 2 major ways:
+1. promise chaining, promise will execute one by one
+2. promise composition, promise will be combined into a single promise
+
+#### Promise Chaining
+Achieving promise chaining by instance methods, such as `then()`, `catch()`, and `finally()`. They will all return a new instance of promise, and can be chained by themselves again.
+```js
+let p = new Promise((resolve, reject) => {
+    console.log("first");
+    resolve();
+});
+
+p.then(() => console.log("second"))
+.then(() => console.log("third"))
+.then(() => console.log("fourth"));
+// first
+// second
+// third
+// fourth
+```
+Another promise chaining example which sequence the async operations.
+```js
+let p1 = new Promise((resolve, reject) => {
+    console.log("p1 executor");
+    setTimeout(resolve, 1000);
+} );
+p1.then(() => new Promise((resolve, reject) => {
+    console.log("p2 executor");
+    setTimeout(resolve, 1000);
+}))
+.then(() => new Promise((resolve, reject) => {
+    console.log("p3 executor");
+    setTimeout(resolve, 1000);
+}))
+.then(() => new Promise((resolve, reject) => {
+    console.log("p4 executor");
+    setTimeout(resolve, 1000);
+}))
+// p1 executor
+// p2 executor
+// p3 executor
+// p4 executor
+// exectued one by one after 1s
+```
+
+So we can generate a factory function
+```js
+function delayedResolve(str){
+    return new Promise((resolve, reject) => {
+        console.log(str);
+        setTimeout(resolve, 1000);
+    })
+}
+
+delayedResolve("p1 executor")
+.then(() => delayedResolve("p2 executor"))
+.then(() => delayedResolve("p3 executor"))
+.then(() => delayedResolve("p4 executor"))
+```
+
+Let's look at what will happen if we don't have `then()` and Promise
+```js
+function delayedExecute(str, callback = null){
+    setTimeout(() =>{
+        console.log(str);
+        callback && callback();
+    }, 1000)
+}
+
+delayedExecute("p1 executor", () => {
+    delayedExecute("p2 executor", () => {
+        delayedExecute("p3 executor", () =>{
+            delayedExecute("p4 executor");
+        })
+    })
+})
+```
+
+#### Using `Promise.all()` (promise composiiton)
+This will create a promise that will be settled if all promises in the collection(iterable) is settled.
+```js
+//Following comments are the print result from codepen.io console
+
+let p1 = Promise.all([
+    Promise.resolve(),
+    Promise.resolve()
+]);
+console.log(p1); // Promise pending, promiseState: fulfilled, promiseResult: 0: undefined, 1: undefined
+
+let p2 = Promise.all([3, 4]);
+console.log(p2); // Promise pending, promiseState: fulfilled, promiseResult: 0: 3, 1: 4
+
+let p3 = Promise.all([]);
+console.log(p3); // Promise fufilled, promiseState: fulfilled, promiseResult: Array(0)
+
+let p4 = Promise.all();
+// TypeError: cannot read Symbol.iterator of undefined
+
+let p = Promise.all([Promise.resolve(), new Promise(() => setTimeout(resolve, 1000))]);
+console.asyncLog(p);
+
+p.then(() => console.asyncLog("all() fulfilled!"));
+// all() fulfilled
+```
+
+- If one promise rejects, the composed promise rejects;
+- If at least one promise pending, the composed promise remains pending:
+```js
+let p1 = Promise.all([new Promise(() => {})]);
+console.log(p1);// Promise pending
+
+let p2 = Promise.all([Promise.resolve(), Promise.reject(), Promise.resolve()]);
+console.log(p2);// Promise reject: undefined
+```
+
+- If composed promise is resolved, the return value will be an Array.
+```js
+let p = Promise.all([
+    Promise.resolve(3),
+    Promise.resolve(),
+    Promise.resolve(4)
+]);
+
+p.then((values) => console.log(values));// [3, undefined, 4]
+```
+
+- If one promise rejects, the first rejection will be the reject reason of composed promise. Later rejections' behavior is not affected, though later ones' reasons would have no effect on the composed one.
+```js
+let p = Promise.all([
+    Promise.reject(3),
+    new Promise((reject) => setTimeout(reject, 1000))
+])
+
+p.catch((reason) => console.log(reason)); // 3
+```
+
+#### Using `Promise.allSettled()`
+The composed promise is settled if all contained promises are settled. The result will be different from `Promise.all()`, it will show all the result in an Array, of which element would be either fulfilled or rejected and contain value or reason.
+```js
+let p1 = Promise.allSettled([
+    Promise.resolve(),
+    Promise.reject()
+]);
+
+console.log(p1); // Promiese pending: promiseState: fulfilled, promiseResult: [{status: fufilled, value: undefined}, {status: rejected, reason: undefined}]
+
+let p2 = Promise.allSettled([3, 4]);
+console.log(p2);// Promise pending: promiseState: fulfilled, promiseResult: [{status: fulfilled, value: 3}, {status: fulfilled, value: 4}]
+
+let p3 = Promise.allSettled([]);//Promise fulfilled: promiseState: fulfilled, promiseResult: Array(0)
+
+let p4 = Promise.allSettled()//TypeError: cannot read Symbol.iterator of undefined
+```
+
+- Here is example of how to iterate result of `Promise.allSettled()`
+```js
+Promise.allSettled([fetchDataFromAPI1(), fetchDataFromAPI2(), fetchDataFromAPI3()])
+.then((results) =>{
+    results.map((result, i) => {
+        if(result.status === "fulfilled"){
+            console.log(`API ${i} data:`, result.value);
+        }else{
+            console.log(`API ${i} error:`, result.reason);
+        }
+    })
+});
+```
+
+#### Using `Promise.race()`
+This composed promise will be settled if any contained promise is settled.
+```js
+let p1 = Promise.race([Promise.resolve(), Promise.resolve()]);
+console.log(p1);// Promise pending: promiseState: fulfilled promiseResult: undefined
+
+let p2 = Promise.race([3, 4]);
+console.log(p2);// Promise pending: promiseState: fulfilled promiseResult: 3
+
+let p3 = Promise.race([]);
+console.log(p3);// Promise pending: promiseState: pending
+
+let p4 = Promise.race();
+//TypeError: cannot read Symbol.iterator of undefined
+
+let p5 = Promise.race([
+    Promise.resolve(3),
+    new Promise((resolve, reject) => setTimeout(reject, 1000))
+]);
+console.log(p5);// Promise fulfilled: 3
+
+let p6 = Promise.race([Promise.reject(4),
+    new Promise((resolve, reject)=>{setTimeout(resolve,1000);})
+]);
+console.log(p6);// Promise rejected: 4
+
+let p7 = Promise.race([Promise.resolve(5), Promise.resolve(6), Promise.resolve(7)]);
+console.log(p7)// Promise fulfilled: 5
+```
+
+```js
+let p = Promise.race([Promise.resolve(1), Promise.reject(0)]);
+console.log(p); // Promise fulfilled: 1
+```
+
+#### Using `Promise.any()`
