@@ -756,3 +756,119 @@ console.log(p); // Promise fulfilled: 1
 ```
 
 #### Using `Promise.any()`
+1. The composed promise is settled if any of contained promises are settled.
+2. Once first promise is settled, the rest promises are short-circuited.(killed)
+```js
+let p1 = Promise.any([Promise.resolve(), Promise.reject()]);
+console.log(p1);// Promise pending: promiseState: fulfilled, promiseResult: undefined
+
+let p2 = Promise.any([3, 4]);
+console.log(p2);// Promise pending: promiseState: fulfilled, promiseResult: 3
+
+let p3 = Promise.any([])
+console.log(p3);// Promise rejected: AggregateError: All promises were rejected
+
+let p4 = Promise.any();
+// TypeError: cannot read Symbol.iterator of undefined
+```
+
+```js
+let p = Promise.any([
+    new Promise((resolve, reject) => setTimeout(resolve, 1000, "first")),
+    new Promise((resolve, reject) => setTimeout(resolve, 2000, "second"))
+]);
+console.log(p);
+
+p.then((value) => console.log(value));
+// first
+```
+If all contained promises reject, the composed promise will also reject. AggregateError instance contains all rejection reasons.
+How to catch all errors?
+```js
+Promise.any([
+    fetchDataFromAPI1(),
+    fetchDataFromAPI2(),
+    fetchDataFromAPI3()
+]).then((data)=>{
+    console.log("Fastest data:", data)
+}).catch((error)=>{
+    if(error instanceof AggregateError){
+        console.log("All promises rejected. Errors:", error.errors);
+    }else{
+        console.log("Unknown error:", error)
+    }
+})
+```
+
+#### Serial Promise Composition
+For promises chaining, we are doing is serializing executions. This is analogous to *function composition*.
+Example of *function composition*
+```js
+function addTwo(x) { return x + 2;}
+function addThree(x) {return x + 3;}
+function addFive(x) {return x + 5;}
+
+function addTen(x){
+    return addFive(addTwo(addThree(x)));
+}
+console.log(addTen(7)) // 17
+```
+
+We can re-write *function composition* with promise composition.
+```js
+function addTwo(x) { return x + 2;}
+function addThree(x) {return x + 3;}
+function addFive(x) {return x + 5;}
+
+function addTen(x){
+    return Promise.resolve(x)
+    .then(addTwo)
+    .then(addThree)
+    .then(addFive);
+}
+
+addTen(8).then(console.log); // 18
+```
+
+This can be fashioned into a more succinct form using `Array.prototype.reduce()`
+```js
+function addTwo(x) { return x + 2;}
+function addThree(x) {return x + 3;}
+function addFive(x) {return x + 5;}
+
+function addTen(x){
+    return [addTwo, addThree, addFive].reduce((promise, fn)=> promise.then(fn), Promise.resolve(x));
+}
+
+addTen(8).then(console.log); // 18
+```
+
+More,
+```js
+function addTwo(x) { return x + 2;}
+function addThree(x) {return x + 3;}
+function addFive(x) {return x + 5;}
+
+function compose(...fns){
+    return (x) => fns.reduce((promise, fn) => promise.then(fn), Promise.resolve(x))
+}
+
+let addTen = compose(addTwo, addThree, addFive);
+
+addTen(8).then(console.log);
+```
+
+#### Promises and the Microtask Queue
+So, there are *message queue* and *microtask queue* in JavaScript engine. *microtask queue* has higher priority than *message queue*.
+```js
+console.log("1");
+setTimeout(console.log, 0, "4");// add to message queue
+Promise.resolve("3").then(console.log);// add to the microtask queue
+console.log("2")
+// 1
+// 2
+// 3
+// 4
+```
+
+### Avoiding Unhandled Rejections
