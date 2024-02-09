@@ -872,3 +872,78 @@ console.log("2")
 ```
 
 ### Avoiding Unhandled Rejections
+There are several occasions for unhandled rejections that can lead to unhandled errors. You can observe these by adding `unhandledrejection` event listener handler, and you can fix these by adding *onRejected* handler.
+```js
+Promise.reject("foo");
+// Uncaught (in promise) foo
+
+//Observing
+window.addEventListener("unhandledrejection", () => console.log("UNHANDLED"));
+Promsie.reject("foo");
+//UNHANDLED
+//Uncaught (in promise) foo
+
+//Fixing
+window.addEventListener("unhandledrejection", () => console.log("UNHANDLED"));
+Promise.reject("foo").catch(() =>{});
+Promise.reject("foo").then(null, () => {});
+// NO console output
+```
+
+`Promise.allSettled` will not throw any uncaught error if there's a rejection.
+
+To detect rejection that is already handled, 
+```js
+window.addEventListener("rejectionhandled", () => console.log("HANDLED LATE"));
+const p = Promise.reject();
+setTimeout(() => p.catch(() => {}), 1000);
+// HANDLED LATE
+```
+
+### Promise Extensions
+- There are several extended feature which not included in the standard ECMAScript, like cancel promise and promise progress.
+
+#### Promise Canceling
+[github opensource library](https://github.com/tc39/proposal-cancelable-promises)
+
+```html
+<button id="start">Start</button>
+<button id="cancel">Cancel</button>
+
+<script>
+    class CancelToken{
+        constructor(cancelFN){
+            this.promise = new Promise((resolve, reject)=>{
+                cancelFN(() => {
+                    console.log("delay cancelled");
+                    resolve();
+                })
+            })
+        }
+    }
+
+    const startButton = document.querySelector("#start");
+    const cancelButton = document.querySelector("cancel");
+
+    function cancellableDelayedResolve(delay){
+        console.log("set delay");
+        return new Promise((resolve, reject)=>{
+            const id = setTimeout(() =>{
+                console.log("delayed resolve");
+                resolve();
+            }, delay);
+
+            const cancelToken = new CancelToken((cancelCallback) =>
+                cancelButton.addEventListener("click", cancelCallback);
+            );
+            cancelToken.promise.then(() => clearTimeout(id));
+        })
+    }
+
+    startButton.addEventListener("click", () => cancellableDelayedResolve(1000));
+</script>
+```
+
+#### Promise Progress Notifications
+
+### Async Funtions
