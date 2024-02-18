@@ -872,3 +872,453 @@ console.log("2")
 ```
 
 ### Avoiding Unhandled Rejections
+There are several occasions for unhandled rejections that can lead to unhandled errors. You can observe these by adding `unhandledrejection` event listener handler, and you can fix these by adding *onRejected* handler.
+```js
+Promise.reject("foo");
+// Uncaught (in promise) foo
+
+//Observing
+window.addEventListener("unhandledrejection", () => console.log("UNHANDLED"));
+Promsie.reject("foo");
+//UNHANDLED
+//Uncaught (in promise) foo
+
+//Fixing
+window.addEventListener("unhandledrejection", () => console.log("UNHANDLED"));
+Promise.reject("foo").catch(() =>{});
+Promise.reject("foo").then(null, () => {});
+// NO console output
+```
+
+`Promise.allSettled` will not throw any uncaught error if there's a rejection.
+
+To detect rejection that is already handled, 
+```js
+window.addEventListener("rejectionhandled", () => console.log("HANDLED LATE"));
+const p = Promise.reject();
+setTimeout(() => p.catch(() => {}), 1000);
+// HANDLED LATE
+```
+
+### Promise Extensions
+- There are several extended feature which not included in the standard ECMAScript, like cancel promise and promise progress.
+
+#### Promise Canceling
+[github opensource library](https://github.com/tc39/proposal-cancelable-promises)
+
+```html
+<button id="start">Start</button>
+<button id="cancel">Cancel</button>
+
+<script>
+    class CancelToken{
+        constructor(cancelFN){
+            this.promise = new Promise((resolve, reject)=>{
+                cancelFN(() => {
+                    console.log("delay cancelled");
+                    resolve();
+                })
+            })
+        }
+    }
+
+    const startButton = document.querySelector("#start");
+    const cancelButton = document.querySelector("cancel");
+
+    function cancellableDelayedResolve(delay){
+        console.log("set delay");
+        return new Promise((resolve, reject)=>{
+            const id = setTimeout(() =>{
+                console.log("delayed resolve");
+                resolve();
+            }, delay);
+
+            const cancelToken = new CancelToken((cancelCallback) =>
+                cancelButton.addEventListener("click", cancelCallback);
+            );
+            cancelToken.promise.then(() => clearTimeout(id));
+        })
+    }
+
+    startButton.addEventListener("click", () => cancellableDelayedResolve(1000));
+</script>
+```
+
+#### Promise Progress Notifications
+
+### Async Funtions
+#### The `async` keyword
+
+`async` can be prepended to:
+1. function declarations
+2. function expressions
+3. arrow functions
+4. methods
+
+```js
+async function foo(){}
+let bar = async funtion () {};
+let baz = async () => {};
+class Qux{
+    async qux(){}
+}
+```
+
+When prepending `async` to a function, that function still run as normal synchronous function.
+```js
+async function foo (){
+    console.log(1);
+}
+
+foo();
+console.log(2);
+//1
+//2
+```
+- `async` function with `return` will automatically converted into a promise object with `Promise.resolve()`. 
+```js
+async function foo(){
+    console.log(1);
+    return 3;
+}
+
+foo().then(console.log);
+
+console.log(2);
+// 1
+// 2
+// 3
+```
+
+`async` function anticipates but not requires a **thenable** object. 
+```js
+// return a primitive
+async function foo(){
+    return "foo";
+}
+foo().then(console.log);
+// foo
+
+// return a non-thenable object
+async function bar(){
+    return ["bar"];
+}
+bar().then(console.log);
+// ["bar"]
+
+// return a thenable non-promise object
+async function baz(){
+    const thenable = {
+        then(callback){
+            callback("baz");
+        }
+    }
+}
+// baz
+
+// return a promise
+async function qux(){
+    return Promise.resolve("qux");
+}
+qux().then(console.log);
+// qux
+```
+
+If `async` funtion throw a error, it will return a rejection.
+```js
+async function foo(){
+    console.log(1);
+    throw 3;
+}
+
+foo().catch(console.log);
+console.log(2);
+//1
+//2
+//3
+```
+A promise rejection will not be caught by `async` function
+```js
+async function foo(){
+    console.log(1);
+    Promise.reject(3);
+}
+
+foo().catch(console.log);
+console.log(2);
+//1
+//2
+//uncaught (in promise): 3
+```
+
+#### The `await` keyword
+Using `await` to rewrite:
+```js
+//Original
+let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3));
+
+p.then((x) => console.log(x));
+
+//Re-Write
+async function foo(){
+    let p = new Promise((resolve, reject) => setTimeout(resolve, 1000, 3));
+    console.log(await p);
+}
+foo();
+```
+
+- `await` keyword is just like `yield` keyword, it release the JavaScript runtime's thread of execution. "unwrap" the value of that object, the object follows the `await`. And asynchronously resume execution of the async function.
+
+- `await` keyword anticipates but not requires a thenable object.
+- If synchronous operation throws an error, then `await` return a rejected promise.
+- Promise.reject() will be captured by `await`
+
+```js
+// Asynchronously print "foo"
+async function foo(){
+    console.log(await Promise.resolve("foo"));
+}
+foo();
+// foo
+
+// Asynchronously print "bar"
+async function bar(){
+    return await Promise.resolve("bar");
+}
+bar().then(console.log);
+// bar
+
+//Asynchronously print "baz" after 1000ms
+async function baz(){
+    await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+    console.log("baz");
+}
+baz();
+// baz after 1000ms
+```
+
+```js
+async function baz(){
+    const thenable = {
+        then(callback){callback("baz");}
+    };
+    console.log(await thenable);
+}
+baz();
+//baz
+```
+
+```js
+async function foo(){
+    console.log(1);
+    await (() => {throw 3;})();
+}
+foo().catch(console.log);
+console.log(2);
+//1
+//2
+//3
+
+async function foo(){
+    console.log(1);
+    await Promise.reject(3);
+    console.log(4); // never print
+}
+foo().catch(console.log);
+console.log(2);
+//1
+//2
+//3
+```
+
+#### Restrictions on `await`
+`await` must be used inside `async` function.
+
+`await` can also make `for-of` loop behave asynchronously
+```js
+for await (let varibale of iterable){
+    //code to be executed
+}
+```
+This could be used in any object that has a `Symbol.asyncIterator` method.
+
+```js
+async function getRandomNumber(i){
+    return new Promise(resolve => {
+        console.log(i);
+        setTimeout(resolve, 1000, Math.random());
+    })
+}
+
+async function printRandomNumbers(){
+    for await (const x of Array.from(Array(5).keys()).map(getRandomnumber)){
+        console.log(x);
+    }
+    console.log("loop has exited");
+}
+
+printRandomNumbers();
+//0
+//1
+//2
+//3
+//4
+
+//random numbers ...
+//loop has exited
+```
+```js
+async function* asyncIterable(array){
+    for(const item of array){
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        yield item;
+    }
+}
+const myArray = [1, 2, 3];
+for await (const item of asyncIterable(myArray)){
+    console.log(item);
+}
+```
+
+#### Strategies for Async Functions
+
+##### Implementing `Sleep()`
+```js
+async function sellp(delay){
+    return new Promise(resolve => setTimeout(resolve, delay));
+}
+
+async function foo(){
+    const t0 = Date.now();
+    await sleep(1500);
+    console.log(Date.now() - t0);
+}
+
+foo();
+//1502
+```
+
+##### Maximizing Parallelization
+- To execute **IN ORDER**
+```js
+async function randomDelay(id){
+    const delay = Math.random() * 1000;
+    return new Promise((resolve) => setTimeout(() => {
+        console.log(`${id} finished`);
+        resolve();
+    }, delay));
+}
+
+async function foo(){
+    const t0 = Date.now();
+    await randomDelay(0);
+    await randomDelay(1);
+    await randomDelay(2);
+    await randomDelay(3);
+    await randomDelay(4);
+    console.log(`${Date.now() - t0}ms elapsed`);
+}
+foo();
+```
+
+```js
+async function randomDelay(id){
+    const delay = Math.random() * 1000;
+    return new Promise((resolve) => setTimeout(() => {
+        console.log(`${id} finished`);
+        resolve();
+    }, delay));
+}
+
+async function foo(){
+    const t0 = Date.now();
+    for(let i = 0; i < 5; ++i){
+        await randomDelay(i);
+    }
+    console.log(`${Date.now() - t0}ms elapsed`);
+}
+foo();
+```
+- To execute **Parallely**
+```js
+async function randomDelay(id){
+    const delay = Math.random() * 1000;
+    return new Promise((resolve) => setTimeout(() => {
+        console.log(`${id} finished`);
+        resolve();
+    }, delay));
+}
+
+async function foo(){
+    const t0 = Date.now();
+    const p0 = randomDelay(0);
+    const p1 = randomDelay(1);
+    const p1 = randomDelay(2);
+    const p1 = randomDelay(3);
+    const p1 = randomDelay(4);
+
+    await p0;
+    await p1;
+    await p2;
+    await p3;
+    await p4;
+    
+    console.log(`${Date.now() - t0}ms elapsed`);
+}
+foo();
+```
+```js
+async function randomDelay(id){
+    const delay = Math.random() * 1000;
+    return new Promise((resolve) => setTimeout(() => {
+        console.log(`${id} finished`);
+        resolve();
+    }, delay));
+}
+
+async function foo(){
+    const t0 = Date.now();
+
+    const promises = Array(5).fill(null).map((_, i) => randomDelay(i));
+
+    for(const p of promises){
+        console.log(`awaited ${await p}`);
+    }
+
+    console.log(`${Date.now() - t0}ms elapsed`);
+}
+foo();
+```
+
+##### Serial Promise Execution
+```js
+function addTwo(x) {return x + 2;}
+function addThree(x) {return x + 3;}
+function addFive(x) {return x + 5;}
+
+async function addTen(x){
+    for(const fn of [addTwo, addThree, addFive]){
+        x = await fn(x)
+    }
+    return x;
+}
+
+addTen(9).then(console.log); // 19
+```
+```js
+async function addTwo(x) {return x + 2;}
+async function addThree(x) {return x + 3;}
+async function addFive(x) {return x + 5;}
+
+async function addTen(x){
+    for(const fn of [addTwo, addThree, addFive]){
+        x = await fn(x)
+    }
+    return x;
+}
+
+addTen(9).then(console.log); // 19
+```
+
+##### Stack Traces and Memory Management
+##### Rejection-Safe Parallelization
