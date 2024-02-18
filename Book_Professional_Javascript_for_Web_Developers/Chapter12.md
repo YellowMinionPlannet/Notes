@@ -166,3 +166,19 @@ if(blocked){
 ```
 
 ### Intervals and Timeouts
+
+This content is about `window.setTimeout` and `window.setInterval` methods.
+
+> From the previous chapter, when we discuss promise, we know that there are *message queue* and *microtask queue* and setTimeout is scheduled to *message queue* which has lower priority than *microtask queue*.(Promise is scheduled to the later)
+
+- `window.setInterval` will schedule the callback function after x ms, where x is defined by 2nd argument. And no matter how long the callback gonna take, the window will repeat this scheduling right after x ms. Remember that the scheduled callback is started only when the message queue is empty.
+
+### System Dialogs
+
+`window.alert()`, `window.confirm()`, and `window.prompt()` will open a modal, which will stop execution thread of the current window, the execution will be continued as long as these modals are dismissed. 
+
+These modals cannot be controlled by CSS code.
+
+`window.find()` and `window.print()` will start a async modal, you cannot have control when these modals are fired.
+
+## THE LOCATION OBJECT
