@@ -234,3 +234,40 @@ If you want to reload:
 2. `location.reload(true)`, force to reload from server
 
 ## THE NAVIGATOR OBJECT
+
+This is a standard for all JavaScript-Enabled web browser.
+
+> TODO: investigate on the table in text book
+
+### Registering Handler
+
+> TODO: investigate on concept of "Web-based protocol handlers"
+
+## THE SCREEN OBJECT
+
+## THE HISTORY OBJECT
+We cannot know exact URL user visited through this object, but we can go forward and backward using methods on this object.
+
+```js
+//go back one page
+history.go(-1);
+//go forward one page
+history.go(1);
+//go forward two pages
+history.go(2);
+
+//go to nearest wiley.com page
+history.go("wiley.com");
+// go to nearest nczonline.net page
+history.go("nczonline.net");
+
+//go back one page
+history.back();
+//go forward one page
+history.forward();
+
+if(history.length == 0){
+    // this is the first page in the user's window.
+}
+```
+### History State Management
