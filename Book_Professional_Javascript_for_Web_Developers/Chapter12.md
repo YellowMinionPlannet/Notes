@@ -123,4 +123,46 @@ Sqr(1920<sup>2</sup> + 1200<sup>2</sup>) / 14 = 161 px/inch
 
 The fomula of Sqr(HighestResolutionWidth<sup>2</sup> + HighestResolutionHeight<sup>2</sup>) / Physical Diagonal of Screen is the definition of ppi, which is pixels per inch. This value is critical when comparing monitor's clearity.
 
+### Window Size
 
+- `window.outerWidth` and `window.outerHeight` is the available size of a browser display area(including the toolbar and borders). This will be narrowed when you use dev tool and set to Responsive mode. The `window.outerWidth` and `window.outerHeight` would be like 400 * 712, because you changed to Portrait. When you cancel the responsive mode, and maximize the browser, this values are actually the `screen.width` and `screen.height`.
+
+- `window.innerWidth` and `window.innerHeight` is the content area of the browser, this would be the same with `document.documentElement.width` and `document.documentElement.height`. However, if you are using smart phone, when you zoom-in and zoom-out, these values would be the visible area size of the page, where `document.documentElement` values would be always equal to the page view port size.
+
+### Windows Viewport Position
+
+This offset values could be accessed with `window.pageXOffset / window.scrollX` and `window.pageYOffset / window.scrollY`
+
+### Navigating and Opening Windows
+This content is about `window.open()` method and `window.close()` method and `window.opener`, `window.closed`property.
+
+- `window.open` accept 4 arguments
+- `window.opener` refers the object which opens the current window
+```js
+let wileyWin = window.open("http://www.wiley.com", "wileyWindow", "height=400, width=400, top=10, left=10, resizable=yes");
+
+wileyWin.close();
+console.log(wileyWin.opener === window); // true
+console.log(wileyWin.closed);// true
+```
+
+- How to check if pop-up window feature is blocked?
+```js
+let blocked = false;
+
+try{
+    let wileyWin = window.open("http://www.wiley.com", "_blank");
+
+    if(wileyWin == null){
+        blocked = true;
+    }
+}catch(ex){
+    blocked = true
+}
+
+if(blocked){
+    alert("The popup was blocked!");
+}
+```
+
+### Intervals and Timeouts
