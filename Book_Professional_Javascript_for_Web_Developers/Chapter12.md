@@ -182,3 +182,55 @@ These modals cannot be controlled by CSS code.
 `window.find()` and `window.print()` will start a async modal, you cannot have control when these modals are fired.
 
 ## THE LOCATION OBJECT
+
+Both `window.location` or `document.location` points to the same `location` object.
+
+For example, if we have `http://foouser:barpassword@www.wiley.com:80/WileyCDA/?q=javascript#contents` for the current browser. We can use following property name to get values.
+|PROPERTY NAME|RETURN VALUE|DESCRIPTION|
+|-|-|-|
+|location.hash|"#contents"|Will return pound sign (`#`) followed by zero or more characters. Or will return empty string if there isn't a hash fragment|
+|location.host|"www.wiley.com:80"|The name of the server and port number if present|
+|location.hostname|"www.wiley.com"|The name of the server without the port number|
+|location.href|"http://foouser:barpassword@www.wiley.com:80/WileyCDA/?q=javascript#contents"|The full URL of the currently loaded page. Same as `location.toString()`|
+|location.pathname|"/WileyCDA/"|The directory and/or filename of the URL|
+|location.port|"80"|The port of the request if specified in the URL. **If a URL does not contain a port, then this property returns an empty string.**|
+|location.protocal|"http:"||
+|location.search|"?/q=javascript"|The query string of the URL.**It returns a string beginning with a question mark.** Or return empty string if none.|
+|location.username|"foouser"|The username specified before the domain name|
+|location.password|"barpassword"|The password specified before the domain name|
+|location.origin|"http://ww.wiley.com"|The origin of the URL. Read ONLY|
+
+#### Manipulating the Location
+The location can be changed in number of ways:
+1. `location.assign("http://www.wiley.com");`
+    - browser will start to load the content from the new URL
+    - browser enters the history stack
+    
+2. if we set `location.href`
+3. Or we set `window.location` to a URL, `assign()` method will be called with that value
+
+By changing `search`, `hostname`, `pathname`, `port` properties on `location` with a new value will cause reloads with the new URL and new entry in the browser's history stack .
+
+By changing `hash`:
+- no reloads
+- add new entry in browser's history
+
+If you want to replace the current history entry with a new URL, use `location.replace()`.
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>You won't be able to get back here</title>
+    </head>
+    <script>
+        setTimeout(() => location.replace("http://www.wiley.com"), 1000);
+    </script>
+</html>
+```
+After 1 sec, you are going to load `www.wiley.com`, but "Back" button will be disabled, since the last history entry is replaced by "http://www.wiley.com".
+
+If you want to reload:
+1. `location.reload()`, from cache if available
+2. `location.reload(true)`, force to reload from server
+
+## THE NAVIGATOR OBJECT
