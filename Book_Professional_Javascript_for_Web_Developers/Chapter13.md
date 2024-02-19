@@ -65,3 +65,82 @@ if(someNode.nodeType == 1){
 For different types of nodes, these properties' values are different. For element type nodes, the `nodeName` is always the tag name, and `nodeValue` is always `null`.
 
 #### Node Relationships
+So how to describe the relationship among nodes?
+1. parent, direct parent node
+2. child, direct child node
+3. sibling, share same parent node with other siblings
+
+- Each `Node` has `childNodes` property, which contains a `NodeList` type instance.
+    - `NodeList` behave like Array instance, but it is not
+    - `childNodes` property is not a snapshot of the owner's children, it is synced whenever the children were updated
+- How to use `NodeList` type instance:
+```js
+let firstChild = someNode.childNodes[0];
+let secondChild = someNode.childNodes.item(1);
+let count = someNode.childNodes.length;
+```
+- How to convert `NodeList` type into Array
+```js
+let arrayOfNodes = Array.prototype.slice.call(someNode.childNodes, 0);
+```
+
+- Each node has a `parentNode` property that points to its parent in the document tree.
+- Each node in the same `childNodes` property share the same `parentNode`
+- Using `nextSibling` and `previousSibling` properties in `Node` instance.
+```js
+if(someNode.nextSibling === null){
+    alert("Last node in the parent's childNode list.");
+}else if(someNode.previousSibling === null){
+    alert("First node in the parent's childNode list.");
+}
+```
+- `childNodes`'s `firstChild` property always points to the `childNodes[0]`, and `lastChild` property always points to `someNode.childNodes[someNode.childNodes.length -1]`
+- If `firstChild` and `lastChild` points to the same node, there must be only one node in the list.
+- If no children `firstChild` and `lastChild` are both `null`
+- Don't forget to use `hasChildNodes()` method to check for the `Node`
+- `ownerDocument` property always points to the Document node(Not `documentElement`).
+
+#### Manipulating Nodes
+Properties mentioned above are all READ-ONLY.
+
+Now we begin to manipulate the relationship.
+
+- `appendChild()` method, will move the node to the end of the `childNodes` list, and returns the newly added nodes. The relationship pointers properties related to this newly added node and other effected nodes are automatically updated.
+
+```js
+let returnedNode = someNode.appendChild(newNode);
+alert(returnedNode == newNode); // true
+alert(someNode.lastChild == newNode); // true
+
+let returnedNode = someNode.appendChild(someNode.firstChild);
+alert(returnedNode == someNode.firstChild); // false
+alert(retunredNode == someNode.lastChild); // true
+```
+- `insertBefore()` accepts two arguments, the inserted node and the referenced node.
+- if the referenced node is `null`, then it behaves the same as `appendChild()`
+
+```js
+returnedNode = someNode.insertBefore(newNode, null);
+alert(newNode == someNode.lastNode); // true
+
+returnedNode = someNode.insertBefore(newNode, someNode.firstNode);
+alert(returnedNode == newNode); // true
+alert(newNode == someNode.firstNode) // true
+
+returnedNode = someNode.insertBefore(newNode, someNode.lastChild);
+alert(newNode == someNode.childNodes[someNode.childNodes.length -2]);
+```
+
+- `replaceChild()` accepts: inserted node, and removed node. It returns the removed node.
+- the removed node is still owned by document, but has no position.
+```js
+let returnedNode = someNode.replaceChild(newNode, someNode.firstChild);
+returnedNode = someNode.replacechild(newNode, someNOde.lastChild);
+```
+- `removeChild()` method, returns the removed node.
+```js
+let formerFirstChild = someNode.removeChild(someNode.firstChild);
+let formerLastChild = someNode.removeChild(someNode.lastChild);
+```
+
+#### Other Methods
