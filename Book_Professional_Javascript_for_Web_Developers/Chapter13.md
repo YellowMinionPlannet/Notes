@@ -144,3 +144,29 @@ let formerLastChild = someNode.removeChild(someNode.lastChild);
 ```
 
 #### Other Methods
+- `cloneNode()`
+```html
+<!DOCTYPE>
+<html>
+    <body>
+        <ul>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+        <script>
+            let myList = document.getElementsByTagName("ul")[0];
+            let deepList = myList.cloneNode(true);
+            alert(deepList.childNodes.length); // 7 because ul and li must has a text node
+            
+            let shallowList = myList.cloneNode(false);
+            alert(shallowList.childNodes.length); // 0
+        </script>
+    </body>
+</html>
+```
+- `cloneNode()` does not copy event handlers, but copies attributes. It copies childNodes only if deep copy.
+
+- `normalize()` deal with fragment text node.
+
+### The Document Type
