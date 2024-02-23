@@ -276,3 +276,47 @@ let radios = document.getElementsByName("color");
 - `document.links`: contains all `<a>` elements with a `href` attibute
 
 #### Document Writing
+There are 4 methods available for Document Writing:
+1. `write`
+2. `writeln`
+3. `open`
+4. `close`
+
+Look at similar examples about `write` method
+```html
+<html>
+    <head>
+        <title>document.write() Example</title>
+    </head>
+    <body>
+        <p>This is some content that you won't get to see because it will be overwritten.</p>
+        <script type="text/javascript">
+            window.onload = function(){
+                document.write("Hellow World!");
+            }
+        </script>
+    </body>
+</html>
+```
+```html
+<html>
+    <head>
+        <title>document.write() Example</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            document.write("<script type=\"text/javascript\" src=\"file.js\">" + "<\/script>");
+        </script>
+    </body>
+</html>
+```
+
+The first one will overwrite the entire page to "Hello World!", because the `write` method is triggered when page is loaded.
+
+The second one will only write script tag to the page, because `write` is triggered when page is loading.
+
+> Be careful for the closing `</script>` tag syntax
+
+`open` and `close` are not required when using `write` when the page is loading. They are used when you want to open / close the output stream of the page.
+
+### The Element Type
