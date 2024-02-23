@@ -170,3 +170,109 @@ let formerLastChild = someNode.removeChild(someNode.lastChild);
 - `normalize()` deal with fragment text node.
 
 ### The Document Type
+
+For HTML, `window` has a property named `document`, this object is `HTMLDocument` type which inherited from `Document` type.
+
+This `document` object has following characteristics:
+- `nodeType` is 9
+- `nodeName` is "#document"
+- `nodeValue` is `null`
+- `parentNode` is `null`
+- `ownerDocument` is `null`
+- Its child nodes may be `DocumentType` type(MAX of 1), `Element` Type(MAX of 1), `ProcessingInstruction`, or `Comment`
+
+#### Document Children
+- The first child nodes of `document` object is `documentElement` property, which represents `<html>` element.
+
+How to access?
+```js
+let html = document.documentElement;
+alert(html === document.childNodes[0]);
+alert(html === document.firstChild);
+```
+
+- As a instance of `HTMLDocument` type object, `document` object also can have a `body` property, which represnets `<body>` element.
+
+- Another possible child node of a `Document` type is `DocumentType` type object, `document.doctype`.
+
+- Comments that are outside `<html>` element, `documentElement`, can also be childNodes of `document` object.
+
+#### Document Information
+`title`, `domain`, `url`, `referer` properties also available.
+
+- Updating `title` property will update the title bar of the browser, but `title` property will not be synced to the `<title>` element.
+
+- `domain`, `url`, `referer` properties are included in HTTP request, and can be accessible by JavaScript through these properties.
+
+- If a page includes a frame or iframe, and if you set the sub pages' `document.domain` property into same value. Then the sub pages could communicate with each other.
+
+- If you set the `domain` property into "wrox.com", you cannot set the `domain` property into "p2p.wrox.om" later. Because it's tightening the property, and it's not allowed.
+
+#### Locating Elements
+To locate a specific element, DOM provides two methods in the `document` object to perform such task.
+They are `document.getElementById()` and `document.getElementsByTagName()`.
+
+- `document.getElementById()` accepts one argument, and will return the element which id is exactly match up with the argument. Otherwise, this method will return `null`.
+- If there are multiple matchup cases, this method will return the first one.
+```js
+<div id="myDIv">Some Text</div>
+
+let div = document.getElementById("myDiv");
+let div = document.getElementById("mydiv"); //null
+```
+
+- `document.getElementsByTagName()` will return all elements that match up the tag name. The result is returned as `NodeList` type instance. In HTML, this result returns as `HTMLCollection` type object, which is similar to `NodeList`, it is a live collection.
+
+```js
+let images = document.getElementsByTagName("img");
+alert(images.length); // 
+alert(images[0].src); // output of first image's src attribute
+alert(iamges.item(0).src)// output of first image's src attribute
+
+//Suppose we have one of the images element defined by following comment
+//<img src="myimage.gif" name="myImage">
+
+let myImage = images.namedItemn("myImage");
+let myImage = images["myImage"];
+
+// This namedItem probably is specific to <img> element
+```
+
+> `document.getElmentsByTagName()` is case-insensitive for HTML and case-sensitive for XML and XHTML, although it is defined only case-senstive in specification.
+
+- `document.getElementsByName()` is the third method for locating element. It is a special one for `HTMLDocument` type only.
+
+```html
+<fieldset>
+    <legend>Which color do you prefer?</legend>
+    <ul>
+        <li>
+            <input type="radio" value="red" name="color" id="colorRed">
+            <label for="colorRed">Red</label>
+        </li>
+        <li>
+            <input type="radio" value="green" name="color" id="colorGreen">
+            <label for="colorGreen">Green</label>
+        </li>
+        <li>
+            <input type="radio" value="blue" name="color" id="colorBlue">
+            <label for="colorBlue">Blue</label>
+        </li>
+    </ul>
+</fieldset>
+```
+- Different `id` attributes can let `<label>` element target corresponding `<input>` elements.
+
+```js
+// this line of code retrieve all elements which name attributes equals to color
+let radios = document.getElementsByName("color");
+```
+
+#### Special Collections
+`document` has special collections that can easily access special element collection in the page.
+- `document.anchors`: contains all `<a>` elements with a `name` attribute
+- `document.forms`: same as `document.getElementsByTagName("form")`
+- `document.images`: smae as `document.getElementsByTagName("img")`
+- `document.links`: contains all `<a>` elements with a `href` attibute
+
+#### Document Writing
