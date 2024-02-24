@@ -369,3 +369,17 @@ alert(div.getAttribute("dir"));
 - event attribute, for example onclick, will return a JavaScript function or `null` if no call back is assigned.
 
 #### Setting Attributes
+`setAttribute()` will set the value to that specific attribute, and if the target attribute already has value, will replace it.
+
+- Although update the attribute related property will also update the corresponding attribute value, adding custom property cannot sync values to the custom attribute.
+
+`removeAttribute()` will remove the sprcific attribute and the value completely.
+
+#### The `attribute` Property
+The `Element` tpye is the only DOM node that uses `attribute` property, which returns a `NamedNodeMap` object. The attributes in `Element` node will be represented as `Attr` node, and these node are all stored in the `NamedNodeMap` object, which is a "live" object like `NodeList` object.
+
+There are several methods on this `NamedNodeMap`:
+- `getNamedItem(name)`, returns the node whose `nodeName` property is equal to name
+- `removeNamedItem(name)`, returns the node whose `nodeName` property is equal to the name
+- `setNamedItem(node)`, Adds the node to the list
+- `item(pos)` - returns pos index item.
