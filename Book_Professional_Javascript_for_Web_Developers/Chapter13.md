@@ -320,3 +320,52 @@ The second one will only write script tag to the page, because `write` is trigge
 `open` and `close` are not required when using `write` when the page is loading. They are used when you want to open / close the output stream of the page.
 
 ### The Element Type
+
+The `Element` type represents an XML or HTML element, providing access to info such as its tag name, children, and attributes. It has following characteristics:
+- `nodeType` is 1
+- `nodeName` is the element's tag name.
+- `nodeValue` is `null`
+- `parentNode` may be a `Document` / `Element`
+- `childNodes` may be `Element`, `Text`, `Comment`, `ProcessingInstruction`, `CDATASection`, or `EntityReference`.
+
+- An element's tag name is accessible through `tagName`/ `nodeName` properties.
+```js
+let div = document.getElementById("myDiv");
+alert(div.tagName); // Div
+alert(div.tagName == div.nodeName); // true
+```
+For XML the tagname value's case size is same as source code. The HTML will always follow Uppercase. So if you are not sure, which type of page gonna be, you'd better use common case for comparison.
+
+#### HTML Elements
+All HTML Elments are directly or subtyping of `HTMLElement` type. They share these properties:
+- id
+- title
+- lang
+- dir, ltr or rtl
+- className, equivalent to class attribute
+
+We can use these property to retrieve info or manipulate attribute value of corresponding tag.
+
+#### Getting Attributes
+We can use several methods to manipulate attributes in element.
+- `getAttribute()`
+- `setAttribute()`
+- `removeAttribute()`
+
+Argument passed in `getAttribute()` must be the actual attribute name, and if that attribute does not exist, `getAttribute()` will return `null`.
+
+```js
+let div = document.getElementById("myDiv");
+alert(div.getAttribute("id"));
+alert(div.getAttribute("class"));
+alert(div.getAttribute("title"));
+alert(div.getAttribute("lang"));
+alert(div.getAttribute("dir"));
+```
+
+- Attribute names are case-insensitive, which means "ID" and "id" are the same.
+- Custom attribute, for example my_custom_attribute, will not map to the properties of element. It can only be accessed by `getAttribute()` method.
+- style attribute will return an object
+- event attribute, for example onclick, will return a JavaScript function or `null` if no call back is assigned.
+
+#### Setting Attributes
