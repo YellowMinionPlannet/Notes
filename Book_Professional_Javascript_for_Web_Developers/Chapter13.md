@@ -157,7 +157,7 @@ let formerLastChild = someNode.removeChild(someNode.lastChild);
         <script>
             let myList = document.getElementsByTagName("ul")[0];
             let deepList = myList.cloneNode(true);
-            alert(deepList.childNodes.length); // 7 because ul and li must has a text node
+            alert(deepList.childNodes.length); // 7 because there are 2 text nodes among three <li> and 2 text nodes between first <li> and <ul> and last <li> and </ul>. Totally, 4 text nodes and 3 <li> element nodes
             
             let shallowList = myList.cloneNode(false);
             alert(shallowList.childNodes.length); // 0
@@ -371,11 +371,22 @@ alert(div.getAttribute("dir"));
 #### Setting Attributes
 `setAttribute()` will set the value to that specific attribute, and if the target attribute already has value, will replace it.
 
+```js
+div.setAttributes("id", "someOtherId");
+div.setAttributes("class", "ft");
+div.setAttributes("title", "some other text");
+div.setAttributes("lang", "fr");
+div.setAttributes("dir", "rtl");
+```
+
 - Although update the attribute related property will also update the corresponding attribute value, adding custom property cannot sync values to the custom attribute.
 
 `removeAttribute()` will remove the sprcific attribute and the value completely.
+```js
+div.removeAttribute("class");
+```
 
-#### The `attribute` Property
+#### The `attributes` Property
 The `Element` tpye is the only DOM node that uses `attribute` property, which returns a `NamedNodeMap` object. The attributes in `Element` node will be represented as `Attr` node, and these node are all stored in the `NamedNodeMap` object, which is a "live" object like `NodeList` object.
 
 There are several methods on this `NamedNodeMap`:
@@ -405,3 +416,47 @@ function outputAttributes(element){
     return pairs.join(" ");
 }
 ```
+
+#### Creating Elements
+To create a new element, where fro HTML argument is case-insensitive and for XML the argument is case-sensitive.
+```js
+let div = document.createElement("div");
+
+div.id = "myNewDiv";
+div.className = "box";
+
+//insert the newly created element into document tree
+document.body.appendChild(div);
+```
+
+#### Element Children
+Consider this example which has previous demonstrated:
+```html
+<!-- UL No.1 -->
+<ul id="myList">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+</ul>
+<!-- UL No.2 -->
+<ul id="myList"><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>
+```
+
+For No.1 element.childNodes.length will return 7, and No.2 element.childNodes.length will return 3.
+
+If we use No.1, we can have following code to process only `Element` type node
+```js
+for(let i = 0, len = element.childNodes.length; i < len; ++i){
+    if(element.childNodes[i].nodeType == 1){
+        //processing
+    }
+}
+```
+
+However, childNodes only returns direct descendants, if you want to retrieve all the <li> tags of multiple layers within that element 
+```js
+let ul = document.getElementById("myList");
+let items = ul.getElementsByTagName("li");
+```
+
+### The Text Type
