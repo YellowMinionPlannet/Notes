@@ -383,3 +383,25 @@ There are several methods on this `NamedNodeMap`:
 - `removeNamedItem(name)`, returns the node whose `nodeName` property is equal to the name
 - `setNamedItem(node)`, Adds the node to the list
 - `item(pos)` - returns pos index item.
+
+```js
+//access by attribute's name
+let id = element.attributes.getNamedItem("id").nodeValue;
+//access by bracket notation
+let id = eelemnt.attributes["id"].nodeValue;
+//set attribute value by nodeValue
+element.attributes["id"].nodeVlaue = "someOtherId";
+// remove and return
+let oldAttr = element.attributes.removeNamedItem("id");
+// add a new attribute
+element.attributes.setNamedItem(newAttr);
+
+function outputAttributes(element){
+    let pairs = [];
+    for(let i = 0, len = element.attributes.length; i < len; ++i){
+        const attribute = element.attributes[i];
+        pairs.push(`${attribute.nodeName}=${attribute.nodeValue}`);
+    }
+    return pairs.join(" ");
+}
+```
