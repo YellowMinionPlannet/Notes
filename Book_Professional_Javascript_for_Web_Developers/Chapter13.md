@@ -525,3 +525,61 @@ alert(element.firstChild.nodeValue); // Hello World!Yippee!
 ```
 
 #### Splitting Text Nodes
+```js
+let element = document.createElement("div");
+element.className = "message";
+
+let textNode = document.createTextNode("Hello World!");
+element.appendChild(textNode);
+
+document.body.appendChild(element);
+
+let newNode = element.firstChild.splitText(5);
+alert(element.firstChild.nodeValue); // "Hello"
+alert(newNode.nodeValue); // " World!"
+alert(element.childNodes.length); // 2
+```
+
+### The Comment Type
+`Comment` type node contains comments info, it has characteristics: 
+- `nodeType` is 8
+- `nodeName` is "#comment"
+- `nodeValue` is the content of the comment
+- `parentNode` is a Document/ Element
+- Child nodes are not supported
+
+It is inherited from `Text` type and has all behaviors other than `splitText()` method.
+
+### The CDATASection Type
+`CDATASection` type has following characteristics
+- `nodeType` is 4
+- `nodeName` is "#cdata-section"
+- `nodeValue` is the contents of CDATA section
+- parantNode is a Document / Element
+- Child nodes are not supported.
+
+It is a XML based type.
+
+### The DocumentType Type
+- `nodeType` is 10
+- `nodeName` is the name of the doctype
+- `nodeValue` is null
+- parantNode is Document
+- Child nodes are not supported
+
+### The DocumentFragment Type
+### The Attr type
+- `nodeType` is 11
+- `nodeName` is the name of attribute
+- `nodeValue` is the attribute value
+- parentNode is null
+- childe nodes are not supported in HTML
+```js
+let attr = document.createAttribute("align");
+attr.value = "left"
+element.setAttributeNode(attr)
+
+alert(element.attributes["align"].value);//left
+alert(element.getAttributeNode("align"));//left
+alert(element.getAttribute("align")); //left
+```
