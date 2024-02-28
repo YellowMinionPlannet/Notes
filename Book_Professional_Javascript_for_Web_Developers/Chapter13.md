@@ -583,3 +583,195 @@ alert(element.attributes["align"].value);//left
 alert(element.getAttributeNode("align"));//left
 alert(element.getAttribute("align")); //left
 ```
+
+## WORKING WITH THE DOM
+### Dynamic Scripts
+Dynamic scripts are scripts inserted by `<script>` element, either by using `src` attribute for external file, or by writing scripts inside.
+
+These scripts do NOT exist when page is loaded but are included later by using the DOM.
+
+```js
+// HTML code
+<script src="foo.js"></script>
+
+// DOM code
+let script = document.createElement("script");
+script.src = "foo.js";
+document.body.appendChild(script);
+```
+The external file "foo.js" is not downloaded until the `<script>` element is added to the page. You can also put the `<script>` element in `<head>` element and this will have the same effect as the previous.
+
+Once loaded, the script is fully available to the rest of the page.
+
+If you put text in `<script>` element, the browser will not execute it. Unlesse it's like something:
+```js
+<script>
+    (function sayHi(){
+        alert("Hi");
+    })();
+</script>
+```
+
+### Dynamic Styles
+Loading dynamic styles will be executed asynchronously.
+
+```js
+<link rel="stylesheet" type="text/css" href="styles.css">
+
+let link = document.createElement("link");
+link.rel = "stylesheet"
+link.type = "text/css"
+link.href = "styles.css"
+let head = document.getElementsByTagName("head")[0];
+head.appendChild(link);
+```
+
+### Using NodeLists
+Following code will generate a infinite loop:
+```js
+let divs = document.getElementsByTagName("div");
+
+for(let i = 0; i < divs.length; i++){
+    let div = document.createElement("div");
+    document.body.appendChild(div);
+}
+```
+
+Because the NodeList is a "live" object, and its status will be evaluated(updated) whenever you access it.
+
+## SELECTOR API
+Try to select a element by CSS selector, we can use `querySelector()` and `querySelectorALl()` methods.
+
+#### The `querySelector` method
+```js
+let body = document.querySelector("body");
+
+let myDiv = document.querySelector("#myDiv");
+
+// Select first element className is selected
+let selected = document.querySelector(".selected");
+
+let img = document.querySelector("img.button");
+```
+This will search all levels of descendants.
+
+#### The `querySelectorAll()` Method
+Returns a NodeList, which is a snapshot of elements rather than a dynamic query that is constantly re-executed.
+
+Following will not be infinite loop:
+```js
+let targets = document.querySelectorAll(".li");
+for(let i = 0; i < targets.length; i++){
+    targets[i].className = "il";
+}
+```
+
+#### The `matches()` method
+
+## ELEMENT TRAVERSAL
+Element only properties:
+1. `childElementCount`
+2. `firstElementChild`
+3. `lastElementChild`
+4. `previousElementSibling`
+5. `nextElementSibling`
+
+## HTML5
+The major difference of HTML5 and HTML4 is to interact with class attribute including dynamic changing of classes and querying the document to find elements with given class or set of classes.
+
+### Class-Related Additions
+#### The `getElementsByClassName()` method
+```js
+let allCurrentUserNames = document.getElementsByClassName("username current");
+let selected = document.getElementById("myDiv").getElementsbyClassName("selected");
+```
+This method will return `NodeList` object, and will have issues with "live" syncup overhead.
+For example:
+```js
+//Will generate infinite loop
+let ul = document.getElementsByTagName("ul");
+let targets = ul.getElementsByClassName("li");
+
+for(let i = 0; i<targets.length;i++){
+    let nli = document.createElement("li");
+    nli.className = "li";
+    ul.appendChild(nli);
+    console.log("Loops!");
+}
+```
+
+#### The `classList` property
+To remove one of the class names using `className` property.
+```html
+<div class="bd user disabled">...</div>
+```
+```js
+let targetCLass = "user";
+let className = div.className.split(/\s+/);
+let idx = className.indexOf(targetClass);
+if(idx > -1){
+    classNames.splice(idx, 1)
+}
+div.className = classNames.join(" ");
+```
+
+`classList` property returns object with `DOMTokenList` type.
+It has following methods:
+1. `add(value)`, Adds the given string value to the list. If the value exists, it will not added
+2. `contains(value)`
+3. `remove(value)` remove the given string value
+4. `toggle(value)` if the string value exists, then remove it, if the value does not exists, added it.
+
+### Focus Management
+`document.activeElement` will always points to the element that has focus status.
+```js
+let button = document.getElementById("myButton");
+button.focus();
+console.log(button === document.activeElement);// true
+```
+
+body is the `activeElement` whenever the page is loaded. null will be the value before the page fully loaded.
+
+`hasFocus()` method:
+```js
+let button = document.getElementById("myButton");
+button.focus();
+console.log(button.hasFocus());// true
+```
+
+### Changes to HTMLDocument
+#### The `readyState` Property
+It has two possible values:
+1. loading, 
+2. complete, loading complete
+
+#### Compatibility Mode
+#### The `head` Property
+
+### Charater Set Properties
+### Custom Data Attributes
+When `data-` attributes are defined in the element, they can be accessed by `dataset` property. It returns a `DOMStringMap` object.
+```js
+// this will add data-appId attribute to the div
+div.dataset.appId = 23456;
+```
+
+### Markup Insertion
+`innerHTML` will read the element's child nodes into a string syntax. `innerHTML` will accept string values that will be parsed into nodes.
+```js
+div.innerHTML = "Hello & Welcome, <b>\"reader!\"</b>"
+// <div>Hello & Welcome, <b>"reader"!</b></div>
+```
+
+`outerHTML` will read the element's child nodes and itself into a string syntax.
+```js
+let p = document.createElement("p");
+p.appendChild(document.createTextNode("THis is a paragraph."));
+oldP.parentNode.replaeChild(p, oldP);
+```
+
+`innerHTML` has better performance than add nodes using DOM, but it has overhead to create parser when you access innerHTML property.
+
+`innerHTML` has XSS vulnerability.
+
+### The `scrollIntoView()` method
