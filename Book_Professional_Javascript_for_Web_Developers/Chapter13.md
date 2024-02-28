@@ -460,3 +460,68 @@ let items = ul.getElementsByTagName("li");
 ```
 
 ### The Text Type
+Text nodes are represented by the `Text` type and contain plain text that is interpreted literally and may contain escaped HTML characters but no HTML code. They have following charateristics:
+- `nodeType` is 3.
+- `nodeName` is "#text"
+- `nodeValue` is text contained in the node
+- `parentNode` is an `Element` type
+- Child nodes are not supported.
+
+The plain text within `Text` type node can be accessed either by `data` property or `nodeValue` property. These two properties also sync up with each other.
+
+```html
+<!-- no content, so no text node -->
+<div></div>
+
+<!-- white space content, one text node-->
+<div> </div>
+
+<!-- content, one text node -->
+<div>Hello World!</div>
+```
+
+```js
+div.firstChild.nodeValue = "Some <strong>other</strong> message";
+// The actual display string is "Some <strong>other</strong> message", where <strong> tag is not effective, but a plain text
+```
+
+#### Creating Text Nodes
+`createTextNode()` can create `Text` type node on the current document. When we create a text node, the ownerDocument property is set, but it will no appear anywhere until we append it under element.
+```js
+let element = document.createElement("div");
+element.className = "message";
+let textNode = document.createTextNode("Hello world!");
+element.appendChild(textNode);
+document.body.appendChild(element);
+```
+
+One element is able to have multiple text nodes as child nodes.
+```js
+let element = document.createElement("div");
+element.className = "message";
+let textNode = document.createTextNode("Hello Wolrd!");
+element.appendChild(textNode);
+let anotherTextNode = document.createTextNode("Yippe!");
+element.appendChild(anotherTextNode);
+
+document.body.appendChild(element);
+```
+
+#### Normalizing Text Nodes
+To join two sibling text nodes:
+```js
+let element = document.createElement("div");
+element.className = "message";
+let textNode = document.createTextNode("Hello World!");
+element.appendChild(textNode);
+let anotherTextNode = document.createTextNode("Yippe!");
+element.appendChild(anotherTextNode);
+
+alert(element.childNodes.length); // 2
+element.normalize();
+
+alert(element.childNodes.length); // 1
+alert(element.firstChild.nodeValue); // Hello World!Yippee!
+```
+
+#### Splitting Text Nodes
