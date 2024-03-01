@@ -80,3 +80,73 @@ To calculate the total size of the viewport:
 let docHeight = Math.max(document.documentElement.scrollHeight, document.documentElement.clientHeight);
 let docWidth = Math.max(document.documentElement.scrollWidth, document.documentElement.clientWidth);
 ```
+
+## TRAVERSALS
+### `createNodeIterator()`
+There are 4 arguments available for this method.
+- root, the root node
+- whatToShow, pass in a pre-set numerical code
+- filter, additional/optional filter
+- entityReferenceExpansion, HTML, always false
+
+`whatToShow` could be these values:
+- NodeFilter.SHOW_ALL, show all types
+- NodeFilter.SHOW_ELEMENT, show element nodes only
+- NodeFilter.SHOW_ATTRIBUTE
+- NodeFilter.SHOW_TEXT
+- NodeFilter.SHOW_CDATA_SECTION
+- NodeFilter.SHOW_ENTITY_REFERENCE
+- NodeFilter.SHOW_ENTITY
+- NodeFilter.SHOW_PROCESSING_INSTRUCTION
+- NodeFilter.SHOW_COMMENT
+- NodeFilter.SHOW_DOCUMENT
+- NodeFilter.SHOW_DOCUMENT_TYPE
+- NodeFilter.SHOW_DOCUMENT_FRAGMENT
+- NodeFilter.SHOW_NOTATION
+
+Sample:
+```js
+let filter = function(node){
+    return node.tagName.toLowerCase() == "p"?
+    NodeFilter.FILTER_ACEPT:
+    NodeFilter.FILTER_SKIP;
+}
+
+let iterator = document.reateNodeIterator(root, NodeFilter.SHOW_ELEMENT, filter, false);
+
+let node = iterator.nextNode();
+while(node !== null){
+    console.log(node.tagName);
+    node = iterator.nextNode();
+}
+```
+
+### TreeWalker
+Work the same as previous one, but has following method:
+- parentNode()
+- firstChild()
+- lastChild()
+- nextSibling()
+- previousSibling()
+
+Sample:
+```js
+let div = document.getElementById("div1");
+let filter = function(node){
+    return node.tagName.toLowerCase() == "li" ?
+    NodeFilter.FILTER_ACCEPT:
+    NodeFIlter.FILTER_SKIP;
+}
+
+let walker = document.createTreeWalker(div, NodeFilter.SHOW_ELEMENT, filter, false);
+walker.firstChild();
+walker.nextSibling();
+
+let node = walker.firstChild();
+while(node != null){
+    console.log(node.tagName);
+    node = walker.nextSibling();
+}
+```
+
+## RANGES
