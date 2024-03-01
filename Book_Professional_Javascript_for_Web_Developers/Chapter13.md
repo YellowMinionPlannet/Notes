@@ -754,7 +754,7 @@ When `data-` attributes are defined in the element, they can be accessed by `dat
 ```js
 // this will add data-appId attribute to the div
 div.dataset.appId = 23456;
-```
+```t
 
 ### Markup Insertion
 `innerHTML` will read the element's child nodes into a string syntax. `innerHTML` will accept string values that will be parsed into nodes.
@@ -775,3 +775,55 @@ oldP.parentNode.replaeChild(p, oldP);
 `innerHTML` has XSS vulnerability.
 
 ### The `scrollIntoView()` method
+This is a method on every element, calling which will allow scrolling the browser window or container element so the element is visible in the viewport.
+1. If an argument of `true` is supllied, it specifies `alignToTop`, which means the window scrolls so that the top of the element is at the top of the viewport.
+2. If an object argument is supplied, user could provide `behavior` property such as "auto", "instant", or "smooth"
+```js
+document.forms[0].scrollIntoView();
+
+document.forms[0].scrollIntoView(true);
+document.forms[0].scrollIntoView({block: true});
+document.forms[0].scrollIntoView({behavior: 'smooth', block: true});
+```
+### The `children` property
+This property returns `HTMLCollection` type object, which only includes HTML elements
+
+### The `contains()` method
+```js
+console.log(document.documentElement.contains(document.body)); // true
+let result = document.documentElement.compareDocumentPosition(document.body);
+console.log(!!(result & 0x10));
+```
+
+### Markup Insertion
+#### `innerText`
+```html
+<div id="content">
+    <p>This is a <strong>paragraph</strong> with a list following it.</p>
+    <ul>
+        <li>item 1</li>
+        <li>item 2</li>
+        <li>item 3</li>
+    </ul>
+</div>
+```
+```js
+console.log(document.getElementsById("content").innerText);
+//This is a paragraph with a list following it.
+//item 1
+//item 2
+//item 3
+```
+Example # 2
+```js
+div.innerText = "Hello & welcome, <b>\"reader!\"</b>";
+```
+```html
+<div>Hello & welcome, <b>"reader!"</b></div>
+```
+
+#### `outerText`
+This will replace the entire `div` element!
+```js
+div.outerText="Hello world!";
+```
