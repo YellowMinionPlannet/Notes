@@ -365,8 +365,8 @@ alert(div.getAttribute("dir"));
 
 - Attribute names are case-insensitive, which means "ID" and "id" are the same.
 - Custom attribute, for example my_custom_attribute, will not map to the properties of element. It can only be accessed by `getAttribute()` method.
-- style attribute will return an object
-- event attribute, for example onclick, will return a JavaScript function or `null` if no call back is assigned.
+- `style` attribute will return an object and does not have same content with `style` property of the element, because `style` property reflect all styles applied of that element.
+- event-handler attribute, for example `onclick`, will return a JavaScript function or `null` if no call back is assigned.
 
 #### Setting Attributes
 `setAttribute()` will set the value to that specific attribute, and if the target attribute already has value, will replace it.
