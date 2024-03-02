@@ -150,3 +150,140 @@ while(node != null){
 ```
 
 ## RANGES
+Allow javasript to interact with part of the HTML document fragment. That fragment could be composite of parts of single or multiple elements.
+
+Each range has following properties:
+- startContainer
+- startOffset, if the startContainer is a text node, comment node, or CDATA node, the startOffset is the number of the characters skipped. Otherwise, the offset is the index of the first child node in the range.
+- endContainer
+- endOffset
+- commonAncestorContainer, the deepest node has both startContainer and endContainer as desendants.
+
+### Simple Selection in DOM Ranges
+```html
+<!DOCTYPE html>
+<html>
+<body>
+    <p id="p1"><b>Hello</b> world!</p>
+</body>
+</html>
+```
+```js
+let range1 = document.createRange();
+let range2 = document.createRange();
+let p = document.getElementById("p1");
+range1.selectNode(p);
+range2.selectNodeContent(p);
+```
+![rangeSelection](./rangeSelection.png)
+
+Also there are other methods to set range:
+- setStartBefore(refNode), startContainer is the parent node of the refNode, and startOffset is set to the index of refNode
+- setStartAfter
+- setEndBefore
+- setEndAfter
+
+### Complex Selection in DOM Ranges
+```js
+let range1 = document.createRange();
+let range2 = document.createRange();
+let p1 = document.getElementById("p1");
+let p1Index = -1;
+for(let i = 0, len = p.parentNode.childNodes.length; i < len; i++){
+    if(p1.parentNode.childeNodes[i] === p1){
+        p1Index = i;
+        break;
+    }
+}
+range1.setStart(p1.parentNode, p1Index);
+range1.setEnd(p1.parentNode, p1Index + 1);
+range2.setStart(p1, 0);
+range2.setEnd(p1, p1.childNodes.length);
+```
+
+Another sample:
+```js
+let range = document.createRange();
+let p1 = document.getElementById("p1");
+let helloNode = p1.firstChild.firstChild;
+let worldNode = p1.lastChild;
+range.setStart(helloNode, 2);
+range.setEnd(worldNode, 3);
+```
+![rangeSelectionComplex](./rangeSelectionComplex.png)
+
+### Interacting with DOM Range Content
+```js
+let range = document.createRange();
+let p1 = document.getElementById("p1");
+let helloNode = p1.firstChild.firstChild;
+let worldNode = p1.lastChild;
+range.setStart(helloNode, 2);
+range.setEnd(worldNode, 3);
+
+range.deleteContents();
+```
+```html
+<p id="p1"><b>He</b>rld!</p>
+```
+
+Another method:
+```js
+let range = document.createRange();
+let p1 = document.getElementById("p1");
+let helloNode = p1.firstChild.firstChild;
+let worldNode = p1.lastChild;
+range.setStart(helloNode, 2);
+range.setEnd(worldNode, 3);
+
+let fragment = range.extratContents();
+p1.parentNode.appendChild(fragment);
+```
+```html
+<p id="p1"><b>He</b>rld!</p>
+<b>llo</b> wo
+```
+
+Another method:
+```js
+let range = document.createRange();
+let p1 = document.getElementById("p1");
+let helloNode = p1.firstChild.firstChild;
+let worldNode = p1.lastChild;
+range.setStart(helloNode, 2);
+range.setEnd(worldNode, 3);
+
+let fragment = range.cloneContents();
+p1.parentNode.appendChild(fragment);
+```
+```html
+<p id="p1"><b>Hello</b> world!</p>
+<b>llo</b> wo
+```
+
+### Inserting DOM Range Content
+`insertNode`, `surroundContents`
+### Collapsing a DOM Range
+```js
+range.collapse(true); // collapse to the starting point
+console.log(range.collapsed);//true
+```
+### Comparing DOM Ranges
+```js
+let p1 = document.getElementById("p1");
+range1.selectNodeContents(p1);
+range2.selectNodeContents(p1);
+range2.setEndBefore(p1.lastChild);
+
+console.log(range1.compareBoundaryPoints(Range.START_TO_START, range2));//0
+console.log(range1.compareBoundaryPoints(Range.END_TO_END,range2)); //1
+```
+### Cloning DOM Ranges
+```js
+range.cloneRaneg();
+```
+### Clean up
+```js
+range.detach();
+range = null;
+```
