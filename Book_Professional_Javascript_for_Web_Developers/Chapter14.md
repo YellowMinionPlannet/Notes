@@ -287,3 +287,59 @@ range.cloneRaneg();
 range.detach();
 range = null;
 ```
+
+## OBSERVER APIS
+
+Observer behaves like a guard, you need to tell who you want to spy on and what to do when target is active.
+
+There are three pre-defined observers:
+1. The Mutation Observer API
+2. Resize Observer API
+3. The Intersection Observer API
+
+### Observer API Methods
+```js
+let fakeCallback = (fakeEventContext, observer) => console.log("Fake event happened");
+let fakeObserver = new FakeObserver(fakeCallback);
+
+fakeObserver.observer(document.body);
+
+fakeObserver.unobserver(document.body);
+fakeObserver.disconnect();
+```
+
+#### Async allbacks and the Record Queue
+
+There will be a *record* for each observer instane and represents an in-order record of each event.
+
+Each time a record is added to the record queue, the observer callback is scheduled to microtask queue only if there are no other task in that queue.
+
+#### The `takeRecords()` method
+
+You can manually handle those events registered into the *record* but not yet send to the microtask.
+
+```js
+console.log(fakeObserver.takeRecords());
+//[FakeObserverRecord, ....]
+```
+
+#### Observer References
+Observer has weak reference to the target node, so that will not prevent target node being garbage collected.
+
+Target node has a strong referene to its observer, which means the node is removed from the DOM and subsequently garbage collected, the observer is also garbage collected.
+
+### Resize Observers
+```js
+let observer = new ResizeObserver(() => console.log("<body> was resized"));
+
+observer.observe(document.body);
+
+setTimeout(()=>{
+    document.body.style.width = "100px";
+    observer.unobserver(document.body);
+},1000);
+
+// will log nothing
+```
+
+For More details 'bout each Observer, need to check the documentation online.
