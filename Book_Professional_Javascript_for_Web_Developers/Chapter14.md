@@ -343,3 +343,17 @@ setTimeout(()=>{
 ```
 
 For More details 'bout each Observer, need to check the documentation online.
+
+## OBSERVER PERFORMANCE
+
+1. Debouncing:
+```js
+let timeoutId = null;
+let observer = new ResizeObserver(() =>{
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => console.log("body is changed"), 1000);
+});
+
+observer.observer(document.body);
+```
+2. ResizeObserver prefers async function.
