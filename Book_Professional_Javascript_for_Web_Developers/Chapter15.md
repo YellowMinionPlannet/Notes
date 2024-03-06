@@ -91,3 +91,30 @@ btn.removeEventListener("click", handler, false);
 ```
 
 ## THE EVENT OBJECT
+When event is fired, related info will be wrapped in an object called `event`. Remember, all browsers support the event object, but not in the same way.
+
+### The DOM Event Object
+You can always access this object through DOM Level 0 or DOM level 2 event handler by `event` property.
+
+```js
+let btn = document.getElementById("myBtn");
+btn.onclick = function(event){
+    console.log(event.type);
+}
+
+btn.addEventListener("click", (event) => {
+    console.log(event.type);
+}, false) // use event bubble not captureing
+```
+```html
+<input type="button" value="Click Me" onclick="console.log(event.type)">
+```
+
+Consider we clicked on a button:
+```js
+document.body.onclick = function(event){
+    console.log(event.currentTarget === document.body);// true
+    console.log(this === document.body);// true
+    console.log(target === document.getElementById("myBtn")); // true, target is pointing to the real target
+}
+```
