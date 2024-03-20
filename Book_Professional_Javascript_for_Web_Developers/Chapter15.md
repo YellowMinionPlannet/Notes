@@ -118,3 +118,5 @@ document.body.onclick = function(event){
     console.log(target === document.getElementById("myBtn")); // true, target is pointing to the real target
 }
 ```
+
+## EVENT TYPES
