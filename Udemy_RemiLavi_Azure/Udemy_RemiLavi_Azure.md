@@ -53,3 +53,41 @@ There are some tech to do this:
 
 - Microsoft have SLA(service level agreement) with guarantees for availability of VM.
 
+- Availability Concepts in Azure
+1. Fault Domain: 
+    Physical group of physical hardware that share a common power source and network switch. So this is similar concept of a physical rack/cabinet.
+    - servers share a single power within this unit, and if there's a problem with power/networking, all server shut down
+    - So you want your servers spread across more than one fault domain
+2. Update Domain: 
+    Logical group of physical hardware that can undergo maintenance and be rebooted at the same time.
+    - this maintenance is controled by Azure, so we don't have choice on this
+    - that means we want our servers spread in different update domain, just in case of all servers update in the same time 
+3. Availability Set:
+    A collection of Fault Domains and Update Domains your VMs will be spread across
+    - So it can contain 3 Fault Domains and 20 Update domains
+    - however, these domains within the Availability Set will be under the same zone(datacenter)
+    - If we choose Availability Set, Azure will set different Fault Domain and Update Domain to us, so that we can have backup if one of our server is down for Fault/Update
+    ![AvailabilitySet](./AvailabilitySet.png)
+    - No extra charge for Availability Set
+4. Availability Zone
+    A physically separate zone within an Azure region
+    - It provides protection against a complete zone shutdown
+
+
+## ARM Template
+- ARM stands for Azure Resource Manager Template, a JSON file to describe what setup your creating resources would be.
+- It can be exported, modified, uploaded, and deployed.
+
+|Declarative|Imperative|
+|--|--|
+|Describes the end result|send instructions to run|
+|Can deploy(be copied) to multiple resources|Suited for quick and dirty operations|
+|Can be integrated in CI/CD processes||
+|Can be source controled||
+
+## Using ARM Template
+Steps of using ARM template:
+1. After you create VM, you can view Template page for ARM templates preview.
+
+2. When you download, it has two files: `parameters.json`, and `template.json`.
+
