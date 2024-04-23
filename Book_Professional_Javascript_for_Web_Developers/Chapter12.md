@@ -131,6 +131,8 @@ The fomula of Sqr(HighestResolutionWidth<sup>2</sup> + HighestResolutionHeight<s
 
 - `window.visualViewport.height` can be accessed if the browser support visualviewport api. It's a concept to smart device only. When you browsing page through smart device, and zoom-in and zoom-out, the layout viewport, which is the real viewport will be the same as the window.However the visible part of page, which is only part of the layout viewport is called visual viewport, will be changed. So `window.visualViewport.height` is different from `window.innerHeight` if you try to press `shift` + `leftbuton` + `drag`(simulating zooming in dev mode of browser).
 
+- `document.documentElement.scrollHeight` to calculate real html tag height, this only would be larger if the html tag is longer than the viewport.
+
 ### Windows Viewport Position
 
 This offset values could be accessed with `window.pageXOffset / window.scrollX` and `window.pageYOffset / window.scrollY`
