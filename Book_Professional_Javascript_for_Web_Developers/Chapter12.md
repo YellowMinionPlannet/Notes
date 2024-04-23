@@ -127,7 +127,9 @@ The fomula of Sqr(HighestResolutionWidth<sup>2</sup> + HighestResolutionHeight<s
 
 - `window.outerWidth` and `window.outerHeight` is the available size of a browser display area(including the toolbar and borders). This will be narrowed when you use dev tool and set to Responsive mode. The `window.outerWidth` and `window.outerHeight` would be like 400 * 712, because you changed to Portrait. When you cancel the responsive mode, and maximize the browser, this values are actually the `screen.width` and `screen.height`.
 
-- `window.innerWidth` and `window.innerHeight` is the content area of the browser, this would be the same with `document.documentElement.width` and `document.documentElement.height`. However, if you are using smart phone, when you zoom-in and zoom-out, these values would be the visible area size of the page, where `document.documentElement` values would be always equal to the page view port size.
+- `window.innerWidth` and `window.innerHeight` is the content area of the browser, this would be the same with `document.documentElement.clientWidth` and `document.documentElement.clientHeight`. However, if you are using smart phone, when you zoom-in and zoom-out, these values would be the visible area size of the page, where `document.documentElement` values would be always equal to the page view port size.
+
+- `window.visualViewport.height` can be accessed if the browser support visualviewport api. It's a concept to smart device only. When you browsing page through smart device, and zoom-in and zoom-out, the layout viewport, which is the real viewport will be the same as the window.However the visible part of page, which is only part of the layout viewport is called visual viewport, will be changed. So `window.visualViewport.height` is different from `window.innerHeight` if you try to press `shift` + `leftbuton` + `drag`(simulating zooming in dev mode of browser).
 
 ### Windows Viewport Position
 
