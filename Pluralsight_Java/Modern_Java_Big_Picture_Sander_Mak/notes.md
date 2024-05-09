@@ -134,6 +134,7 @@ Other than Spring:
     - Apache Spark
     - DL4J: Deep Learning for JAVA
     - Storage: Cassandra, Neo4J(graph database), ElasticSearch, HDFS
-    
+
 # Practices and Common Tools
 # Examining Alternative Java Languages
+- Scala, Kotlin all compiled to JAVA bytecode and run in JVM
