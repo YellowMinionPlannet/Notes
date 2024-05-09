@@ -106,6 +106,34 @@ Other than Spring:
 - Run top of Dalvik Virtual Machine
 
 # Exploring Popular Java Libraries
+## Spring
+- Famous for Spring DI Container, 
+    - Dependency Injection:
+        - Usually when we have a main class `Application.java` which will use `Helper.java` class and `Utilities.java` class, the `Application.java` will initiate these two classes. This is a way called tightly coupled.
+        - Using configurations, either by annotation/ xml config file, we can tell DI container the relationship of dependencies.
+        - DI container initiate classes and inject them into main class when it's needed.
+        - Before injection, we can do intercepter code when it's needed for security and transactionality(can be roll-backed ??).
+- Spring WebFlux, WebAPIs deeply integrated with Spring Framework
 
+## Other libraries
+- Google Guava
+- Apache Commons
+- Apache Log4J
+
+- Distributed:
+    - Netty, low level websocket http http2 
+    - Akka concurency
+    - RxJava (Rx .net) asynchonous
+    - Apache Camel
+- Data-access:
+    - JDBC
+    - ORMs (Hibernate, EclipseLink), make JAVA Object map to SQL tables
+    - SQL DSLs (jOOQ, QueryDSL), make sql language embeded into JAVA
+- Data-processing:
+    - Apache Hadoop
+    - Apache Spark
+    - DL4J: Deep Learning for JAVA
+    - Storage: Cassandra, Neo4J(graph database), ElasticSearch, HDFS
+    
 # Practices and Common Tools
 # Examining Alternative Java Languages
