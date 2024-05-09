@@ -62,6 +62,50 @@ Not suitable for Real-Time application due to the Managed Runtime, and not suita
 
 
 # From Desktop to Enterprise Java to the Cloud
+## Desktop
+- 1st GUI is called AWT, abstract windowing toolkit; Hard to build portable applications among differnt OS, 'cause different OS has different behavior for Native controls, AWT uses Native Controls which comes with OS
+- Swing uses Java RUNTIME GUI, you can make sure each Control look and feel across platforms. Also comes with MVC
+- JavaFX, using XML based syntax to create UI, which is called FXML, CSS can be used, and 3D graphics effects. From Java 11, JavaFX is seperated from JDK, and becomes OpenJFX.
+
+## Enterprise
+- distributed communication
+- scheduling tasks etc.
+- data persistence, transactions
+- Web applications
+- security
+- messaging
+- JSON/XML
+
+There was once a time a Java EE Application Server between JAVA Web Application and JAVA Runtime
+- Samples for JEE Application Server APIs:
+    - Java Persistence Architecture, connect relation database, and object mapping
+    - Enterprise Java Beans, transactional business logic
+    - Java Server Faces, JSF, web front ends.
+- Java Web Application is deployed to JEE Application server as WAR(Web Archive), Server is running on top of JVM, Famous Java Web Application Server:
+    - Wildfy(Red Hat)
+    - WebSphere(IBM)
+    - WebLogic(Oracle)
+    - Tomcat(Apache)
+- Java EE 8 is the last Oracle release, it migrate to [Jakarta EE](jakarta.ee)(Eclipse Foundation). 
+- Spring Framework
+
+## Cloud
+When we talk about JEE Application Server, usually it's designed for Monolithic web apps, and Spring is born for distributed(microservices).
+
+Spring Boot Application combined with Spring/Netflix Libraries run on top of SE and JVM, there's no JEE Application server involved anymore.
+
+Other than Spring:
+- MicroProfile, inherit knowlege of JEE
+- Vert.x (Red Hat)
+- Play Framework
+
+## Android
+- Uses JAVA 7 and Subset of JAVA 8 Programing Language
+- Compile to JAVA Bytecode and finally  Transfer to DEX(Dalvik Executable Format) which runs on the phone.
+- With Android APIs and JAVA SEish APIs
+- Run top of Dalvik Virtual Machine
+
 # Exploring Popular Java Libraries
+
 # Practices and Common Tools
 # Examining Alternative Java Languages
