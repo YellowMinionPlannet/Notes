@@ -26,12 +26,11 @@ AEM uses ACL to determine:
 |Action|Description|
 |--|--|
 |Read|Allow to read the page and child pages|
-|Modify|- modify existing content on the page and on the child pages
-        - create paragraphs on the page |
-|Create|- if modify is denied, user can only create a jcr:content node, but cannot modify subtree under it|
-|Delete|- if modify is denied, user can only remove jcr:content node, but not subtree|
-|Read ACL||
-|Edit ACL||
-|Replicate||
+|Modify|* modify existing content on the page and on the child pages * create paragraphs on the page |
+|Create|* if modify is denied, user can only create a jcr:content node, but cannot modify subtree under it|
+|Delete|* if modify is denied, user can only remove jcr:content node, but not subtree|
+|Read ACL|The user can read the access control list of the page or child pages.|
+|Edit ACL|The user can modify the access control list of the page or any child pages.|
+|Replicate|The user can replicate content to another environment (for example, the Publish environment). The privilege is also applied to any child pages.|
 
 ### ACL and how they are evaluated
