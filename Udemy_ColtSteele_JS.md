@@ -145,3 +145,49 @@ function outerFunction(){
 const myClosure = outerFunction();
 myClosure();
 ```
+
+## Closures: Another Example
+Instead of returning function, let's return object:
+```js
+const counter = (function createCounter(){
+  let count = 0;
+  return {
+    increment: function(){
+      return ++count;
+    },
+    decrement: function(){
+      return --count;
+    },
+    getCount:function(){
+      return count;
+    }
+  }
+})();
+```
+
+> We can also do a Factory function to create different object that created by IIFE:
+
+```js
+const baseFactory = function(factory){
+  return (factory)();
+}
+
+const counterFactory = function(){
+  let counter = 0;
+  return {
+    increment: function(){
+      return ++counter;
+    },
+    decrement: function(){
+      return --counter;
+    },
+    getCounter: function(){
+      return counter;
+    }
+  } 
+}
+
+const counter = baseFactory(counterFactory);
+counter.increment();
+```
+
