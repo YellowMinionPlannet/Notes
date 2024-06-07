@@ -191,3 +191,104 @@ const counter = baseFactory(counterFactory);
 counter.increment();
 ```
 
+## Closures: Factory Functions
+
+```js
+function createExponentFunction(exp){
+  return function(val){
+    return val ** exp;
+  }
+}
+
+const square = createExponentFunction(2);
+const cube = createExponentFunction(3);
+
+square(2); //4
+square(10); //100
+
+cube(2); //8
+cube(10); //1000
+
+function uniqueIdGenerator(prefix){
+  let id = 0;
+  return function(){
+    id += 1;
+    return `${prefix}${id}`;
+  }
+}
+
+const getBookId = uniqueIdGenerator("book_");
+const getUserId = uniqueIdGenerator("user_");
+
+getBookId(); //book_1
+
+getUserId(); //user_1
+```
+
+## Closures: Event Listeners
+
+
+```js
+// OLD WAY
+let count = 0; 
+document.querySelector("button").addEventListener("click", function(){
+  count += 1;
+  console.log("You clicked me ", count);
+});
+
+
+// With IIFE
+document.querySelector("button").addEventLisenter("click", (function(){
+  let count = 0;
+  return function(){
+    count += 1;
+    console.log("You clicked me ", count);
+  }
+})());
+```
+
+If there are three button, and each of them work on their own counter.
+
+```js
+function createCounterButton(id){
+  const btn = document.getElementById(id);
+  let count = 0;
+  btn.addEventListener("click", function(){
+    count += 1;
+    btn.innerText = "Clicked " + count;
+  });
+}
+```
+
+## Closures: Loops
+For some scenarios, if we want to create several setTimeout funciton and each of them doing its job after the previours one for 1 second sequentially.
+
+```js
+for(var i = 1; i < 6; i++){
+  setTimeout(function(){
+    console.log(i);
+  }, 1000);
+}
+// 6
+// 6
+// 6
+// 6
+// 6
+// This is because the I is global variable and once the setTimeout all fires out, the i got updated to 6.
+
+// Solution 1
+for(let i = 1; i < 6; i++){
+  setTimeout(function(){
+    console.log(i);
+  }, 1000);
+}
+
+// Solution 2 
+for(var i = 1; i < 6; i++){
+  (function(j){
+    setTimeout(function(){
+      console.log(j);
+    }, 1000);
+  })(i);
+}
+```
