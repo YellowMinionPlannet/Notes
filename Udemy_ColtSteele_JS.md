@@ -292,3 +292,133 @@ for(var i = 1; i < 6; i++){
   })(i);
 }
 ```
+
+# Section 10: Debouncing, Throttling, & RequestAnimationFrame
+## setTimeout
+```js
+function showNotification(message, duration){
+  const notification = document.createElement("div");
+  notification.innerText = message;
+  notification.className = "notification";
+  document.body.append(notification);
+
+  setTimeout(function(){
+    notification.remove();
+  }, 3000);
+}
+
+showNotification("I was here.", 3000);
+```
+## setInterval
+```js
+setInterval(function(){
+  console.log("It's been 2 seconds!");
+}, 2000);
+```
+
+```js
+function startCountDown(duration){
+  let secondsRemaining = duration;
+  const h1 = document.getElementById("timer");
+  h1.innerText = secondsRemaining + " seconds remaining";
+  secondsRemaining -= 1;
+  const timerId = setInterval(function(){
+    h1.innerText = secondsRemaining + " seconds remaining";
+    secondsRemaining -= 1;
+
+    if(secondsRemaining <= 0){
+      clearInterval(timerId);
+    }  
+  }, 1000);
+}
+```
+
+## clearTimeout
+
+## Debouncing
+```js
+function queryAPI (){
+  console.log("MAKEING AN API REQUEST");
+}
+
+const searchInput = document.querySelector("#search");
+
+let debounceTimeout;
+searchInput.addEventListener("input", () =>{
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() =>{
+    queryAPI();
+  }, 400);
+});
+```
+
+## Writing a Fancy Debounce Function
+```js
+const debouncedQueryAPI = debounce(queryAPI, 500);
+function debounce(callback, deley){
+  let timeoutId;
+  return (...args) =>{
+    if(timeoutId){
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+}
+
+searchInput.addEventListener("input", (evt) =>{
+  debouncedQueryAPI(evt.target.value);
+});
+
+```
+
+## Throttling
+- Throttling is a concept of controlling the execution of some function within a defined duration to happen only 1 time.
+eg. when visit a web site, we want to make loading pictures happens only when user about to scroll to the bottom of the page. But without throttling, if user scroll a lot, that will causing tens of requests sent to the remote API within a second, which causes the API to be jamed. So we need throttling to limit the requests within a defined duration.
+
+```js
+function getRandomColor(){
+  const palette = [
+    "#FFADAD",
+    "#FFC3A0",
+    "#FF6770",
+    "#392F5A",
+    "#31A2AC",
+    "#61C0BF",
+    "#6B4226",
+    "#D9BF77",
+    "#ACD8AA",
+    "#FFE156",
+    "#6A0572",
+    "#AB83A1"
+  ];
+  const randomIndex = Math.floor(Math.random() * palette.length);
+  return palette[randomIndex];
+}
+
+const content = document.getElementById("content");
+
+function loadMoreItems(){
+  const scrollDistanceToBottom = document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
+  
+  if(scrollDistanceToBottom < 200){
+    console.log("LOADING DATA FROM AN API!!!");
+    for(let i = 0; i < 10; i++){
+      const item = document.createElement("div");
+      item.classList.add("item");
+      console.log(content);
+      item.textContent = "Item" + (content.children?.length??0 +1);
+      item.style.backgroundColor = getRandomColor();
+      item.style.setProperty("height", "100px");
+      content.appendChild(item);
+    }
+  }
+}
+
+window.addEventListener("scroll", () =>{
+  loadMoreItems();
+});
+
+loadMoreItems();
+```
