@@ -21,6 +21,8 @@ eg. using mobile device, we can pinch to zoom in and zoom out. When we zomm in o
 
 - `scrollY`, which is a property of `window` object. It is the distance from the beginning of the web page, no matter it's out of current viewport or inside, to the top of the visible viewport. So we don't scroll, `scrollY` is 0.
 
+- `pageYOffset`, which is a property of `window` object. It is the alias of `scrollY` and works perfectly on IE browsers and other browsers. Same as `document.documentElement.scrollTop` of the IE8.
+
 - `scrollHeight`, which is a property of `element` obejct. It is the visible and unvisible total height of a element. `documentElement.scrollHeight` is usually larger than the `window.innerHeight` because you can scroll down. This value includes content "real" height and paddings. But it excludes borders, margins and scrollbars. It also includes pseudo-elements size.
 
 - `clientHeight`, which is a property of `element` object. It is the content "real" height and the paddings. It excludes scroll bars.

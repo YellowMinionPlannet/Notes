@@ -377,6 +377,8 @@ searchInput.addEventListener("input", (evt) =>{
 - Throttling is a concept of controlling the execution of some function within a defined duration to happen only 1 time.
 eg. when visit a web site, we want to make loading pictures happens only when user about to scroll to the bottom of the page. But without throttling, if user scroll a lot, that will causing tens of requests sent to the remote API within a second, which causes the API to be jamed. So we need throttling to limit the requests within a defined duration.
 
+Description:
+we scroll down and new divs are appended
 ```js
 function getRandomColor(){
   const palette = [
@@ -431,6 +433,8 @@ loadMoreItems();
 ```
 
 ## Building a Fancy Throttle Function
+Description:
+sample of a simplified throttle framework
 ```js
 function throttle(callback, delay = 500){
   let isThrottled = false;
@@ -471,7 +475,9 @@ loadMoreItems();
 
 - for creating smooth animations, instead of giving it a fixed interval, which is usually 60frames/second fixed, to perform, the animation will be triggered as the page got repainted.
 
-An example of fixed interval animation vs. requestAnimationFrame
+An example of fixed interval animation vs. requestAnimationFrame:
+Description:
+we have to div that rotates
 ```js
 const boxInterval = document.getElementById("boxInterval");
 const boxAnimationFrame = document.getElementById("boxAnimationFrame");
@@ -491,7 +497,11 @@ function animatedWithInterval(){
   }
 }
 
-function animatedWithAnimationFrame(){
+
+let previousTime;
+function animatedWithAnimationFrame(currentTime){
+  console.log(currentTime - previousTime);
+  previousTime = currentTime;
   boxAnimationFrame.style.transform = "rotate("+animationFrameAngle+"deg)";
   animationFrameAngle += 2;
   if(animationFrameAngle % 360 == 0){
@@ -503,4 +513,35 @@ function animatedWithAnimationFrame(){
 
 setInterval(animatedWithInterval, 16); // 16 milisecond is approximately 60frames/second
 requestAnimationFrame(animatedWithAnimationFrame);
+```
+## reqeustAnimationFrame with Timestamps
+
+## Scroll to top Animation WIth requestAnimationFrame
+Description:
+we can click on a button to get back to the top of the page.
+
+```js
+document.querySelector(".back-to-top").addEventListener("click", smoothScrollToTop);
+
+function smoothScrollToTop(){
+  const duration = 1000;
+  const start = window.scrollY;
+  const end = 0;
+  const change = end - start;
+  let startTime = null;
+
+  function animateScroll(currentTime){
+    if(startTime === null) startTime = currentTime;
+    const timeElapsed = currentTime - startTime;
+    console.log(timeElapsed);
+    const progress = Math.min(timeElapsed/duration, 1);
+    console.log(progress);
+    window.scrollTo(0, start + change * progress);
+
+    if(timeElapsed < duration){
+      requestAnimationFrame(animateScroll);
+    }
+  }
+  requestAnimationFrame(animateScroll);
+}
 ```
