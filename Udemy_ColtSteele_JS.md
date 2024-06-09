@@ -416,9 +416,91 @@ function loadMoreItems(){
   }
 }
 
+let isThrottled = false;
 window.addEventListener("scroll", () =>{
-  loadMoreItems();
+  if(!isThrottled){
+    loadMoreItems();
+    isThrottled = true;
+    setTimeout(() =>{
+      isThrottled = false;
+    }, 200);
+  }
 });
 
 loadMoreItems();
+```
+
+## Building a Fancy Throttle Function
+```js
+function throttle(callback, delay = 500){
+  let isThrottled = false;
+  let savedArgs = null;
+
+  //This is a helper function
+  const executeCallback = () => {
+    if(savedArgs === null){
+      isThrottled = false;
+    }else{
+      callback(...savedArgs);
+      savedArgs = null;
+      setTimeout(executeCallback, delay);
+    }
+  }
+
+  return (...args) =>{
+    if(isThrottled){
+      savedArgs = args;
+      return;
+    }
+    callback(...args);
+    isThrottled = true;
+    setTimeout(executeCallback, delay);
+  }
+}
+
+const throttledLoad = throttle(loadMoreItems);
+
+window.addEventListener("scroll", () => {
+  throttledLoad();
+});
+
+loadMoreItems();
+```
+
+## requestAnimationFrame Basics
+
+- for creating smooth animations, instead of giving it a fixed interval, which is usually 60frames/second fixed, to perform, the animation will be triggered as the page got repainted.
+
+An example of fixed interval animation vs. requestAnimationFrame
+```js
+const boxInterval = document.getElementById("boxInterval");
+const boxAnimationFrame = document.getElementById("boxAnimationFrame");
+
+let intervalAngle = 0;
+let animationFrameAngle = 0;
+
+let counterInterval = 0;
+let counterAnimationFrame = 0;
+
+function animatedWithInterval(){
+  boxInterval.style.transform = "rotate(" + intervalAngle + "deg)";
+  intervalAngle +=2;
+  if(intervalAngle % 360 == 0){
+    counterInterval++;
+    boxInterval.innerText = counterInterval;
+  }
+}
+
+function animatedWithAnimationFrame(){
+  boxAnimationFrame.style.transform = "rotate("+animationFrameAngle+"deg)";
+  animationFrameAngle += 2;
+  if(animationFrameAngle % 360 == 0){
+    counterAnimationFrame++;
+    boxAnimationFrame.innerText = counterInterval;
+  }
+  requestAnimationFrame(animatedWithAnimationFrame);
+}
+
+setInterval(animatedWithInterval, 16); // 16 milisecond is approximately 60frames/second
+requestAnimationFrame(animatedWithAnimationFrame);
 ```
