@@ -545,3 +545,120 @@ function smoothScrollToTop(){
   requestAnimationFrame(animateScroll);
 }
 ```
+
+# Section 11 Functional Programing
+## Introducing Functional Programing
+- FP is process of building software by composing pure functions, avoiding shared state, mutable data, and side-effects
+- FP is often declarative rather than imperative, and application state flows through pure functions
+- FP try to avoid looping, mutation and shared state, variable declarations
+
+- Concepts we gonna cover in this section:
+  - higher order functions, first class functions
+  - pure functions
+  - immutability
+  - closure
+  - partial application/currying
+  - function composition
+
+### Imperative Programing vs. Functional Programing
+eg. if we want to achieve sum, from 1 to 5, in both imperative and functional way:
+```js
+// Imperative Programing
+// Imperative programing is more descriptive to how the logic perform, and try to manipulate pieces of state
+let sum = 0;
+for(let i = 1; i <= 5; i++){
+  sum += i;
+}
+
+// Functional Programing
+// Functional programing is more descriptive to relationship among state (input/output/variables), try to avoid mutate state by using pure function
+[1, 2, 3, 4, 5].reduce((acc, val) => acc + val, 0);
+```
+
+eg. if we have an array, and we want to find even numbers:
+```js
+const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// Imperative Programing
+const evens = [];
+for(let num of nums){
+  if(num % 2 === 0){
+    evens.push(num);
+  }
+}
+
+// Functional Approach
+nums.filter(n => n % 2 === 0);
+```
+
+## First Class Functions
+- The important building blocks of functional programing
+- First class functions means you can treat function as variables, inputs, and outputs(return values) etc.
+
+```js
+// store function in a variable
+const func = function (person){
+  console.log("Hello there, ", person);
+}
+
+func("blue");
+
+// store function in an array
+const funcs = [
+  function(person){
+    console.log("Hello there, " person);
+  },
+  function(person){
+    console.log("I hate you ", person);
+  }
+];
+
+// reference functions with inputs and executes them
+function greet(person){
+    console.log("Hello there, " person);
+}
+
+function hate(person){
+    console.log("I hate you ", person);
+  }
+
+function callWithBlue(func){
+  func("blue")
+}
+
+callWithBlue(hate);
+
+callWithBlue((color) => { console.log(color + "is the best color");});
+```
+
+## Writing Pure Funcitons
+- fundamental to functional programing
+- pure functions is determinestic, which means for the same input it always gives the same output. And they cannot depend on any mutable state, which might be outside of the pure functions.
+- Referential transparency
+- Side-effect free: they do not mutate any external data, modify any state. eg. writing to the console or a log file, modifying a mutable object, reassigning a variable, updating something in different scope, etc.
+
+```js
+let value = 2;
+function squareAndUpdateValue(num){
+  value = num * num; // mutating value, so this is not pure function
+  return value;
+}
+
+// pure function
+function square(num){
+  return num * num;
+}
+
+// Example II
+
+const colors = ["red", "orange"];
+function addToArray(arr, value){
+  return arr.push(value);
+}
+
+addToArray(colors, "yellow");// Not pure
+
+// pure function
+function pureAddToArray(arr, value){
+  return [...arr, value];// arr not changed, return a new array, so this is pure.
+}
+```
