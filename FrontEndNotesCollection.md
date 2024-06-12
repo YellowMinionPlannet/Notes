@@ -26,3 +26,28 @@ eg. using mobile device, we can pinch to zoom in and zoom out. When we zomm in o
 - `scrollHeight`, which is a property of `element` obejct. It is the visible and unvisible total height of a element. `documentElement.scrollHeight` is usually larger than the `window.innerHeight` because you can scroll down. This value includes content "real" height and paddings. But it excludes borders, margins and scrollbars. It also includes pseudo-elements size.
 
 - `clientHeight`, which is a property of `element` object. It is the content "real" height and the paddings. It excludes scroll bars.
+
+# about `console.log` vs. `console.dir`
+with `console.log`, you can print a list of objects or a list of strings.
+- list of objects will appear as the order of they are inputed
+- `console.log` will log the reference of the object
+Example:
+```js
+var object = {};
+console.log(object);// when we open the console, the prop valued 1234 will be included within that object, but propDelay will not appear even it's 10 seconds passed. But propDelay will appear when you revisit the object.
+object.prop = "1234";
+
+setTimeout(() => {
+  object.propDelay = "10 seconds";
+  console.log("10 seconds passed"); // print out after 10 seconds
+}, 10000);
+
+// Way of retrieving object at the console.log moment
+console.log(JSON.parse(JSON.stringify(object)));
+```
+
+with `console.dir`, you can print out properties of an object, it also accept a option object as second arguments.
+|Table of option object|colors|depth|showHidden|
+|-|-|-|-|
+|**Defaults**|true|2|false|
+|**Descriptions**|Style the properties according to their type|Number of levels to print|wheather to print non-enumerable and symbol properties|
