@@ -51,3 +51,242 @@ with `console.dir`, you can print out properties of an object, it also accept a 
 |-|-|-|-|
 |**Defaults**|true|2|false|
 |**Descriptions**|Style the properties according to their type|Number of levels to print|wheather to print non-enumerable and symbol properties|
+
+# about Cascade, Inheritance etc. in CSS
+## Cascade
+- The cascade is an algorithm that defines how user agents combine property values originating from different sources.
+- So when there is more than one values set for a property from different *origin*, *cascade layer*, or *`@scope` block*, this cascade algorithm gonna decide which has the most precedence.
+
+### Origin
+There are *User-agent stylesheets*, *Author stylesheets*, *User stylesheets*.
+
+#### User-agent stylesheets
+- It is stylesheet/initial code included within browser, usually you can't configure this kind of stylesheet.
+- Developer usually will have normalize.css to normalize property values to a "normal"/"common" state.
+- Unless using `!important`, User-agent stylesheet is overriden by author styles, including a reset stylesheet, regardless of the specificity of the selector.
+
+#### Author stylesheets
+- linked/ imported stylesheets, `<style>` block, and inline style with `style=""` attribute.
+
+#### User stylesheets
+- other styles that can be configured directly or added by browser extentions.
+
+### Cascade layers
+- Cascade order is based on origin types, and the precedence of which is described in last section.
+- Within origin type, the precedence is based on the declaration order of cascade layers
+- Cascade layers could be declared using `layer`, `layer()`, or `@layer`
+- Styles could be placed into the specified named layer, or into an anonymous layer if no name is provided. If styles are placed outside of a layer, they are treated as being part of an anonymous last declared layer.
+
+#### `layer()` and `@layer`
+- `layer()` is used for `@import`
+```css
+@import url(theme.css) layer(default);
+@layer default{
+  audio[controls]{
+    display: block;
+  }
+}
+```
+
+- `@layer`
+```css
+@layer module, state;
+@layer state{
+  .alert{
+    background-color: brown;
+  }
+  p{
+    border: medium solid limegreen;
+  }
+}
+
+@layer module{
+  .alert{
+    border: medium solid violet;
+    background-color: yellow;
+    color: white;
+  }
+}
+```
+- All styles declared outside of a layer will override styles declared in a layer, regardless of specificity.
+
+##### 3 ways of creating cascade layer with `@layer`
+1. Named layer with CSS rules for that layer inside.
+```css
+  @layer utilities{
+    .padding-sm{
+      padding: 0.5rem;
+    }
+
+    .padding-lg{
+      padding: 0.8rem;
+    }
+  }
+```
+
+2. named cascade layer without assigning any styles.
+```css
+@layer utilities;
+@layer theme, layout, utilities;
+```
+- Last layer to be listed will have top precedence, regardless of specificity.
+
+3. anonymous cascade layer.
+```css
+@layer{
+  p{
+    margin-block: 1rem;
+  }
+}
+```
+- This anonymous layer is lower than styles declared outside of a layer, the precedence depends on order it was declared.
+
+##### Nested Layers
+```css
+@layer framework{
+  @layer layout{
+
+  }
+}
+
+@layer framework.layout{
+  p {
+    margin-block: 1rem;
+  }
+}
+```
+
+### Cascading order
+Steps of how the algorithm works:
+1. Relevance: first filter out all rules that apply to a given element
+2. Origin and importance: First is importance then the orgin type precedence
+3. Specificity: if rules fall in same origin, then highest specificity wins.
+4. Scoping proximity: same origin and same specificity, the property value within scoped rules with the smallest number of hops up the DOM hierarchy to hte scope root wins.
+5. Order of apperance: if all the last 4 rules cannot decide a winner, the last declaration in the style order is applied.
+
+#### Specificity
+It is an algorithm to calculate weight of selector, the higher wins.
+
+##### Selector weight categories
+1. ID column
+  - only ID selectors
+2. CLASS column
+  - class selectors, attribute selectors and pseudo-classes 
+3. TYPE column
+  - type selectors, like `p`, `h1`, and pseudo-elements, like `::before` and other double-colon notation.
+4. No value
+  - The universal selector `*` and pseudo-class `:where()` and its parameters aren't counted.
+  - Combinators, like `+`, `>`, `~` and `||` does not add value
+  - `&` nesting combinator does not add weight, but nested rules do, and also, `:is()`, `:has()`, `:not()` parameters do add values.
+
+  For example:
+  ```css
+    [type="password"]           /*0-1-0*/
+    input:focus                 /*0-1-1*/
+    :root #myApp input:required /*1-2-1*/
+
+    [type="password"],           
+    input:focus,
+    :root #myApp input:required{
+      color: blue;
+    }
+  ```
+  - With above css stylesheet, `color: blue` has specificity of 1-2-1, since the last comma separated selector has this highest specificity which will represents the whole rule.
+
+  Examples:
+  ```css
+    #myElement {
+    color: green; /* 1-0-0  - WINS!! */
+    }
+    .bodyClass .sectionClass .parentClass [id="myElement"] {
+      color: yellow; /* 0-4-0 */
+    }
+
+    #myElement {
+      color: yellow; /* 1-0-0 */
+    }
+    #myApp [id="myElement"] {
+      color: green; /* 1-1-0  - WINS!! */
+    }
+
+    :root input {
+      color: green; /* 0-1-1 - WINS because CLASS column is greater */
+    }
+    html body main input {
+      color: yellow; /* 0-0-4 */
+    }
+
+    input.myClass {
+      color: yellow; /* 0-1-1 */
+    }
+    :root input {
+      color: green; /* 0-1-1 WINS because it comes later */
+    }
+
+    p {
+      /* 0-0-1 */
+    }
+    :is(p) {
+      /* 0-0-1 */
+    }
+
+    h2:nth-last-of-type(n + 2) {
+      /* 0-1-1 */
+    }
+    h2:has(~ h2) {
+      /* 0-0-2 */
+    }
+
+    div.outer p {
+      /* 0-1-2 */
+    }
+    div:not(.inner) p {
+      /* 0-1-2 */
+    }
+
+    :is(p, #fakeId) {
+      /* 1-0-0 */
+    }
+    h1:has(+ h2, > #fakeId) {
+      /* 1-0-1 */
+    }
+    p:not(#fakeId) {
+      /* 1-0-1 */
+    }
+    div:not(.inner, #fakeId) p {
+      /* 1-0-2 */
+    }
+
+    #fakeId {
+      span {
+        /* 1-0-1 */
+      }
+    }
+
+    a:not(#fakeId#fakeId#fakeID) {
+      color: blue; /* 3-0-1 */
+    }
+
+    :where(#defaultTheme) a {
+      /* 0-0-1 */
+      color: red;
+    }
+    
+    @scope (.article-body) {
+      /* img has a specificity of 0-0-1, as expected */
+      img { ... }
+    }
+    
+    @scope (.article-body) {
+      /* :scope img has a specificity of 0-1-0 + 0-0-1 = 0-1-1 */
+      :scope img { ... }
+    }
+
+    @scope (figure, #primary) {
+      & img { ... }
+    }
+    /*
+    equivalent to :is(figure, #primary) img
+    */
+    /*1-0-0for @scope(#primary), 0-0-1 for img, so 1-0-1 in total*/
+  ```
