@@ -94,3 +94,207 @@ Example:
   </body>
 </html>
 ```
+
+# 3 Custom Elements
+## Intro
+- Custom Elements can make custom element like native element
+
+It has following characteristics:
+1. Descriptive: you don't need `div` for everything, so that we can achieve concept of semantic web. Imrpove SEO performance and Enhances accessibility.
+2. Speeds up development, aids maintenance
+
+## Core Functionality
+Extends esisting elements by `is="xxxx"` attribute.
+
+## Registering Custom Elements
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <pluralsight-comment/>
+      <script>
+          var PluralsightCommentProto = Object.create(HTMLElement.prototype);
+          PluralsightCommentProto.createdCallback = function(){
+            this.innerHTML = "<h2>Pluralsight Comment</h2><textarea></textarea></br><input type='submit/>'"
+          }
+
+          var PluralsightComment = document.registerElement("pluralsight-comment", {
+            prototype: PluralsightCommentProto
+          });
+
+      </script>
+  </body>
+</html>
+```
+
+## Instantiating Extended Custom Elements
+1. Declare in markup
+`<button is="super-button">`
+2. Javascript
+`var button = document.createElement("button", "super-button");`
+3. New operator
+`document.body.appendChild(new SuperButton());`
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+  <button is="pluralsight-button"></button>
+      <script>
+          var Proto = Object.create(HTMLButtonElement.prototype);
+
+          Proto.createdCallback = function(){
+            this.innerHTML = "Pluralsight Button";
+            this.value = "Default value";
+            this.style.color = "orange";
+          }
+
+          var PluralsightButton = document.registerElement("pluralsight-button", {
+            prototype: Proto,
+            extends: "button"
+          });
+      </script>
+  </body>
+</html>
+```
+
+## Lifecycle Callback Methods
+|Method|Called when|
+|-|-|
+|createdCallback|Instance is created|
+|attachedCallback|Instance inserted into DOM|
+|detachedCallback|Instance removed from DOM|
+|attributedChangedCallback|Attributes are added, removed, or updated|
+
+# 4 Shadow DOM Fundamentals
+## Light DOM vs. Shadow DOM
+- Light DOM: normal DOM
+
+## Shadow DOM Alternatives
+- `<iframe>` tag, embed full html document, html elements have completely seperate context
+
+## Creating Shadow DOM
+1. Select shadow host
+- Choose a light DOM as the host of shadow DOM
+2. Create a shadow root
+3. Add elements
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      h1{
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>Hello World from Light DOM</h1>
+  <div id="host"></div>
+  <template>
+    <style>
+      h1 {
+        color: green;
+      }
+    </style>
+    <h1>Hellow World from the Shadow DOM</h1>
+  </template>
+  <script>
+      var template = document.querySelector("template");
+      var host = document.getElementById("host");
+      var root = host.createShadowRoot();
+      root.appendChild(document.importNode(template.content, true));
+  </script>
+  </body>
+</html>
+```
+
+## Shadow Host and Shadow Boundary
+A light DOM could be the shadow host, shadow host will contains a Shadow Tree, which includes a shadow root and bunch of shadow DOMs, and this is also context of Shadow Boundary. 
+
+## ShadowRoot DOM Methods
+- getElementById()
+- getElementsByClassName()
+- getElementsByTagName()
+- getElementsByTagnameNS()
+- querySelector
+- querySelectorAll()
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      h1{
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+  <h1>Hello World from Light DOM</h1>
+  <div id="host"></div>
+  <template>
+    <style>
+      h1 {
+        color: green;
+      }
+    </style>
+    <h1>Hellow World from the Shadow DOM</h1>
+  </template>
+  <script>
+      var template = document.querySelector("template");
+      var host = document.getElementById("host");
+      var root = host.createShadowRoot();
+      root.appendChild(document.importNode(template.content, true));
+
+      root.querySelector("h1");
+  </script>
+  </body>
+</html>
+```
+
+## Javascript is not Encapsulated in Shadow DOM
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+  <div id="host">
+    <ul>
+      <li>Wilbur</li>
+      <li>Alfred</li>
+      <li>Mortimer</li>
+    </ul>
+  </div>
+  <template>
+    <h1>Bad Cat Names</h1>
+    <content id="test"></content>
+    <script>
+        function sayHi(){
+          alert("");
+        }
+    </script>
+  </template>
+  <script>
+      var host = document.querySelector("#host");
+      var root = host.createShadowRoot();
+      var template = document.querySelector("template");
+      var clone = document.importNode(template.content, true);
+      root.appendChild(clone);
+
+      var distributedNodes = root.querySelector("#test").getDistributedNodes();
+
+      var destinationInsertionPoints = document.querySelector("ul").getDestinationInsertionPoints();
+
+      
+  </script>
+  </body>
+</html>
+```
