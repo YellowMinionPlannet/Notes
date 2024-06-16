@@ -104,7 +104,7 @@ It has following characteristics:
 2. Speeds up development, aids maintenance
 
 ## Core Functionality
-Extends esisting elements by `is="xxxx"` attribute.
+Extends custom elements by `is="xxxx"` attribute.
 
 ## Registering Custom Elements
 ```html
@@ -294,6 +294,51 @@ A light DOM could be the shadow host, shadow host will contains a Shadow Tree, w
       var destinationInsertionPoints = document.querySelector("ul").getDestinationInsertionPoints();
 
       
+  </script>
+  </body>
+</html>
+```
+
+# 5 Shadow DOM Insertion Points & Events
+Insertion points is achieved by `<content>` tag to invite any targeted Light DOM Elements, which is included within Shadow Host,to be inserted within Shadow DOM.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+  <comment-form>
+    <h1>Tell us what's on your mind!</h1>
+    <p class="instructions">Fill out this form</p>
+    <p class="footer">Privacy Policy: jargon</p>
+  </comment-form>
+
+  <template>
+    <fieldset>
+      <legend>
+        <content select="h1"></content>
+      </legend>
+      <content select="p.instructions"></content>
+      <textarea style="width:400px; height:200px">
+      </textarea>
+      <br/>
+      <input type="submit" value="Submit Comment"/>
+      <content select=".footer"></content>
+      <content></content>
+    </fieldset>
+  </template>
+  <script>
+    var commentProto = document.createObject(HTMLElement.prototype);
+    commentProto.createdCallback = function(){
+      var template = ducument.querySelector("template");
+      var shadow = this.createShadowRoot();
+      shadow.appendChild(document.importNode(template.content, true));
+
+      document.registerElement("comment-form", {
+        prototype: commentProto
+      })
+    }
   </script>
   </body>
 </html>
