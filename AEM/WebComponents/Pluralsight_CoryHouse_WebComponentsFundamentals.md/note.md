@@ -1,3 +1,5 @@
+> IMPORTANT: This course content is deprecated, but concept is good. So notes stops at Section 5.
+
 # 2 Templates
 ## Intros
 ## Common Approaches when `template` tag is not available
@@ -352,6 +354,7 @@ Insertion points is achieved by `<content>` tag to invite any targeted Light DOM
 - Any content that are distributed can't be traversed.
 
 ```html
+<!-- IMPORTANT: createShadowRoot and contains methods are deprecated -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -370,3 +373,4 @@ Insertion points is achieved by `<content>` tag to invite any targeted Light DOM
   </body>
 </html>
 ```
+
