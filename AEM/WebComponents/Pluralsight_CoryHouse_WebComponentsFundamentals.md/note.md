@@ -300,7 +300,7 @@ A light DOM could be the shadow host, shadow host will contains a Shadow Tree, w
 ```
 
 # 5 Shadow DOM Insertion Points & Events
-Insertion points is achieved by `<content>` tag to invite any targeted Light DOM Elements, which is included within Shadow Host,to be inserted within Shadow DOM.
+Insertion points is achieved by `<content>` tag to invite any targeted Light DOM Elements, which is included within Shadow Host, to be inserted within Shadow DOM.
 
 ```html
 <!DOCTYPE html>
@@ -340,6 +340,33 @@ Insertion points is achieved by `<content>` tag to invite any targeted Light DOM
       })
     }
   </script>
+  </body>
+</html>
+```
+
+## Insertion Points vs. Distributed Nodes
+- Insertion Points are the `<content>` tags
+- Distributed Nodes are the element that are introduced into Shadow DOM
+
+- Distributed nodes are merely displayed at the insertion point. They are not actually inserted into the shadow DOM.
+- Any content that are distributed can't be traversed.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div>
+      <h1>Header defined in the light DOM</h1>
+    </div>
+    <script>
+        var root = document.querySelector("div").createShadowRoot();
+        root.innerHTML = "<content select="h1"></content>";
+
+        console.log(document.querySelector("h1"));
+        console.log(root.querySelector("content").contains("h1")); // false
+    </script>
   </body>
 </html>
 ```
