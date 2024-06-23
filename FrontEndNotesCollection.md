@@ -290,3 +290,55 @@ It is an algorithm to calculate weight of selector, the higher wins.
     */
     /*1-0-0for @scope(#primary), 0-0-1 for img, so 1-0-1 in total*/
   ```
+# About `@scope`
+ `@scope` enable developer to select elements in a specific DOM subtrees. If we do not use `@scope`, the specificity would be too high to override, and selectors would be coupling.
+
+ ## Syntax
+ ```css
+@scope (scope root) to (scope limit){
+  rulesets
+}
+ ```
+
+## A example
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <article class="feature">
+          <section class="article-hero">
+          </section>
+          <section class="article-body">
+            <h3></h3>
+            <p></p>
+            <img/>
+            <p></p>
+            <figure>
+              <img/>
+              <figcaption>
+            </figure>
+          </section>
+          <footer>
+            <p></p>
+            <img/>
+          </footer>
+        </article>
+    </body>
+</html>
+```
+- if we want to select `<img>` element inside `<section>` with a class of `.article-body`, we have selector `.feature > .article-body > img`.
+- if we use `@scope`, and we want to select `<img/>` within `section.article-hero` and is not contained within `<figure>`, we can have:
+```css
+@scope (.article-body) to (figure){
+  img{
+    border: 5px solid black;
+    background-color: goldenrod;
+  }
+}
+```
+
+## `:scope` pseudo-class
+
+We use `:scope` within a `@scope` to select the root.
