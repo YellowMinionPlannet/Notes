@@ -718,7 +718,7 @@ function removeLastItem(arr){
 - It comply with functional programing becuase it does not mutate and create declarative code.
 
 ## Partial Application With Bind
-From this function, we talk about FP techniques.
+From this section, we talk about FP techniques.
 - Partial Application: the process of executing a function wiht some or all of its arguments. The partially applied function then gets returned for later use.
 - Typical example would be using `bind`
 ```js
