@@ -290,17 +290,17 @@ It is an algorithm to calculate weight of selector, the higher wins.
     */
     /*1-0-0for @scope(#primary), 0-0-1 for img, so 1-0-1 in total*/
   ```
-# About `@scope`
+## about `@scope`
  `@scope` enable developer to select elements in a specific DOM subtrees. If we do not use `@scope`, the specificity would be too high to override, and selectors would be coupling.
 
- ## Syntax
+### Syntax
  ```css
 @scope (scope root) to (scope limit){
   rulesets
 }
  ```
 
-## A example
+#### A example
 ```html
 <!DOCTYPE html>
 <html>
@@ -342,3 +342,5 @@ It is an algorithm to calculate weight of selector, the higher wins.
 ## `:scope` pseudo-class
 
 We use `:scope` within a `@scope` to select the root.
+
+# about JS modules

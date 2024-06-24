@@ -662,3 +662,196 @@ function pureAddToArray(arr, value){
   return [...arr, value];// arr not changed, return a new array, so this is pure.
 }
 ```
+## Returning Functions
+- Higher Order Functions: a function that receives another function as an argument, returns a function or does both.
+
+```js
+//receives a function
+function doTwice(func){
+  func();
+  func();
+}
+
+//returns a function
+function multiplyBy(factor){
+  return function(number){
+    return number * factor;
+  }
+}
+
+const triple = multiplyBy(3);
+const double = multiplyBy(2);
+```
+
+## Immutability
+- Usually, if we have common typed variable, `const` will prevent mutation. However, if we have an Object, we need to be careful of maintaining immutability:
+```js
+const num = 1;
+num = 2; // ERROR
+const nums = [1, 2, 3];
+nums.push(4); // OK
+```
+
+### Object.freeze
+```js
+const person = {name: "Teddy", age: 2};
+Object.freeze(person);
+person.color = "pink";// Wouldn't do anything
+person.age = 3;// Wouldn't do anything
+console.log(person); // {name: "Teddy", age: 2}
+```
+
+### Immutability in pure function
+- One of definition about pure function is, pure function never mutate external data, or mutate any state.
+```js
+const nums = [1, 2, 3, 4];
+funciton push(arr, val){
+  return [...arr, val];// Instead of mutate arr, we created a new array here
+}
+
+function removeLastItem(arr){
+  return arr.slice(0, -1);
+}
+```
+
+## Recursion
+- It comply with functional programing becuase it does not mutate and create declarative code.
+
+## Partial Application With Bind
+From this function, we talk about FP techniques.
+- Partial Application: the process of executing a function wiht some or all of its arguments. The partially applied function then gets returned for later use.
+- Typical example would be using `bind`
+```js
+function greet(greeting, name){
+  console.log(`${greeting}, ${name}!!!`);
+}
+
+const aussieGreet = greet.bind(null, "good day");
+aussieGreet("lei"); //good day, lei
+```
+
+## Writing a Partial Function
+```js
+funciton multiply(a, b){
+  return a * b;
+}
+function partial(func, ...fixedArgs){
+  return function (...remainingArgs){
+    return func(...fixedArgs, ...remainingArgs);
+  }
+}
+
+const double = partial(multiply, 2);
+```
+
+```js
+function fetchData(url, apiKey, params){
+  const queryString = new URLSearchParams(params).toString();
+  const fullUrl = `${url}?${queryString}`;
+
+  console.log(`Sending requests to ${fullUrl}`);
+  console.log(`With API key of ${apiKey}`);
+}
+
+const fetchMyAPI = partial(fetchData, myAPIUrl, myAPIKey);
+```
+
+## Composition Function
+- Composition: Funciton composition is mechanism of combining multiple functions to build a more complicated one. The result of each function is passed to the next one. eg. f(g(x))
+
+```js
+const add = (a, b) => a + b;
+const square = (a) => a * a;
+
+const addAndSquare = (a, b) => square(add(a, b));
+
+function lowerCase(str){
+  return str.toLowerCase()
+}
+
+function splitWords(str){
+  return str.split(" ");
+}
+
+function joinWithDash(array){
+  return array.join("-")
+}
+
+joinWithDash(splitWords(lowerCase("hello world")));
+```
+
+## A simple compose function
+```js
+function compose(fn1, fn2){
+  return function (value){
+    return fn2(fn1(value));
+  }
+}
+```
+
+## Writing a fancier compose function
+```js
+function compose(...functions){
+  return function(data){
+    return functions.reduceRight((val, func) => func(val), data);
+  }
+}
+```
+
+## Currying Basics
+- A curried funciton can be called with any number of arguments - if you call it with fewer args than it takes, it returns a "smaller" partial, which you can then call with remaining arguments. eg. 
+```js
+// if we have function that can be called as
+f(a, b , c);
+// this is the curried format of previous one
+f(a)(b)(c);
+```
+
+```js
+function add(a, b, c){
+  return a + b + c;
+}
+
+// curried version
+function addCurry(a){
+  return function(b){
+    return function(c){
+      return a + b + c;
+    }
+  }
+}
+```
+
+## More advanced currying
+```js
+// Our goal:
+//If we have function:
+function add3(a, b, c){
+  return a + b + c;
+}
+
+const curry(add3); // Get back a curried version of add3
+
+add3(1, 2, 3); // 6
+add3(1);// return a function that will take b and c
+add3(1, 2)// return a function that will take c
+add3(1)(2)(3)// 6
+```
+
+```js
+function add3(x, y, z){
+  return x + y + z;
+}
+
+function curry(fn){
+  return function curried(...args){
+    if(args.length >= fn.length){
+      return fn.apply(this, args);
+    }else{
+      return function (...args2){
+        return curried.apply(this, args.concat(args2));
+      }
+    }
+  }
+}
+```
