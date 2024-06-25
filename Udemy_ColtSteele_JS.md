@@ -855,3 +855,72 @@ function curry(fn){
   }
 }
 ```
+
+## Dice Game Intro
+```js
+class DiceGame{
+  constructor(rollBtnId, resultDiplayId){
+    this.rollBtn = document.getElementById(rollBtnId);
+    this.resultDisplay = document.getElementById(resultDiaplayId);
+    this.rollBtn.addEventListener("click", this.rollDice);
+  }
+
+  getRandomRoll(){
+    return Math.floor(Math.random()*6) + 1;
+  }
+
+  checkWin(roll){
+    return roll === 6;
+  }
+
+  rollDice = () =>{
+    const roll = this.getRandomRoll();
+
+    if(this.checkWin(roll)){
+      this.resultDisplay.innerText = `You rolled a ${roll}! You Win!`;
+    }else{
+      this.resultDisplay.innerText = `You rolled a ${roll}. Try again!`;
+    }
+  }
+}
+
+new DiceGame("rollBtn", "result");
+
+```
+```html
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <input type='button' id='rollBtn'>Roll the Dice</button>
+    <div id='result'>Roll the dice to see if you win!</div>
+  </body>
+</html>
+```
+
+## Dice Game Simple FP
+```js
+//FP version of dice game
+const getRandomRoll = () => Math.floor((Math.random()*6) + 1);
+const checkWin = (roll) => return roll === 6;
+
+const displayResult = (element, message) =>{
+  element.innerText = message;
+}
+
+rollDiceAndDisplayResult = (resultDisplay) => () => {
+  const roll = getRandomRoll();
+  const message = checkWin(roll)? `You rolled a ${roll}, You win!`:
+                                  `You rolled a ${roll}, keep trying!`;
+  displayResult(resultDisplay, message);
+}
+
+const createDiceGame = (rollBtnId, resultDisplayId) => {
+  const rollBtn = document.getElementById(rollBtnId);
+  const resultDisplay = document.getElementById(resultDisplayId);
+
+  rollBtn.addEventListener("click", rollDiceAndDisplayResult(resultDisplay));
+}
+
+createDiceGame("rollBtn", "result");
+```
