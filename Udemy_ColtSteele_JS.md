@@ -924,3 +924,121 @@ const createDiceGame = (rollBtnId, resultDisplayId) => {
 
 createDiceGame("rollBtn", "result");
 ```
+
+# Section 12 Fetch API
+## The Basics of Fetch
+```js
+const POKE_URL = "https://pokeapi.co/api/v2/pokemon";
+
+async function getPokemon(){
+  const response = await fetch(POKE_URL);
+  const data = await response.json();// Stream API
+  console.log(data);
+}
+
+fetch(POKE_URL)
+.then((res) => res.json())
+.then((data) => console.log(data));
+```
+
+## Error Handling with Fetch
+- Anything with 2-- will cause `response.ok === true`.
+```js
+const POKE_URL = "https://pokeapi.co/api/v2/pokemon";
+
+async function getPokemon(){
+  try{
+    const response = await fetch(POKE_URL);
+    if(!response.ok){
+      throw new Error(`HTTP erorr! Status: ${response.status}`);
+    }
+    const data = await response.json();// Stream API
+    console.log(data);
+  }catch(e){
+    console.log(`SOMETHING WENT WRONG WITH THE FETCH CALL!`);
+    console.log(e);
+  }
+}
+
+fetch(POKE_URL)
+.then((res) => {
+  console.log("THE FETCH WORKED!!!!");
+  console.log(res);
+  if(!res.ok){
+    throw new Error(`HTTP erorr! Status: ${res.status}`);
+  }
+  return res.json();
+})
+.then((data) => console.log(data))
+.catch((e) =>{
+  console.log(`SOMETHING WENT WRONG WITH THE FETCH CALL!`);
+  console.log(e);
+});
+```
+
+## Fetch API with Headers
+```js
+async function showMeHeaders(){
+  try{
+    const res = await fetch("http://localhost:3001/showmeheaders", {headers:{"content-type": "application/json"}});
+    const data = await res.json();
+    console.log(data);
+  }catch(e){
+
+  }
+}
+
+async function getSecret(){
+  const headers = new Headers({"content-type": "application/json"});// USING Headers Object
+  try{
+    const res = await fetch("http://localhost:3001/showmeheaders", {headers:{"content-type": "application/json"}});
+    const data = await res.json();
+    console.log(data);
+  }catch(e){
+
+  }
+}
+```
+
+## POST Requests with Fetch
+```js
+async function postData(){
+  const payload = {
+    handler: "chickenco",
+    name: "chickens and Company",
+    description: "A lovely company run by chickens",
+    numEmployees: 999,
+    logoUrl: "http://www.google.com",
+  }
+
+  const response = fetch("http://localhost:3001/companies", {
+    method: "POST",
+    headers: {"content-type": "application/json"},
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json();
+  console.log(data);
+}
+```
+
+## Uploading a File
+```js
+async function uploadFile(formData){
+  const response = fetch("http://localhost:3001/companies", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+  console.log(data);
+}
+
+const fileInput = document.querySelector("#fileUpload");
+fileInput.addListener("change", (e)=>{
+  const formData = new FormData();
+  formData.append("logo", fileInput.files[0]);
+  console.log(formData);
+  uploadFile(formData);
+});
+```
