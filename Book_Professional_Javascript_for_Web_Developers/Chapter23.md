@@ -7,9 +7,11 @@
 
 ## UNDERSTANDING THE MODULE PATTERN
 - Basic Concept of Module Pattern:
-  1. Breack logi cin to pieces, each of which is encapsulated from the rest
+  1. Breack logic into pieces, each of which is encapsulated from the rest
   2. Each of them define what parts of itself are exposed to external pieces
   3. allow each piece to explicitly define what external pieces it needs to execute.
+
+> So following are just some introductions of fundamental concept about module system.
 
 ### Module Identifiers
 - Module systems are essentially key-value entities.
@@ -31,6 +33,6 @@
 ### Entry Points
 - Must define a single module as the entry point
 - By using that entry point, it is possible to draw a dependency graph and gain an order to describe which module should be downloaded/initialized first.
-- It's cllaed "blocking" if some module is loaded before its dependency get ready and must wait for a remote request for dependency.
+- It's called "blocking" if some module is loaded before its dependency get ready and must wait for a remote request for dependency.
 
 ### Asynchronous Dependencies
