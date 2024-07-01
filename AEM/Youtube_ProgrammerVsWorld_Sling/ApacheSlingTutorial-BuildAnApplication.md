@@ -77,3 +77,5 @@ If that library dependency is within `/etc` folder.
 now we can see the html included jquery library.
 
 # Createing a simple component from scratch
+
+`.4.json`
