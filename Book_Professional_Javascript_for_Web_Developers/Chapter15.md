@@ -142,4 +142,33 @@ document.body.onclick = function(event){
 
 ## EVENT TYPES
 
+Event type determines the info available about the event, DOM 3 Events are secified as following.
 
+|Event group|Description|
+|-|-|
+|**User interface**|events are general browser events that may have some interaction with the BOM|
+|**Focus events**|fired when an element gains or loses focus|
+|**Mouse events**|fired when the mouse is used to perform an action|
+|**Wheel events**|fired when a mouse wheel is used|
+|**Text events**|fired when text is input into the document|
+|**Keyboard events**|fired when keyboard is used|
+|**Composition events**|fired when inputting characters for an Input Method Editor(IME)|
+
+<sup>In addition to these categories, HTML5 has its own set, and also browser could have their own proprietary events</sup>
+
+> IME, for example, is the panel for Chinese candidate characters
+
+### UI Events
+|Event type|Descriptions|
+|-|-|
+|load|fires on <ol><li>window</li><li>frameset</li><li>`<img>`</li><li>`<object>`</li></ol> when it's completely loaded|
+|unload||
+|abort|fires on `<object>` when user interupt load process|
+|error|fires on window when JS error occurs|
+|select|fires when user selects one or more characters in a text box|
+|resize|fires on a window or frame when it is resized|
+|scroll|fires on any element with a scrollbar when the user scrolls it|
+
+<sup>`<object>` should NOT be used especially when its data attribute includes insecure request(url begins with `http`), because there's potential that the embeded scripts will manipulate parent context.</sup>
+
+#### The *load* Event
