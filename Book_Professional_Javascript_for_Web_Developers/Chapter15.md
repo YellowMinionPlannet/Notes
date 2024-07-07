@@ -172,3 +172,69 @@ Event type determines the info available about the event, DOM 3 Events are secif
 <sup>`<object>` should NOT be used especially when its data attribute includes insecure request(url begins with `http`), because there's potential that the embeded scripts will manipulate parent context.</sup>
 
 #### The *load* Event
+
+- Window load event fires only if the page is loaded, including external resources, like js files, css files, and images.
+- Images load event fires if image is loaded, but the image start downloading whenever `src` property is set. (Even it's not added to the DOM yet)
+- `<script>` fires load event when script is downloaded. `<script>` starts downloading only if `src` property is set AND the element is added to the DOM.
+
+#### The *unload* Event
+- Fires when a document has completely unloaded
+- Used for clean up references to avoid memo leaks
+- Not all objects available when page is loaded still remains available when unload event is fired
+
+#### The *resize* Event
+- resize could be assigned to `<body>` element
+- Avoid heavy computation on this event, and be noted that it also fires when minimize and miximize the window.
+
+#### The *scroll* Event
+```js
+window.addEventListener("scroll", (event) =>{
+  console.log(document.body.scrollTop);
+})
+```
+- The above code snippet will show the vertical scroll position of the page.
+
+### Focus Events
+These events work with `document.hasFocus()` and `document.activeElement` properties.
+|Event type|Descriptions|
+|-|-|
+|blur|fires when element lost focus, this event does not bubble|
+|focus|fires when element received focus, does not bubble|
+|focusin|fires when element received focus, Bubble version|
+|focusout|fires when element lost focus, Generic version of the blur event|
+
+When focus is moved from one element to another on the page, following happens:
+1. focusout fires on the element losing focus.
+2. focusin fires on the element receiving focus.
+3. blur fires on the element losing focus
+4. DOMFocusOut fires on the elemeent losing focus
+5. focus fries on the element receiving focus.
+6. DOMFocusin fires on the element receiving focus.
+
+### Mouse and Wheel Events
+9 mouse events in DOM 3:
+|Event type|Descriptions|
+|-|-|
+|click|left button or enter key is pressed|
+|dblclick|left button double clicked|
+|mousedown|any mouse button, cannot be fired by keyboard|
+|mouseenter|fires when first time enter the boundaries of element, does NOT bubble or fires on descendat element|
+|mouseleave|fires when move outside of element, does NOT bubble or fires on descendants|
+|mousemove|fires repeatedly as cursor being moved, cannot be fired by keyboards|
+|mouseout|moves out an element and moves over to another element, cannot be fired by keyboards|
+|mouseover|like mouseenter, bubble|
+|mouseup|release mouse button, cannot be fired via keyboards|
+
+All events bubble, but mouseenter and mouseleave events. All events can be canceled.
+
+click event would fire after a mousedown and mouseup. If mouseup or mousedown is canceled, then click is not fired.
+So if you double clicked:
+1. mousedown
+2. mouseup
+3. click
+4. mousedown
+5. mouseup
+6. click
+7. dblclick
+
+#### Client Coordinates
