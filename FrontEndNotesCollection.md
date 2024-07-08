@@ -8,7 +8,7 @@ it has two values:
 - If we have `box-sizing: content-box`, which is default, we have height of content "real" height. That is the height of content only(without paddings and borders).
 - If we have `box-sizing: border-box`, we have height of box-model excluding margin. That is content "real" height + paddings + borders.
 
-# about differnt `height` properties
+# about different `height` properties
 ## Layout Viewport vs. Visual Viewport
 - Layout Viewport: the browser's area that draws the web page.
 - Visual Viewport: the visible part of browser's layout viewport.
@@ -344,3 +344,44 @@ It is an algorithm to calculate weight of selector, the higher wins.
 We use `:scope` within a `@scope` to select the root.
 
 # about JS modules
+> TBC: see book notes of Chapter 23
+
+# about CSS Text
+CSS could control line breaking, justification and alignment.CSS text has following properties:
+
+|Properties|Summary|
+|-|-|
+|hanging-punctuation|only Safari|
+|hyphenate-limit-chars|set min chars to allow hyphen and min chars allowed for two broken lines|
+|hyphens|set hyphen rules with `&shy`|
+|letter-spacing|horizontal spacing|
+|line-break|only for Chinese, Japanese, Korean, set spacing rules for line break related to `<br/>` and punctuation related line break|
+|overflow-wrap||
+|tab-size||
+|text-align||
+|text-align-last||
+|text-indent||
+|text-justify||
+|text-size-adjust||
+|text-transform||
+|text-wrap||
+|white-space||
+|white-space-collapse||
+|word-break||
+|word-spacing||
+
+
+# about *line box*
+Source of knowlege: [w3c_inline_formatting](https://www.w3.org/TR/CSS2/visuren.html#inline-formatting)
+
+# about Inheritance
+- If a css property `inherited` is `yes` on MDN property's `formal definition` section, then the property will be set to parent element's `computed value` for default.
+- Computed value is calculated from specified value by
+  1. handle special values
+  2. doing computations, which could be defined in property's `formal definition` section, `computed value` line.
+  
+- Specified value is following precedence of 
+  1. document style sheet value
+  2. parent's value
+  3. initial value.
+
