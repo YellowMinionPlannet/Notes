@@ -237,4 +237,57 @@ So if you double clicked:
 6. click
 7. dblclick
 
-#### Client Coordinates
+#### Coordinates
+```js
+let div = document.getElementById("myDiv");
+div.addEventListener("click", (event) =>{
+  console.log(`Client coordinates: ${event.clientX}, ${event.clientY}`);
+});
+```
+> `clientX` and `clientY` does not take into account the scroll position
+> `pageX` and `pageY` would take account of scroll position, which indicate the position of X and Y related to the page.
+> `screenX` and `screenY` would be the position related to the display screen.
+
+#### Modifier Keys
+- `shiftKey`
+- `ctrlKey`
+- `altKey`
+- `metaKey`
+
+#### Related Elements
+`relatedTarget` would be `null` for other events, but within `mouseover` and `mouseout` it's not `null`.
+- `mouseover`, `relatedTarget` would be the element that losing the cursor
+- `mouseout`, `relatedTarget` would be the element that gaining the cursor.
+
+#### Buttons
+for `mouseup` and `mousedown`, the `button` property indicates the type of button that was pressed and released.
+
+#### Additional Event Information
+- `click` event if fired if mouse stays the same location and `mousedown` and `mouseup` events are fired.
+- `detail` property will count `click` event at the same location
+
+#### The `mousewheel` Event
+`mousewheel` will bubble to the window. `wheelDelta` property has positive value if wheels are scrolled to the front.
+
+#### Touch Device Support
+- `dblclick` event is not available, since touch device will zoom in by double clicked screen
+- Tap on a clickable element will fire `mousemove` event, if there's no change of the screen, then `mousedown` `mouseup` and `click` events are fired in order.
+- Tap on unclickable element, no event fires
+- Clickable element defined as element has default action when clicked or element with `onclick` event assigned
+- `mousewheel` and `scroll` events fires when two fingers are on the screen and the page is scrolled as the result of finger movement.
+
+#### Accessibility Issues
+- use `click` event at maximum since it is the only event that can triggered by mouse and keyboard
+- `mouseover` `mousedown` `dblclick` should be banned
+
+### Keyboard and Text Events
+- `keydown` `keypress` `keyup`, and `textinput`
+- when you press a character key:
+ - before character display
+  1. `keydown`
+  2. `keypress`
+ - after character display and release of the key
+  1. `keyup`
+- when you press a non-character key, `keypress`/`textinput` event is not fired. `textinput` is an alternate event for `keypress`
+
+#### Key Codes
