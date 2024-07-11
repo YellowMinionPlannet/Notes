@@ -291,3 +291,156 @@ for `mouseup` and `mousedown`, the `button` property indicates the type of butto
 - when you press a non-character key, `keypress`/`textinput` event is not fired. `textinput` is an alternate event for `keypress`
 
 #### Key Codes
+`keycode` property is wrapped in `keyup` and `keydown` events. `keycode` property is alphanumeric code to represent keyboard input. It follows ASCII value for lowercase letter or number. For example, 7 key has keyCode of 55, A key has a keyCode of 65.
+
+```js
+const textbox = document.getElementById("myText");
+textbox.addEventListener("keyup", (event) =>{
+  console.log(event.keyCode);
+});
+```
+
+Because `keyup` event only fires after `keypress` event which fires right before character being inserted or removed on screen. So, this code snippet of `keyup` event will log manipulated characters' corresponding `keyCode`. If we want to know what actual character is being manipulated, we can use `String.fromCharCode()` method.
+
+#### DOM Level 3 Changes
+`charCode` property is not standard for DOM Level 3. Within standard, there are `key` and `char` properties.
+
+`key` property is the actual character for character keys, and will be the name of keys for non-character keys. For example, "Shift" or "Down" for corresponding keys. and "k" or "M" etc.
+
+`char` property will behave the same way as `key`, but would be value of `null` if non-character key is pressed.
+
+DOM Level 3 Events also provide property called `location` to describe which part of keyboards is the location of the pressed key.
+|`location` value|description|
+|-|-|
+|0|(traditional)default keyboard compared with other location|
+|1|left location, for left shift left alt etc.|
+|2|right location|
+|3|numeric kepad|
+|4|virtual keypad, especially for mobile|
+|5|joystick|
+
+<sup>Please check compatability before use `location` property for cross browser</sup>
+
+`event.getModifierState` can check the modifier key state, it returns true, if the any modifier is pressed. It also accepts one argument among options of `["Shift", "Control", "Alt", "AltGraph", "Meta"]`, if you set this argument, it will reflect corresponding modifier state.
+
+#### The `textInput` Event
+DOM Leverl 3 introduced a event called `textInput` to fire when a character is input to an editable area. There are two differences between `keypress` and `textInput`:
+1. `keypress` can be fired on any element that can have focus, where `textInput` can only be fired on editable areas.
+2. `textInput` only fires when real character being inserted, where `keypress` fires any key that can affect text. For example, `keypress` fires when Backspace is pressed.
+
+So `textIput` wraps a data property that shows exact characters that is input. For example, s key will result in "s", s key with shift will result in "S".
+
+There is also another useful property called `inputMethod` that indicates which device is used for text input.
+|`inputMethod` value|description|
+|-|-|
+|0|couldn't determine how input is entered|
+|1|keyboard is used|
+|2|pasted in|
+|3|droped as part of drag operation|
+|4|IME is used|
+|5|input by selecting option in a form|
+|6|handwriting|
+|7|voice command|
+|8|combination of methods|
+|9|by script|
+
+### Composition Events
+So this is originally designed for IME. There are 3 events:
+- `compositionstart`, fires when IME is opened.
+- `compositionupdate`, fires when character is inserted into the input field.
+- `compositionend`, fires when composition system is closed, and keyboard returns to normal.
+
+So we have following code snippet to show how these 3 events work for Mandrin PINYIN.
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+      <input type="text" id="myText" />
+      <script>
+        const textBox = document.getElementById("myText");
+        textBox.addEventListener("compositionstart", (event) => {
+          console.log("compositionstart", event.data);
+        });
+        textBox.addEventListener("compositionupdate", (event) => {
+          console.log("compositionupdate", event.data);
+        })
+        textBox.addEventListener("compositionend", (event) => {
+          console.log("compositionend", event.data);
+        })
+      </script>
+    </body>
+</html>
+```
+- On the above page, we switch to PINYIN, when we type in the first character, for example, w:
+```
+compositionstart
+compositionupdate w
+```
+- Then we type the rest of the PINYIN, ode, where the total input is "wode".
+```
+compositionupdate wo
+compositionupdate wo'd
+compositionupdate wo'de
+```
+- Then we choose the "我的" from IME, which will trigger the IME to be closed
+```
+compositionupdate 我的
+compositionend 我的
+```
+
+### Mutation Events
+See Chapter 13, Mutation Observer.
+
+### HTML5 Events
+HTML5 has an complete list of all events that should be supported by browser, but these might not be covered by DOM specification.
+
+Rest of section is not complete of this list. (exhaustive means complete)
+
+#### The `contextmenu` Event
+This event is fired right before the default context menu is displayed. In Windows System, right click, In Mac, ctrl + click.
+
+`contextmenu` bubbles, you can assign this to the document. This event is considered as MOUSE Event, so all features by MOUSE Event is inherited.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+      <div id="myDiv"> Right click me / ctrl + click me to get a custom context menu. Click other places to get a default context menu.</div>
+      <ul id="myMenu" style="position: absolute; visibility: hidden; background-color: silver;">
+        <li><a href="http://www.mattfriz.com">Matt's site</a></li>
+        <li><a href="http://www.wiley.com">Wiley site</a></li>
+      </ul>
+      <script>
+        window.addEventListener("load", (event) => {
+          let div = document.getElementById("myDiv");
+          div.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+
+            let menu = document.getElementById("myMenu");
+            menu.style.left = event.clientX + "px";
+            menu.style.right = event.clientY + "px";
+            menu.style.visibility = "visible";
+          });
+
+          document.addEventListener("click", (event) => {            
+            document.getElementById("myMenu").style.visibility = "hidden";
+          });
+        });
+      </script>
+  </body>
+</html>
+```
+
+#### The `beforeunload` Event
+To triger a question to browser's user to confirm leaving the page. You need:
+```js
+window.onbeforeunload = () => "";
+window.addEventListener("beforeunload", (event) => "");
+```
+
+#### The `DOMContentLoaded` Event
