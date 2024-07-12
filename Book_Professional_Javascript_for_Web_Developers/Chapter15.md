@@ -444,3 +444,56 @@ window.addEventListener("beforeunload", (event) => "");
 ```
 
 #### The `DOMContentLoaded` Event
+
+The `load` event fires whenever the page is completely loaded, where external resources, images, JS files, CSS files for example, are fully loaded.
+
+The `DOMContentLoaded` triggers earlier than `load` event, where DOM tree is completely formed.
+
+You need attach this event to document. Although it will bubble up to window.
+
+```js
+document.addEventListener("DOMContentLoaded", (event) => {
+  console.log("content loaded");
+})
+```
+
+There is a workaround for browser that does not support this event. Although the following snippet will not make sure the timming behaves the same as using `DOMContentLoaded`.
+
+```js
+setTimeout(() => {
+  //Attach your DOMContentLoaded event handler here
+}, 0);
+```
+
+#### The `readystatechange` Event
+Internet Explorer
+
+#### The `pageshow`and `pagehide` Events
+
+These events must assign to the window.
+
+`pageshow` right after `load` event, it has persisted set to true, if the page is restored from bfcache. It has persisted set to false, if the page is loaded freshly.
+
+`pagehide` fires before `unload` event, it also has persisted to true.
+
+> If you assign event handler to `unload` event, the bfcache will not store current page.
+
+#### The `hashchange` Event
+
+Require to assign to window
+
+Fires whenever the hash part is updated in URL.
+
+```js
+window.addEventListener("hashchange", (event) => {
+  console.log("OLD URL:", event.oldURL, " NEW URL:", event.newURL);
+
+  console.log("Current Hash: ", location.hash);
+});
+```
+### Device Events
+> TODO
+
+## MEMORY AND PERFORMANCE
+> TODO
+
