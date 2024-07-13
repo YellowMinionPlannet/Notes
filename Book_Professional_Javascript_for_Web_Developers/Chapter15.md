@@ -492,8 +492,102 @@ window.addEventListener("hashchange", (event) => {
 });
 ```
 ### Device Events
-> TODO
+Special type of events designed for smartphone and mobile devices.
 
+#### The orientationchange Event
+There is a `window.orientation` property that describe the mobile device's orientation.(landscape/portrait). It can contains 3 values:
+1. 0 for portrait mode
+2. 90 for landscape mode
+3. -90 for landscape mode, bottom on the left.
+
+Whenever the changes from one mode to another, `orientationchange` event fires.
+```js
+window.addEventListener("load", (event) => {
+  let div = document.getElementById("myDiv");
+  div.innerHTML = "current orientation is " + window.orientation;
+
+  window.addEventListener("orientationchange", (event) => {
+    div.innerHTML = "current orientation is " + window.orientation;
+  });
+});
+```
+
+#### The `deviceorientation` Event
+
+It is fired if accelerometer info is available and changes. The following image demonstrates three axises for mobile device.
+![deviceorientationaxis](./deviceorientationaxis.png);
+
+When the `deviceorientation` fires, the event would have 5 properties:
+|property name|description|
+|-|-|
+|alpha|The difference in y-axis degrees as you rotate around the z-axis|
+|beta|The difference in z-axis degrees as you rotate around the x-axis|
+|gmma|The difference in x-axis degrees as you rotate around the y-axis|
+|absolute|A boolean value indicating if the device is returning absolute values or not|
+|compasCalibrated| A boolean value indicating if the device's compas is properly calibrated or not|
+
+#### The `devicemotion` Event
+Designed to inform that mobile device is moving.
+
+When the devicemotion events fires, it has following properties:
+- acceleration, an object has x, y , z to inform acceleration in each corresponding axis without considering gravity.
+- accelerationIncludGravity, 
+- interval, amount of time, in milliseconds, that will pass before another devicemotion if fired. This value should be the same from event to event
+- rotationRate, an object has alpha, beta, gamma indicate orientation
+
+> Please always check null before using any of these properties.
+
+### Touch and Gesture Events
+#### Touch Events
+It fires with finger interactive actions with screen. Here are the list of Touch Events:
+|Event name|description|
+|-|-|
+|touchstart|fires when a finger touches the screen even if another finger is already touching the screen|
+|touchmove|fires continuously as a finger is moved across the screen. Calling `preventDefault` during this event prevents scrolling|
+|touchend|fires when a finger is removed from the screen|
+|touchcancel|fires when the system has stopped tracking the touch|
+
+Each events bubbles and canbe canceled. And each event will provide properties that are also common to mouse event. For example, `bubbles`, `cancelable`, `view`, `clientX`, `clientY` etc.
+
+Each events would have special properties as following:
+- touches, an array of Touch objects that indicate the currently tracked touches.
+- targetTouches, an array of Touch objects specific to the event's target
+- changedTouches, an array of Touch objects that have been changed in the last user action.
+
+##### Touch Object
+- clientX, x coordinate of touch within the viewport
+- clientY,
+- identifier, a unique ID for the touch
+- pageX, x coordinate of touch within the page
+- pageY, 
+- screenX, x coordinate of touch within the screen
+- target, the DOM node target for the touch
+
+The order of events when you tap on element:
+1. touchstart
+2. mouseover
+3. mousemove
+4. mousedown
+5. mouseup
+6. click
+7. touchend
+
+#### Gesture Events
+It fires when finger touch the screen and make change in the scale of display or rotation.
+- gesturestart, fires when a finger is already on screen and another finger is placed on screen
+- gesturechange, fires when position of either finger on screen has changed
+- gestureend, fires when one of the fingers has been removed from screen
+
+These events bubble, so you can assign event handler to document.
+
+Gesture event also contains common properties from mouse event,
+
+There are 2 special properties wrapped in gesture event:
+1. rotation, indicates degrees of rotation that fingers have changed, it begins with value of 0.
+2. scale, indicates how much of a change in distance occurred between the fingers. It begins as 1 will increase or decrease.
+
+### Event Reference
+[list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing)
 ## MEMORY AND PERFORMANCE
 > TODO
 
