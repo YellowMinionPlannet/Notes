@@ -588,6 +588,119 @@ There are 2 special properties wrapped in gesture event:
 
 ### Event Reference
 [list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing)
-## MEMORY AND PERFORMANCE
-> TODO
 
+## MEMORY AND PERFORMANCE
+If we add lots of event handler, they would eat up the momory and lower the performance of browser. There are two ways of avoiding this:
+1. event delegation
+2. removing unactive events
+
+### Event Delegation
+The concept is simple, reduce events handler by using concept of bubbling. To be more specific, we can assign event handler to the top level/ container level of the element, and use `target.id` to switch behavior among decendants.
+
+And if we assign evnet handler to the document object, we can have following advance:
+1. document object is immediately available and can have event assigned even before `DOMContentLoaded` event.
+2. minimize the target element references
+3. lower memo usage
+
+> remember that the most suitable events to use event delegation are `click`, `mousedown`, `mouseup`, `keydown`, `keyup`, and `keypress` events.
+
+### Remove Event Handlers
+There are two conditions we need to be aware that will create dangling event handlers:
+1. element is removed from `removeChild()` or `replaceChild()` 
+2. `innerHTML` is updated
+
+## SIMULATING EVENTS
+Events could also be fired by JS code as well as being triggered by browser or user interactive action with browser.
+
+### DOM Event Simulation
+An event could be created at any time by using `createEvent()` method, which accept one string typed argument. That argument might be in form of following:
+- `UIEvents`, mouse events and keyboard events all inherited from UI events, just put sting of `UIEvent` for DOM Level 3.
+- `MouseEvents`, `MouseEvent` for DOM Level 3
+- `HTMLEvents`, 
+
+Once the event object is created, you need to initialize the event. Initializing method wrapped in newly created event object differs due to different event type you input with `createEvent()` method.
+
+After initialization, we can use `dispatchEvent()` to fire our own created event.
+
+#### Simulating Mouse Event
+We use `initMouseEvent` to initialize mouse event typed event object.
+
+Following properties are the accepted arguments by `initMouseEvent` method:
+- type(string), eg. "click"
+- bubbles(Boolean), indicates if the event should bubble, should be true
+- cancelable(Boolean), indicates if event can be canceled, should be true
+- view(AbstractView), should be `document.defaultView`
+- detail(integer), set to 0
+- screenX(integer), 
+- screenY
+- clientX
+- clientY
+- ctrlKey(Boolean), default is false
+- altKey(Boolean)
+- shiftKey(Boolean)
+- metaKey(Boolean)
+- button(integer), default is 0
+- relatedTarget(Object), for `mouseover` and `mouseout` event types
+
+```js
+let btn = document.getElementById("myBtn");
+
+let event = document.createEvent("MouseEvents");
+
+event.initMouseEvent("click", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+btn.dispatchEvent(event);
+```
+
+#### Simulating Keyboard Events
+Arguments for initialization method `initKeyboardEvent()`:
+- type
+- bubbles
+- cancelable
+- view
+- key(string), string code for the key that was pressed
+- location(integer), location of keyboard, 0 for default keyboard, 1 for left location etc.
+- modifiers(string), space seperated list of modifiers, eg. "Shift Control"
+- repeat(integer), number of times this key has been pressed in a row
+
+Fire fox uses `KeyEvents` as argument for `initKeyEvent` to create keyboard event
+
+Sometimes we need to create generic event for browser that does not support this.
+```js
+let textbox = document.getElementById("myTextbox");
+
+let event = document.createEvent("Events");
+
+event.initEvent(type, bubbles, cancelable);
+event.view = document.defaultView;
+event.altKey = false;
+event.ctrlKey = false;
+event.shiftKey = false;
+event.metaKey = false;
+event.keyCode = 65;
+event.charCode = 65;
+
+textbox.dispatchEvent(event);
+```
+
+#### Simulating Other Events
+```js
+let event = document.createEvent("HTMLEvents");
+event.initEvent("focus", true, false);
+target.dispatchEvent(event);
+```
+
+### Custom DOM Events
+```js
+let div = document.getElementById("myDiv"), event;
+
+div.addEventListener("myevent", (event) => {
+  console.log("DIV " + event.detail);
+});
+
+if(document.implementation.hasFeature("CustomEvents", "3.0");){
+  event = document.createEvent("CustomEvents");
+  event.initCustomEvent("myevent", true, false, "Hello World!");
+  div.dispatchEvent(event);
+}
+```
