@@ -244,3 +244,30 @@ eg. attribute of `required`, which is available for `<input>` `<textarea>` and `
 > TODO
 
 ## SCRIPTING SELECT BOXES
+
+## RICH TEXT EDITING
+A very cool way to achieve this is to use `<iframe>` tag and set the document of that iframe's `designMode` property as `"on"`.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <iframe name="richedit" style="height: 100px; width: 100px"></iframe>
+    <script>
+      window.addEventListener("load", (event) => {
+        frames["richedit"].document.designMode = "on";
+      });
+    </script>
+  </body>
+</html>
+```
+
+### Using contenteditable
+```html
+<div class="editable" id="richedit" contenteditable></div>
+```
+
+> Try this enter `data:text/html, <html contenteditable>` in the url bar, the browser will become a notepad.
+
+### Interacting with Rich Taxt
