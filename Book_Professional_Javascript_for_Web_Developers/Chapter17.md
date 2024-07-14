@@ -152,3 +152,95 @@ window.addEventListener("load", (event) =>{
 - focus, fires when gets focus
 
 ## SCRIPTING TEXT BOXES
+There are two types of element that can be used as text input UI:
+1. `<input type="text">` for single line
+2. `<textarea>` for multiple lines
+
+`<input>` has following attributes:
+- size, specify how wide hte text box in terms of visible characters
+- value, initial value
+- maxlength, specifies the maximum number of characters allowed
+
+`<textarea>` has following attributes:
+- row, height of the text box in number of characters
+- cols, width in number of characters
+> be noted that initial value of `<textarea>` must be enclosed within the textarea open and closing tags.
+> be noted, DOM methods such as `setAttribute()` to set the value attribute on element is NOT recommanded, instead just use value property.
+
+### Text Selection
+Both text input elements supports `select()` method, which will trigger focus event and select all the text.
+
+Following snippet select all the text when element get focused.
+```js
+textbox.addEventListener("focus", (event) => {
+  event.target.select();
+});
+```
+
+#### The `selct` Event
+This event fires when element calls `select()` method
+
+#### Retrieve Selected Text
+Using properties of `selectionstart` and `selectionend`
+
+```js
+function getSelectedText(textbox){
+  return textbox.value.substring(textbox.selectionstart, textbox.selectionend);
+}
+```
+
+### Partial Text Selection
+using `setSelectionRange()` method with 0 based indexes
+```js
+textbox.value = "Hello world!";
+
+textbox.setSelectionRange(0, textbox.value.length); //Hello World!
+
+textbox.setSelectionRange(0, 3); //Hel
+
+textbox.setSelectionRange(4, 7); //o w
+```
+> be noted, you need to set focus to the text box either before or after a call to `setSelectionRange` to see the selected effect.
+> autocomplete is implemented by this 
+
+### Input Filtering
+#### Blocking Characters
+Use `keypress` event with regex to prevent nonnumeric character inputs:
+```js
+textbox.addEventListener("keypress", (event) => {
+  if(!/\d/.text(String.fromCharCode(event.charCode)) && event.charCode > 9){
+    event.preventDefault();
+  }
+  // charCode > 9 must not be numeric characters
+});
+```
+
+#### Dealing with the Clipboard
+HTML 5 has following clipboard events:
+- beforecopy, fires before the copy operation 
+- copy, fires when copy operation takes place
+- beforecut, 
+- cut
+- beforepaste,
+- past
+
+`beforecopy`, `beforecut`, and `beforepaste` only fires when context menu for text box is displayed.
+
+Other events fires whenever it's operated through context menu or keyboard shortcut.
+
+Use `clipboardData` Object within clipboard events to access data.
+
+There are 3 methods wrapped within this object:
+1. `getData()`, accept one argument, eg. "text/plain", to specify data type.
+2. `setData()`, accept two arguments, `event.clipboardData.setData("text/plain", "foo")`
+3. `clearData()`
+
+### HTML5 Constraint Validation API
+Event JS is not available, form's field elements still can provide validations if you put the right code to the markup.
+
+eg. attribute of `required`, which is available for `<input>` `<textarea>` and `<select>`
+
+#### Alternate Input Types
+> TODO
+
+## SCRIPTING SELECT BOXES
