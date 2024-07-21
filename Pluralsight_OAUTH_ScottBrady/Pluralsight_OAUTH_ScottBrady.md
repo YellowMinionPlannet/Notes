@@ -209,3 +209,33 @@ response will have two tokens:
     * other claims
 2. AccessToken
 
+# Revised 2024/07/20:
+A typical scenario do describe why we need OAuth:
+
+Suppose we are a registered user of server.example.com, and we want to grant a application, client.example.com, to access to server.example.com's one of the API, which should only perform deleting my Message stored in that server.
+
+Without OAUTH, only thing we could do is to give this application my credentials, eg. username and password. But there are several things need to be aware of:
+1. That application, with my credential, is able to access any API in server.example.com.(Full authority)
+2. We are doing multi tasks, to avoid giving my credentials everytime, that application needs to store my credentials somewhere somehow. That is dangerous, for example, risk of exposing user's credentials.
+3. As long as credential is out, full authority is granted, that means, multi-factor authentication is useless.
+4. If that application wants to use other application as delegate, it needs to share credential with that delegate?
+5. For server.example.com security analysis perspective, it's not possible to identify this is an operation of the real user, or an operation of delegate application.
+
+## To use cookie
+We can let user to go to the url of that specific API and enter their credential and store this grant state in a cookie. But cookie is browser based storage, Cross-Forgery Attack can use script which is able trick the browser to send unwanted request using the browser's cookie.
+
+## OAuth Process
+### The Characters
+There 4 characters within the OAUTH process:
+1. The real user
+2. The client application, a delegate application needs user's specific scoped authority
+3. The identity server
+4. The Resource API, which has access to the user's data
+
+### The Process
+1. So when user want's an application to act as a delegate to manipulate user's data, application will redirect user to the identity server.
+2. User provide credential to the identity server who they are, and Identity server will also ask user which scope they want to grant
+3. If granted, (user proved who they are by credential, and chose the scope), identity server redirect user back to the application page with authorization code, which represent the grant by the user
+4. Application at the background, send the code to identity server and also prove who it is, identity server confirmed and send back the access token, which include scope and expiry period info.
+5. Application use this token, go to the resources, resources needs to verify this token, either locally, or send request to identity server to verify this.
+6. After verification, resource only do what token allows to do.
