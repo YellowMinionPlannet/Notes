@@ -380,3 +380,71 @@ self.onmessage = (messageEvent) =>{
 ```
 
 ### Blobs and Partial Reads
+File type provided a `slice()` method that accepts the start byte index and number of bytes to read, can split the file into Blob type which is super type of File.
+
+Blob type can be created by string, ArrayBuffer, ArrayBufferViews, or, other Blobs.
+
+```js
+new Blob(["foo"]);
+
+new Blob(["{'a':'b'}"], {type: "application/json"});
+
+new Blob(["<p>Foo</p>", "<p>Bar</p>"],{type: "text/html"});
+```
+
+```js
+let filesList = document.getElementById("files-list");
+filesList.addEventListener("change", (event) => {
+  let info = "",
+  output = document.getElementById("output"),
+  progress = document.getElementById("progress"),
+  files = event.target.files,
+  reader = new FileReader(),
+  blob = files[0].slice(0, 32);
+
+  if(blob){
+    reader.readAsText(blob);
+
+    reader.onerror = function(){
+      output.innerHTML = "could not read, error code" + reader.error.code;
+    }
+
+    reader.onload = function(){
+      output.innerHTML = reader.result;
+    }
+  }else{
+
+  }
+});
+```
+
+### Object URLs and Blobs
+Object URL represents a binary data in memo.
+`window.URL.createObjectURL()` is the mothod to create one. Remember to call `URL.revokeObjectURL` with your claimed object URL to free up memo.
+
+### Drag-and-Drop File Reading
+```js
+let droptarget = document.getElementById("droptarget");
+function handleEvent(event) {
+  let info = "",
+  output = document.getElementById("output"),
+  files, i, len;
+  event.preventDefault();
+  if(event.type == "drop"){
+    files = event.dataTransfer.files;
+    i = 0;
+    len = files.length;
+    
+    while(i < len){
+      info += `${files[i].name}`;
+      i++;
+    }
+
+    output.innerHTML = info;
+  }
+}
+
+droptarget.addEventListener("dragenter", handleEvent);
+droptarget.addEventListener("dragover", handleEvent);
+droptarget.addEventListener("drop", handleEvent);
+```
