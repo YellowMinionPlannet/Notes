@@ -270,3 +270,113 @@ console.log(ints) // [0, -1], because 1111 1111 represents the largest number in
 ```
 
 ## BLOB AND FILE APIs
+To avoid using `<input type="file">` to be the only way to interact with files on system, Blob and File API are created.
+
+### The File Type
+This type is related to the `<input type="file">`, and it represents the file or one of the file for that input.
+
+Several read-only properties for File Type:
+- `name`
+- `size`
+- `type`, MIME type of the file
+- `lastModifiedDate`
+
+Sample of usage:
+```js
+let filesList = document.getElementById("files-list");
+filesList.addEventListener("change", (event) => { 
+  let files = event.target.files, i = 0, len = files.length;
+  while( i < len){
+    const f = files[i];
+    console.log(`${f.name} ${f.type} ${f.size}`);
+    i++;
+  }
+});
+```
+
+### The FileReader Type
+This is used for asynchronous file-reading mechanism. So instead of reading from remote server, this type is used to perform i/o from local.
+
+Several available methods:
+- `readAsText(file, encoding)`,
+- `readAsDataURL(file)`, store data URI representing the files 
+- `readAsBinaryString(file)`
+- `readAsArrayBuffer`
+
+So, several events available:
+- progress, when there's more data
+  - triggered every 50 milliseconds
+  - information available: `lengthComputable`, `loaded` and `total`
+  - `result` of FileReader could be readable even the file is not fully loaded
+
+- error, when there's error
+  - `error` property of FileReader is filled
+  - `code` within `error` object has following available values:
+    - 1, not found
+    - 2, security error
+    - 3, read was aborted
+    - 4, file is not readable
+    - 5, encoding error
+
+- load, when file is fully loaded
+```js
+let fileList = document.getElementById("files-list");
+filesList.addEventListener("change", (event) => {
+  let info = "", 
+      output = document.getElementById("output"),
+      progress = document.getElelmentById("progress"),
+      files = event.target.files,
+      type = "default",
+      reader = new FileReader();
+
+  if(/image/.test(files[0].type)){
+    reader.readAsDataURL(files[0]);
+    type = "image";
+  }else{
+    reader.readAsText(files[0]);
+    type = "text";
+  }
+
+  reader.onerror = function() {
+    output.innerHTML = "Could not read file, error is " + reader.error.code;
+  }
+
+  reader.onprogress = function (event){
+    if(event.lengthComputable){
+      progress.innerHTML = `${event.loaded}/${event.total}`;
+    }
+  }
+
+  reader.onload = function(){
+    html = "";
+    swith(type){
+      case "image":
+        html = `<img src="${reader.result}">`;
+        break;
+      case "text":
+        html = reader.result;
+        break;
+    }
+
+    output.innerHTML = html;
+  }
+});
+```
+
+`abort()` can be used to cancel reading, `abort` event is fired. So after either `load`, `error`, or `abort` event is fired, `loadend` event is fired.
+
+### The FileReaderSync Type
+Synchronous version of `FileReader` type, which can only be used within web worker.
+
+Following sample suppose one of the worker sent a file object via `postMessage()`
+```js
+self.onmessage = (messageEvent) =>{
+  const syncReader = new FileReaderSync();
+  
+  const result = syncReader.readAsDataUrl(messageEvent.data);
+
+  self.postMessage(result);
+}
+```
+
+### Blobs and Partial Reads
