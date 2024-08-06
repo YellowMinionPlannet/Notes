@@ -448,3 +448,82 @@ droptarget.addEventListener("dragenter", handleEvent);
 droptarget.addEventListener("dragover", handleEvent);
 droptarget.addEventListener("drop", handleEvent);
 ```
+
+## URL APIs
+This API makes manipulation of URL more easily.
+
+### The URL Object
+`URL()` accepts 2 arguments:
+- url, the URL in string format 
+- base, A base URL object, which makes the url argument relative url.
+
+```js
+const baseURL = new URL("https://example.com/base/path/");
+const relativeURL = new URL("relative/path", baseURL);
+```
+
+There are several properties exposed by URL object:
+- href, the whole URL, you can use this property to create a new URL
+- protocol, includes `:` colon
+- username, username if presents
+- password, password if presents
+- host, combination of host and port
+- hostname, domain name or IP address, eg. example.com
+- port, port number if presents
+- pathname, path of URL 
+- serach, query string, including the leading `?`
+- hash, fragment identifier, including the leading `#`
+- searchParams, a read-only object, `URLSearchParams` typed
+
+```js
+const url = new URL("https://example.com:8080/path/page?q1=val1&q2=val2#fragment");
+
+console.log(url.href); // https://example.com:8080/path/page?q1=val1&q2=val2#fragment
+
+console.log(url.protocol); // https:
+console.log(url.host); // example.com:8080
+console.log(url.hostname); // example.com
+console.log(url.port); // 8080
+console.log(url.pathname); // /path/page
+console.log(url.search); // ?q1=val1&q2=val2
+console.log(url.hash);// #fragment
+
+url.host = "newdomain.com:8081";
+url.pathname = "/new/path/page"
+
+console.log(url.href); // https://newdomain.com:8081/new/path/page?q1=val1&q2=val2#fragment
+```
+
+### URLSearchParams Object
+URLSearchParams has following method:
+- append(name, value), append a new query parameter with name and value
+- delete(name), removes all query parameters with specified name
+- get(name), return the first value of name, or null if none
+- getAll(name), returns array of all values with name, or empty array
+- has(name), return boolean
+- set(name, value), Sets or updates a name's value
+- sort(), sort by name
+```js
+let qs = "?q=javascript&num=10";
+
+let searchParams = new URLSeachParams(qs);
+
+console.log(searchParams.toString()); // q=javascript&num=10
+
+searchParams.has("num"); // true
+searchParams.get("num");// 10
+searchParams.set("page", "3");
+
+console.log(searchParams.toString()) // q=javascript&num=10&page=3
+
+let qs = "?q=javascript&num=10";
+let searchParams = new URLSearchParams(qs);
+for(let param of searchParams){
+  console.log(param);
+}
+
+// ["q", "javascript"]
+// ["num", "10"]
+```
+
+## Encoding API

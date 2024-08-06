@@ -24,7 +24,7 @@ Choose Cognitive Services if that general functionality already satisfy your nee
 
 ![alt text](image-1.png)
 
-[Microsoft Azure Cognitive Services: Big picture](#microsoft-cognitive-services-big-picture)
+* [Microsoft Azure Cognitive Services: Big picture](#microsoft-cognitive-services-big-picture)
 
 ##### about short-term storage
 Why we need Short-term storage, where raw data is being cleaned?
