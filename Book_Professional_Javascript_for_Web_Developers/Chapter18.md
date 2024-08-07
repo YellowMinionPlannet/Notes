@@ -526,4 +526,42 @@ for(let param of searchParams){
 // ["num", "10"]
 ```
 
+## STREAMS API
+
+
 ## Encoding API
+Encoding works for converting string into typed arrays.
+
+Text Encoder, TextEncoderStream, TextDecoder, and TextDecoderStream.
+
+### Encoding Text
+There are 2 ways of doing such conversion, bulk encoding and stream encoding. When going from string to typed arrays, the encoder will always use UTF-8.
+
+#### Bulk Encoding
+The bulk designation means that the JavaScript engine will synchronously encode hte entire string.
+
+```js
+const textEncoder = new TextEncoder();
+const decodedText = 'foo';
+const encodedText = textEncoder.encode(decodedText);
+
+console.log(encodedText); // Uint8Array(3) [102, 111, 111]
+```
+The textEncoder also expose a method called, `encodeInto`, the difference is it can accept an existing Uint8Array, whereas the other method must use a new one.
+
+<sup>Text encoding will always utilized the UTF-8 format and must write into a Uint8Array.</sup>
+
+```js
+const textEncoder = new TextEncoder();
+const fooArr = new Uint8Array(3);
+const barArr = new Uint8Array(2);
+
+const fooResult = textEncoder.encodeInto("foo", fooArr);
+const barResult = textEncoder.encodeInto("bar", barArr);
+
+console.log(fooArr); // Uint8Array(3) [102, 111, 111]
+console.log(fooResult);// {read:3, written: 3}
+
+console.log(barArr);// Uint8Array(2) [98, 97]
+console.log(barResult);// {read:2, written: 2}
+```
