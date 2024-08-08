@@ -5,7 +5,7 @@
 The capability to manipulate memory is scaled when 3D graphics API is introduced.
 
 ### Using ArrayBuffers
-> The `TypedArrayBuffer` is a variant of the `ArrayBuffer` that can be passed between execution contexts without performing a copy.
+> The `SharedArrayBuffer` is a variant of the `ArrayBuffer` that can be passed between execution contexts without performing a copy.
 `ArrayBuffer` is a constructor that can be used to acclocate specific number of bytes in memory.
 ```js
 const buff = new ArrayBuffer(16);// Allocates 16 bytes of memory
@@ -527,7 +527,103 @@ for(let param of searchParams){
 ```
 
 ## STREAMS API
+Why Streams?
 
+We know that data transfered in TCP/IP layer is a squential chuncks. Then how web application can consume a squential chuncks form of data?
+
+The answer is Streams.
+
+Streams aim to solve this problem by 2 ways:
+1. A block of data may not be available all at once. When response is sent, data is sent in squential of packets, and stream processing can allow an application to use network-delivered data as it becomes available rather than waiting for the full payload to finish loading.
+2. A block of data can be processed in small portions. Video processing, image decoding, data decompression, and JSON Parsing all does not require the whole thing to be in memory at once.
+
+### Introduction to Streams
+So stream concept is borrowed from liquid flowing through pipes. It address issue of handling network requests and reading/writing to disk.
+
+There are 3 types of streams:
+- Readable streams, means you can use it to read data, and how data got into stream is underlying source.
+- Writable stremas, means you can write data into streams, and how data got out of stream is underlying sink.
+- Transform streams, one writable and one readable stream, and in between is the transformer, which is used to inspect and modify data in stream.
+
+#### Chunks, Internal Queues, and Backpressure
+- The fundamental unit of stream is *chunk*. *chunk* can be any type of data, but usually it's typed array.
+- *chunk* does not keep a fixed type among them, and does not arrive at a fixed interval
+- Ideally, *chunk* should be fixed size and arrive at fixed interval, approximately.
+- In real world, a well-designed stream should prepare for edge cases
+
+So since there could be different speed of entering and exiting stream. There are 3 conditions need to be considered:
+1. The exit of stream can process faster than the data is provided at entrance. So there would be just waste of memo and computation source
+2. The stream is balanced when exit and enters. Ideal condition.
+3. Entrance of the stream can provide data faster than the exit can process. This is the worst, means there will be a backlog of data somewhere.
+
+For these 3 situations, stream should maintain an *internal queue* of chunks that entered but not yet exited. In the first and second condition, the *internal queue* would be fairly small. 
+
+For the 3rd condition, *internal queue* would grow fast, and indefinitely. So it uses *backpressure* to signal the stream entrance to stop sending data until the length of the *internal queue* below a predefined threshold. This threshold is the *high water mark*, means the max of memo footprint for the queue and is defined in *queueing strategy*.
+
+### Readable Streams
+#### Using the ReadableStreamDefaultController
+```js
+async function* ints(){
+  for(let i = 0; i < 5; ++i){
+    yield await new Promise((resolve) => setTimeout(resolve, 1000, i));
+  }
+}
+
+// generate 0, 1, 2, 3, 4 every 1000ms approximately
+
+const readableStream = new ReadableStream({
+  async start(controller){
+    for await(let chunk of ints()){
+      controller.enqueue(chunk);
+    }
+    controller.close();
+  }
+});
+
+const readableStreamDefaultReader = readableStream.getReader();
+(async function(){
+  while(true){
+    const {done, value} = await readableStreamDefaultReader.read();
+
+    if(done){
+      break;
+    }else{
+      console.log(value);
+    }
+  }
+})()
+```
+
+### Using the WritableStreamDefaultWriter
+```js
+async function* ints(){
+  for(let i = 0; i < 5; ++i){
+    yield await new Promise((resolve) => setTimeout(resolve, 1000, i));
+  }
+}
+
+const writableStream = new WritableStram({
+  write(value){
+    console.log(value);
+  }
+});
+
+const writableStreamDefaultWriter = writableStream.getWriter();
+
+(async function(){
+  for await (let chunk of int()){
+    await writableStreamDefaultWriter.ready;
+    writableStreamDefaultWriter.write(chunk);
+  }
+  writableStreamDefaultWriter.close();
+})()
+```
+
+### Piping Streams
+```js
+
+```
+> In general, as an enduser, when you read squential packet you use readable stream, and read method. When you write to a stream, and use write method.
 
 ## Encoding API
 Encoding works for converting string into typed arrays.
