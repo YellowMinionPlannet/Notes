@@ -1,3 +1,8 @@
+```ps
+conda activate nlp_course
+jupyter notebook
+```
+
 # Section 2: Python Text Basics
 
 ## Working with Text Files with Python - Part One
@@ -194,3 +199,135 @@ with open('doesnotexist.txt', 'r') as mynewfile
 myvariable
 # the file is automatically closed here
 ```
+
+## Working with PDFs
+```ps
+pip install PyPDF2
+```
+
+- Open PDF File
+
+```py
+pdf_file = open('.\\UPDATED_NPL_COURSE\\....\\xx.pdf')
+
+pdf_reader = PyPDF2.PdfReader(myfile)
+
+len(pdf_reader.pages)
+
+page_one = pdf_reader.pages[0]
+
+page_one.extract_text()
+
+myfile.close()
+```
+
+- Concat PDF File
+
+```py
+f = open("")
+pdf_reader = PyPDF2.PdfReader(f)
+first_page = pdf_reader.pages(0)
+pdf_writer = PYPDF2.
+```
+
+## Regular Expressions Part One
+
+```py
+text = "The phone number of the agent is 408-555-1234. Call soon!"
+
+import re
+pattern = "phone"
+my_match = re.search(pattern, text)
+# <_sre.SRE_Match object; span=(4,9), match='phone'>
+my_match.span()
+# (4, 9)
+
+text = "my phone is new phone"
+match = re.search(pattern, text)
+
+matches = re.findall("phone", text)
+len(matches)
+# 2
+
+for match in re.finditer("phone", text)
+  print(match.span())
+```
+
+- Use general pattern
+> Check on `02-Regular_expression.ipynb`
+
+```py
+text = "My telephone number is 777-555-1234"
+# using r before the pattern string to signal it's a pattern
+pattern = r'\d\d\d-\d\d\d-\d\d\d\d'
+target = re.search(patter, text)
+target.group()
+# 777-555-1234
+```
+
+## Regular Expressions Part Two
+- grouping
+
+To make final match result into chunks, so that you can get specific part of the match easily
+
+```py
+pattern = r'(\d{3})-(\d{3})-(\d{4})'
+mymatch = re.search(pattern, text)
+mymatch.group(1)
+# 777
+```
+
+- Confusions
+
+```py
+r'^\d' means starts with a digit
+r'[^\d]' means exclude one digit
+r'[\w\d]+' means a alphneumeric and a digit as a group appears one or multiple times
+```
+
+# Section 3: Natural Language Processing Basics
+## What is Natural Language Processing?
+
+```ps
+<!-- Run as Admin -->
+conda install -c conda-forge spacy
+python -m spacy download en
+```
+
+```py
+import spacy
+nlp = spacy.load('en_core_web_sm')
+# tokenization
+doc = nlp(u'Tesla is looking at buying U.S. startup for $6 million')
+for token in doc:
+  print(token.text, token.pos_, token.dep_)
+```
+
+## Tokenization - Part One
+- Named Entity
+
+```py
+doc8 = nlp(u'Apple to build a Hong Kong factory for $6 million')
+for t in doc8:
+  print(token.text, end=' | ')
+# Apple | to | build | a | Hong | Kong | factory | for | $ | 6 | million |
+
+for entity in doc8.ents:
+  print(entity)
+  print(entity.label_)
+  print(str(spacy.explain(entity.label_)))
+# Apple ORG Companies ... Hong Kong GPE Countires... $6 million MONEY Monetary values...
+```
+
+- Noun Chunks, noun + word describe that
+
+```py
+doc9 = nlp(u'Autonomous cars shift insurance liability toward manufacturers.')
+for chunk in doc9.noun_chunks:
+  print(chunk)
+# Autonomous cars
+# insurance liability
+# manufacturers
+```
+
+## Tokenization - Part Two
