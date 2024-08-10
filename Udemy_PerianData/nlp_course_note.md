@@ -330,4 +330,122 @@ for chunk in doc9.noun_chunks:
 # manufacturers
 ```
 
-## Tokenization - Part Two
+## Tokenization - Part Two (visualization)
+
+```py
+from spacy import displacy
+
+doc = nlp(u'Over the last quarter Apple sold nearly 20 thousand iPods for a profit of $6 million.')
+
+displacy.render(doc, style='dep', jupyter=True, options={'distance': 110})
+```
+
+## Stemming
+
+## Lemmatization
+
+To find root word of a plural of noun or verb of different tense.
+
+```py
+import spacy
+nlp = spacy.load('en_core_web_sm')
+doc1 = nlp(u'I am a runner running in a race because I love to run since I ran today.')
+for token in doc1:
+  print(f'{token.text:{12}} {token.pos_:{6}} {token.lemma:<{22}} {token.lemma_})
+```
+
+## Stop words
+
+words that does not have meaningful meaning.
+
+```py
+len(nlp.Defaults.stop_words)
+
+nlp.vocab['mystery'].is_stop
+#False
+
+nlp.Defaults.stop_words.add('btw')
+nlp.vocab["btw"].is_stop = True
+
+nlp.Defaults.stop_words.remove('beyond')
+```
+
+## Phrase Matching and Vocabulary - Part One
+
+> look at '05 vocabulary and matching' note book
+
+```py
+import spacy
+nlp = spacy.load('en_core_web_sm')
+from spacy.matcher import Matcher
+matcher = Matcher(nlp.vocab)
+# we want to find solarpower in following formats case insensitive:
+# SolarPower
+# soloar-power
+# Solar Power
+
+# So we create pattern, just like regular expression
+
+# pattern of solarpower
+pattern1 = [{'LOWER': 'solarpower'}]
+# pattern of soloar-power
+pattern2 = [{'LOWER': 'solar'}, {"IS_PUNCT": True}, {'LOWER': 'power'}]
+# pattern of solar power
+pattern3 = [{'LOWER':'solar'}, {'LOWER':'power'}]
+
+matcher.add('SolarPower', None, pattern1, pattern2, pattern3)
+
+doc = nlp(u'The Solar Power industry continues to grow as solarpower increases. Solar-Power is amazing.')
+
+found_matches = matcher(doc)
+
+print(found_matches)
+# [(xxxxxx, 1, 3), (xxxxxx, 8, 9), (xxxxxx, 11, 14)]
+# NOTE: the second index as 3, 9, 14 are all exclusive.
+
+for match_id, start, end in found_matches:
+  string_id = nlp.vocab.strings[match_id] # matcher name
+  span = doc[start:end]
+  print(match_id, string_id, start, end, span.text)
+# xxxxxx SolarPower 1 3 Solar Power
+# xxxxxx SolarPower 8 9 solarpower
+# xxxxxx SolarPower 11 14 Solar-power
+# xxxxxx is the matcher id
+
+matcher.remove('SolarPower')
+
+pattern1 = [{'LOWER', 'solarpower'}]
+
+# pattern of solar--power, solar-----power etc.
+pattern2 = [{'LOWER', 'solar'}, {'IS_PUNC': Ture, 'OP': '*'}, {'LOWER':'power'}]
+
+matcher.add('SolarPower', None, pattern1, pattern2)
+
+doc2 = nlp(u'Solar--power is solarpower yay!')
+
+found_matches = matcher(doc2)
+
+```
+
+## Phrase Matching and Vocabulary - Part Two
+
+> look at TextFiles/reaganomics.txt
+
+PhraseMatcher does not requires those rules key like previous matcher, it accepts list of doc.
+
+```py
+from spacy.matcher import PhraseMatcher
+matcher = PhraseMatcher(nlp.vocab)
+with open('../TextFiles/reaganomics.txt') as f:
+  doc3 = nlp(f.read())
+
+phrase_list = ['voodoo economics', 'supply-side economics', 'trickle-down economics']
+
+phrase_patterns = [nlp(text) for text in phrase_list]
+# put each string into nlp() and form a array
+matcher.add('EconMatcher', None, *phrase_patterns)
+# *phrase_patterns means pass phrase_patterns item one by one
+```
+
+# Section 4: Part of Speech Tagging (POS) and Named Entity Recognition (NER)
+
