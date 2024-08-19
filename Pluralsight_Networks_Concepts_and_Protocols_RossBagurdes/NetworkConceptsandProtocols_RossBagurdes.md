@@ -1,3 +1,5 @@
+[OSIModelWellExplained](https://www.baeldung.com/cs/osi-model)
+
 # 3 Dissecting Communication
 
 ## Local and Global Addressing

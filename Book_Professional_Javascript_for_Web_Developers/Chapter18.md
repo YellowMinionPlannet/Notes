@@ -661,3 +661,18 @@ console.log(fooResult);// {read:3, written: 3}
 console.log(barArr);// Uint8Array(2) [98, 97]
 console.log(barResult);// {read:2, written: 2}
 ```
+
+## ATOMICS AND `SharedArrayBuffer`
+A `SharedArrayBuffer` is able to accessed by multiple contexts. The Atomics API allows multiple contexts to safely reade and write to a single `SharedArrayBuffer`. 
+
+- The API forces the buffer operations to occur only one at a time.
+- The API preludes some optimizations that operating system/computer hardware would normall perform automatically (such as instruction reordering).
+- The API make concurrent memory access impossible, which can slow down execution when improperly applied.
+
+### SharedArrayBuffer
+`SharedArrayBuffer` has identical feature comparing to `ArrayBuffer`, but `SharedArrayBuffer` can be used simultaneously,  as a reference, in multiple excution contexts.
+
+Sharing memory among multiple execution contexts means that **concurrent** thread operations become a possibility.
+
+> Check **concurrent** vs. **parelleled** thread operations
+
