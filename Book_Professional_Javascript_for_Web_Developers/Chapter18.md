@@ -762,3 +762,91 @@ Atomics.store(view, 0, 2);
 
 console.log(view[0]);// 2
 ```
+
+#### Atomics Futex Operations and Locks
+This is designed for Linux futex(a portmanteau of fast user-space mutex).
+```js
+// Within read thread
+// Halt when encoutering the initial value 0, at 0 index, for 10000ms
+Atomics.wait(view, 0, 0, 1E5)
+
+// Within write thread
+// notify exact 1 work thread to continue.
+Atomics.add(view, 0 , 1)
+Atomics.notify(view, 0, 1)
+```
+
+## CLIPBOARD API
+Before, if you want to achieve Clipboard operation, you need to use `document.execCommand()`.
+
+Clipboard API aims to replace this method.
+
+There are 3 interfaces involved in this API:
+- Clipboard - The main interface of the Clipboard API, provides read and write access to the clipboard
+- ClipboardEvent - Events for Clipboad operation
+- ClipboardItem - Represent data that can be copied to the system clipboad. It enable text, images, or files to be stored in to single clipboard item.
+
+<sup>all methods are asynchronous, and able to be accessed from `navigator.clipboard`</sup>
+
+### Permissions
+To check permission:
+```js
+navigator.permissions.query({name: "clipboard-read"}).then(result =>{
+  if(result.state == "granted"){
+    console.log("clipboard access granted");
+  }
+})
+```
+
+If you try to access clipboard when the page(tab) is not active, will throw error `DOMException: Document is not focused`
+
+There is also a `allowWithoutGesture` flag to set clipboard permission, which means clipboard can be accessed by program(codee). This is a dangerous one, use by caution.
+
+### Text Read and Write
+```js
+navigator.clipboard.readText().then((clipText) => console.log(clipText));
+
+navigator.clipboard.writeText("This text will be write to the clipboard").then(() => {console.log("clipboarded")});
+```
+
+### Clipboard Events
+```js
+document.addEventListener("copy", async() => {
+  console.log("Copied Text:", await navigator.clipboard.readText());
+});
+```
+
+### Working wiht Non-Text Data
+Clipboard API achieve Non-Text data through `ClipboardItem`, it consists 2 properties: `type` and `data`.
+
+<sup>Please refer to MDN documentaion of `HTMLCanvasElement.toBlob()` [click here](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob)</sup>
+
+```js
+const blob = await new Promise((resolve) => document.createElement("canvas").toBlob(resolve, "image/png"));
+
+const clipboardItem = new ClipboardItem({"image/png": blob});
+
+navigator.clipboard.write([clipboardItem]);
+```
+
+To read:
+
+```js
+for(let clipboardItem of await navigator.clipboard.read()){
+  for(let type of clipboardItem.types){
+    if(type === "image/png"){
+      let blob = await clipboardItem.getType(type);
+
+      //rest of code for blob object
+    }
+  }
+}
+```
+
+To use `ClipboardItemData` type:
+
+```js
+const clipboardItems = [new ClipboardItem([new ClipboardItemData(textData, "text/plain")])];
+
+await navigator.clipboard.write(clipboardItems);
+```
