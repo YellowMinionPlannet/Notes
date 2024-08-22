@@ -672,7 +672,93 @@ A `SharedArrayBuffer` is able to accessed by multiple contexts. The Atomics API 
 ### SharedArrayBuffer
 `SharedArrayBuffer` has identical feature comparing to `ArrayBuffer`, but `SharedArrayBuffer` can be used simultaneously,  as a reference, in multiple excution contexts.
 
-Sharing memory among multiple execution contexts means that **concurrent** thread operations become a possibility.
+Sharing memory among multiple execution contexts means that **concurrent** thread operations become a possibility, where traditionaly, JavaScript operations offer no protection from race condition.
 
 > Check **concurrent** vs. **parelleled** thread operations
+> **concurrent** usually means one single CPU switch among multiple thread very quickly, especially when specific thread is being idle or only waiting/checking the I/O operation to finish.
+> **parallel** means multiple CPU run multiple thread at the same time.
 
+- Demo of race condition
+
+```js
+const workerScript = `
+self.onmessage = ({data}) =>{
+  const view = new Uint32Array(data);
+
+  //Perform 1000000 add operations
+  for(let i = 0; i < 1E6; ++i){
+    //Here is thread unsafe operation where race condition will occur
+    // My thought is there may be multiple contexts read the view[0] at the same time and then add
+    // That will cause the addition to 1 does not not increment
+    view[0] += 1;
+  }
+  self.postMessage(null);
+}
+`
+
+const workerScriptBlobUrl = URL.createObjectURL(new Blob([workerScript]));
+
+// Create worker pool of size 4
+const workers = [];
+for(let i = 0; i < 4; ++i){
+  workers.push(new Worker(workerScriptBlobUrl));
+}
+
+let responseCount = 0;
+for(const worker of workers){
+  worker.onmessage = () =>{
+    if(++responseCount == wokers.length){
+      console.log(`Final buffer value: ${view[0]}`);
+    }
+  }
+}
+
+const sharedArrayBuffer = new SharedArrayBuffer(4);
+const view = new Uint32Array(sharedArrayBuffer);
+view[0] = 1;
+
+for(const worker of workers){
+  worker.postMessage(sharedArrayBuffer);
+}
+
+// Expected result is 4000001. Actual might be 2145106 or something like that
+```
+
+### Atomics Basics
+Basically, the previous race condition includes three operation, load of value, arithmetic operation, and write the value.
+
+- Atomics will make sure these three operation is executed in a sequence and does not get interrupted by another thread.
+
+```js
+let sharedArrayBuffer = new SharedArrayBuffer(1);
+
+let typedArray = new Uint8Array(sharedArrayBuffer);
+
+console.log(typedArray); // Uint8Array[0] initialized with 0
+
+const index = 0;
+const increment = 5;
+
+Atomics.add(typedArray, index, increment);
+Atomics.sub(typedArray, index, increment);
+```
+
+#### Atomic Reads and Writes
+Atomic reads and writes are another story, because these are seperated 2 times call to the typedarray instead of calling once, there must be a machenism to make sure the operation between these two calls is not interrupted or reordered.
+
+The Atomics API addresses this problem in 2 primary ways:
+- All Atomics instructions are never reordered with respect to one another
+- Using Atomic read and wirte guarantees that all instructions before Atomic read/write will finish before the Atomic read/write occurs, and all instructions after will not begin until Atomic read/write completes.
+- Instructions might be reordered but never violates Atomic read/write boundary
+
+```js
+const sharedArrayBuffer = new SharedArrayBuffer(4);
+const view = new Uint32Array(sharedArrayBuffer);
+
+view[0] = 1;
+
+console.log(Atomics.load(view,0)); //1
+Atomics.store(view, 0, 2);
+
+console.log(view[0]);// 2
+```
