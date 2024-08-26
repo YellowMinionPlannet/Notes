@@ -1,8 +1,18 @@
+> DevOps Skills for Developers with Visual Studio and TFS 2017 also by Benjamin Day.
+
 # Getting Started
 ## Create a new project
 dev.azure.com is the home page of Azure DevOps
 
-## User types, Security and Azure Directory
+When you create a new project, it also created a new organization for you.
+
+To setup your organization:
+1. go to azure portal and setup
+  Azure devops organizations
+2. Azure devops organization settings
+  organization settings
+
+  e## User types, Security and Azure Directory
 ### MSA account vs. Azure Active Directory account
 MSA account is the account normal person created with @hotmail.com @live.com @outlook.com
 MSA acccont is managed by the user himself/herself

@@ -850,3 +850,78 @@ const clipboardItems = [new ClipboardItem([new ClipboardItemData(textData, "text
 
 await navigator.clipboard.write(clipboardItems);
 ```
+
+## CROSS-CONTEXT MESSAGING
+
+Cross-document messaging, called XDM, is the ability to pass info between different execution contexts. Contexts include web workers, pages, iframes etc.
+
+> For worker messaging, need to refer Chapter 24 `MessageChannel` and `BroadcastChannel`
+
+- To send message
+```js
+let iframeWindow = document.getElementById("myframe").contentWindow;
+iframeWindow.postMessage("A secret", "http://www.wiley.com");
+```
+- To receive message
+message received through `onmessage` event handler, and there are 3 important pieces of info:
+- data, strin gdata passed by `postMessage()`
+- origin, the origin filled when passing the message
+- source, A proxy of who sent message
+
+```js
+window.addEventListener("message", (event) => {
+  if(event.origin == "http://www.wiley.com"){
+    processMessage(event.data);
+    event.source.postMessage("Received", "http://p2p.wiley.com");
+  }
+})
+```
+
+## Fullscreen API
+- To enter fullscreen mode
+```js
+myDiv.requestFullscreen().catch(err => {
+  console.error("Unable to enter fullscreen mode")
+})
+```
+- To exit fullscreen mode
+```js
+document.exitFullscreen().catch(() => {
+  console.error("Unable to exit fullscreen mode")
+})
+```
+- To check wheather fullscreen is capable
+`fullscreenEnabled` on `document` object
+
+- To check which element is in fullscreen
+```js
+if(document.fullscreenElement){
+
+}
+```
+- To listen for fullscreen event
+```js
+document.addEventListener("fullscreenchange", () =>{
+  if(document.fullscreenElement){
+
+  }
+})
+```
+
+## GEOLOCATION API
+```js
+let p;
+navigator.geolocation.getCurrentPosition((position) => {
+  p = position
+}, (e) => {
+  console.log(e.code);
+  console.log(e.message)
+});
+// p.coords.altitude
+```
+
+## DEVICE APIS
+
+`window.navigator`, to visit browser info, operationg system info, hardware.
+
+### Browser and Operating System Identification
