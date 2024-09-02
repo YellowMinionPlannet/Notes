@@ -115,4 +115,75 @@ Use:
   - `scalar clone` to create a repo
   - `scalar register` to register a existing repo
 
-##
+## Incorporating Changelogs
+
+`git log`
+
+`git log --oneline`
+`git log --pretty="- %s"`
+
+### Automation Options
+- GitHub Changelog Generator
+- Auto Changelog
+#### IDE Plugins
+- Visual Studio changelog plugin
+#### Pipeline Plugins
+- Jenkins Changelog plugin
+
+**To see full log of git**
+
+`git log --pretty=fuller`
+`git reflog`
+
+# 4 Planning and Implementing Branching Strategies for the Source Code
+
+## Configuring Branches
+
+- Branch Policies, initial safeguards
+  - Require approval from a number of reviewer on PR
+  - Linked Work Items for traceability
+  - Check for Comment All resolved
+  - Limit merge Types???
+
+- Branch Restrictions, Advanced safeguards
+  - Build Validation
+  - Status Checks, Other services status check
+  - Designate code reviewers to be included automatically, also called Manual Approval
+  - Restrict Who can Push to the Branch
+
+- Branch Protections, Minimize catastrophic actions
+  - Prevent Deletion
+  - Prevent overwriting, borbid **force push**
+
+## Descovering Branch Strategies
+
+So correcty Branching Strategy will help you to:
+
+- Optimize productivity
+- Enable Parallel Development
+- Plan sets of structured releases
+- Prepare path for CICD, especially for production deployment
+- Tackle delivered changes quickly
+- Support multi-version software and patches.
+
+### Types of Branching Strategy
+
+1. Trunk-Based
+
+  Bug fix, feature updates, all into `main` branch
+
+2. Feature(Task), Branch per story
+
+  `development` Branch created, and each feature, bug fixes are created in a new branch, and merged into `development`, and finally, into `main` branch for release.
+
+2. Feature Flag
+  
+  Use flags to flag which feature branch is enabled and which one is disabled when release.
+
+3. Release, All applicable user stories
+
+  Create a `release x.x.x` version branch for each version of release, and above that release branch, create a `development` branch and feature branches.
+
+  This critical when creating some customized branch for specific customer.
+
+## Understanding the PR workflow
