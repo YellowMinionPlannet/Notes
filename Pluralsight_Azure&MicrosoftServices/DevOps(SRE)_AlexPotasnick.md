@@ -187,3 +187,81 @@ So correcty Branching Strategy will help you to:
   This critical when creating some customized branch for specific customer.
 
 ## Understanding the PR workflow
+
+## Configuring Repositories
+
+### Use Git Tags to Organize Your Repository
+
+Tags are substitue name for a commit.
+
+There are 2 types of tags:
+
+1. Lightweight, No notes, just tag name, simply a pointer to a specific commit
+`git tag v1.2`
+
+2. Annotated, Attatch a note on the tag, stores the tagged commmit as full object in Git Database.
+`git tag -a 1.2 -m "Updated html template"`
+
+Web portal only can creeate Anotated tag
+
+Need to push tag seperately into remote repo `git push origin v1.2`
+
+But first you need a branch and newly created commit.
+
+## Handling Large Repository
+
+- When Large Files are updated git keeps copies of versions of those large files. So you want to avoid that to happen. Because when you clone or pull, the copies would slow down the process.
+
+- However some necessary large files are designated to be in repo. You need LFS for this special condition.
+
+- There is a command to clear git garbage collection.
+`git gc --aggressive`
+
+`git --prune=<date>`
+
+`git --no-prune` , do not delete loose object.
+
+## Exploring Repository Permissions
+
+Branch Permissions are default inherited by the Organization and Project Permission.
+
+- Branch Lock can make a branch into "read-only" condition. It can prevent changes when Pull Request being reviewed. Project Admin has that Authority.
+
+## Removing Repository Data
+
+Q: Why we need it?
+A: Because we maybe commit sensitive data into git, and even we revert the change and commit again, the committed content still prevails. So in order to remove those thing, we need to manipulate the history of Git.
+
+2 scenarios:
+
+|Local but not on remote|Pushed to remote|
+|-|-|
+| <li>"bad" commit on local, not yet pushed to remote</li><li>Remove/amend bad local commit</li>|<li>"bad" commit pushed to remote</li><li>delete remote commit</li><li>delete history through caveat</li>|
+
+### Removing/Amending Local Commit Before Push
+- Delete Unwanted File
+- Remove file from Git tree/index `git rm --cached <filename>`
+- Delete or amend previous commit,
+  - To delete the whole commit `git reset HEAD^`
+  - To keep other file in commit `git commit --amend -m "comment"`
+
+### Removing Commit that pushed to Remote Repo
+
+- Reset back to last "good" commit `git reset --hard #commitSHA`
+- Force push to remove commits past the last good one. `git push --force`
+- All branch commits past the reset one will be deleted.
+
+## Recovering Repository Data
+Q: Why we need this?
+A: When we accidentally deleted branch or repository, we need to recover them.
+
+### Deleted Repository
+
+To restore an deleted repo:
+
+```http
+PATCH
+https://dev.azure.com/{organization}/{project}/_apis/git/recycleBin/repositories/{repositoryId}?api-version=6.0-preview.1
+```
+### Deleted Branch
+
