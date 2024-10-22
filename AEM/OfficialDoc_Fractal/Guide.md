@@ -1,3 +1,20 @@
+[fractal.build](fractal.build)
+
+# Installing Fractal
+## Installing Fractal in your project
+
+1. use `npm init` to initialize your project directory.
+2. use `npm install --save @frctl/fractal` 
+> NOTE: `npm install` and `npm install --save` is no difference after npm 5.0.0
+
+## Installing the Fractal CLI tool
+
+Using CLI tool to start Fractal development web server is easy, but you can also us Gulp and other NPM scripts tool to do this.
+
+To install Fractal CLI tool by using `npm i -g @frctl/fractal`
+
+[Link to Fractal CLI](#fractal-cli)
+
 # Context Data
 
 We can use `{{}}` in the template to access anything under context.
@@ -279,3 +296,111 @@ There are 3 ways of doing this.
 ## using render helper
 ## using handlebar partial
 ## using handlebar partial and reference partial context data in configuration file
+
+
+# Fractal CLI
+## Overview
+### Installation & setup
+You can install CLI tool by `npm i -g @frctl/fractal`
+
+There would be Prerequisites
+1. you must ahve a project settings file, `fractal.config.js` by default
+2. and it exports a configured Fractal instance:
+```js
+//fractal.config.js
+
+var fractal = require('@frctl/fractal').create();
+fractal.set('project.title', 'FooCorp Component Library');
+fractal.components.set('path', _dirname + '/src/components');
+
+module.exports = fractal; // export the configured Fractal instance for use by the CLI tool.
+```
+
+### Running commands
+
+Typical command format:
+```
+fractal <command-name> [args] [opts]
+```
+
+If you want to open UI dev server with *BrowserSync* option:
+
+```
+fractal start --sync
+```
+
+To run multiple commands, please see [Interactive Mode](#interactive-mode)
+
+
+### Command Types
+There are 2 types for commands:
+1. global
+2. project
+
+Example of *global command*
+```
+fractal new <project-name>
+```
+
+Where *project commands* can only be run within root directory of your project, which requires *project settings file*
+
+## Custom commands
+Custom commands can hook up Fractal's API. 
+
+You need to register your custom commands within your *project settings file* by `fractal.cli.command()`.
+
+### An example custom command
+
+```js
+// fractal.config.js
+
+var config = {
+    description: 'Lists components in the project'
+}
+
+function listComponents(ars, done){
+    const app = this.fractal;
+    for(let item of app.components.flatten()){
+        this.log(`${item.handle} - ${item.status.label}`);
+    }
+    done();
+}
+
+fractal.cli.command('list-components', listComponents, config);
+```
+
+Once created, the command can be run from project directory by `fractal list-components`.
+
+OR
+
+`fractal.cli.exec('list-components')`
+
+### Accepting arguments
+
+When you want to pass arguments to your custom commands, the usage of `fractal.cli.command()` function would be slightly different.
+
+```js
+fratcal.cli.command('foo <requiredArg> [optionalArg] [anotherOptionalAr]', function(args, done){
+    console.log(args.requiredArg);
+    done();
+})
+```
+
+The first argument of `fractal.cli.command()` would be the string format of your custom command, where `<>` represents the name of required arguments, and `[]` is the name of optional arguments.
+
+### Accepting options
+
+```js
+var config = {
+    options:[
+        ['-p, --port <number>', 'The port to use.']
+    ]
+}
+
+fractal.cli.command('foo', function(args,done){
+    console.log(`Something was started on port ${args.options.port}`);
+    done();
+}, config);
+```
+
+## Interactive Mode
