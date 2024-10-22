@@ -400,7 +400,7 @@ var config = {
 fractal.cli.command('foo', function(args,done){
     console.log(`Something was started on port ${args.options.port}`);
     done();
-}, config);
+}, config); 
 ```
 
 ## Interactive Mode
