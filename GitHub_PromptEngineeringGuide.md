@@ -75,3 +75,56 @@ positive
 ```
 
 ## General Tips for Designing Prompts
+
+1. Instruction
+
+Use `###` to mark instruction, or use `"""` to mark context
+
+2. Specificity
+
+Imprecise Sample:
+```
+Explain the concept prompt engineering. Keep the explanation short, only a few sentences, and don't be too descriptive.
+```
+
+Better Sample:
+```
+Use 2-3 sentences to explain the concept of prompt engineering to a high school student.
+```
+
+3. To do or not to do?
+Instead using "DO NOT", try to use positive advice/ requirements to the LLM to show what to do.
+
+Negative Prompt:
+```
+The following is an agent that recommends movies to a customer. DO NOT ASK FOR INTERESTS. DO NOT ASK FOR PERSONAL INFORMATION.
+```
+
+Better Prompt:
+```
+The following is an agent that recommends movies to a customer. The agent is responsible to recommend a movie from the top global trending movies. It should refrain from asking users for their preferences and avoid asking for personal information. If the agent doesn't have a movie to recommend, it should respond "Sorry, couldn't find a movie to recommend today.".
+```
+
+4. Be specific about desired context, outcome, length, fromat, style, etc.
+5. Start with zero-shot, then few-shot, neither of them worked, then fine-tune.
+
+Sample of Zero-shot
+```
+Extract keywords from the below text.
+Text: {text}
+Keywords:
+```
+
+Sample of Few-shot
+```
+Extract keywords from the corresponding texts below.
+
+Text 1: Stripe provides APIs that web developers can use to integrate payment processing into their websites and mobile applications.
+Keywords 1: Stripe, payment processing, APIs, web developers, websites, mobile applications
+##
+Text 2: OpenAI has trained cutting-edge language models that are very good at understanding and generating text. Our API provides access to these models and can be used to solve virtually any task that involves processing language.
+Keywords 2: OpenAI, language models, text processing, API.
+##
+Text 3: {text}
+Keywords 3:
+```
