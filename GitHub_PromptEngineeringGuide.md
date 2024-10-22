@@ -128,3 +128,91 @@ Keywords 2: OpenAI, language models, text processing, API.
 Text 3: {text}
 Keywords 3:
 ```
+
+## Examples of Prompts
+
+**This section not only has good sample of prompts, but also demos what LLMs is capable to do, these samples are typical tasks that LLMs are good at.**
+
+### Text Summarization
+To summarize / explain / describe what a complex paragraph is talking about.
+
+Sample:
+```
+Antibiotics are a type of medication used to treat bacterial infections. They work by either killing the bacteria or preventing them from reproducing, allowing the body’s immune system to fight off the infection. Antibiotics are usually taken orally in the form of pills, capsules, or liquid solutions, or sometimes administered intravenously. They are not effective against viral infections, and using them inappropriately can lead to antibiotic resistance.
+
+Explain the above in one sentence:
+```
+### Information Extraction
+
+Sample:
+
+```
+Author-contribution statements and acknowledgements in research papers should state clearly and specifically whether, and to what extent, the authors used AI technologies such as ChatGPT in the preparation of their manuscript and analysis. They should also indicate which LLMs were used. This will alert editors and reviewers to scrutinize manuscripts more carefully for potential biases, inaccuracies and improper source crediting. Likewise, scientific journals should be transparent about their use of LLMs, for example when selecting submitted manuscripts.
+
+Mention the large language model based product mentioned in the paragraph above:
+```
+
+### Question Answering
+Sample:
+```
+Answer the question based on the context below. Keep the answer short and concise. Respond "Unsure about answer" if not sure about the answer.
+
+Context: Teplizumab traces its roots to a New Jersey drug company called Ortho Pharmaceutical. There, scientists generated an early version of the antibody, dubbed OKT3. Originally sourced from mice, the molecule was able to bind to the surface of T cells and limit their cell-killing potential. In 1986, it was approved to help prevent organ rejection after kidney transplants, making it the first therapeutic antibody allowed for human use.
+
+Question: What was OKT3 originally sourced from?
+Answer:
+```
+
+### Text Classification
+
+Decide sentiment of input, etc.
+
+Sample:
+```
+Classify the text into neutral, negative or positive. 
+Text: I think the food was okay. 
+Sentiment:
+```
+
+### Conversation
+Sample:
+```
+The following is a conversation with an AI research assistant. The assistant tone is technical and scientific.
+Human: Hello, who are you?
+AI: Greeting! I am an AI research assistant. How can I help you today?
+Human: Can you tell me about the creation of blackholes?
+AI:
+```
+
+```
+The following is a conversation with an AI research assistant. The assistant answers should be easy to understand even by primary school students.
+Human: Hello, who are you?
+AI: Greeting! I am an AI research assistant. How can I help you today?
+Human: Can you tell me about the creation of black holes?
+AI: 
+```
+
+### Code Generation
+
+Samples:
+
+```
+"""
+Table departments, columns = [DepartmentId, DepartmentName]
+Table students, columns = [DepartmentId, StudentId, StudentName]
+Create a MySQL query for all students in the Computer Science Department
+"""
+```
+
+### Reasoning
+
+Samples:
+
+```
+What is 9,000 * 9,000?
+```
+
+```
+The odd numbers in this group add up to an even number: 15, 32, 5, 13, 82, 7, 1. 
+Solve by breaking the problem into steps. First, identify the odd numbers, add them, and indicate whether the result is odd or even. 
+```
