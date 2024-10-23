@@ -257,7 +257,7 @@ Contains full fractal configuration object
 #### _target
 Only available in component preview layout, and contains data object represnets the item rendered.
 
-### Customising Handlebars
+## Customising Handlebars
 Before customising handlebar engine, you need to install package directly into your project.
 
 Try run `npm install --save @frctl/handlebars`
