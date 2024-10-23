@@ -15,25 +15,77 @@ To install Fractal CLI tool by using `npm i -g @frctl/fractal`
 
 [Link to Fractal CLI](#fractal-cli)
 
-# Context Data
+# Upgrading
+- Template engines: default Handlebars engine
+- Themes: Mandelbrot
 
-We can use `{{}}` in the template to access anything under context.
+# Project Settings
 
-```hbs
-<!-- example.hbs -->
-<p>{{text}}</p>
+Before you can get your dev server running, you need to provide following required settings.
+
+## The `fractal.config.js` file
+
+This file should be locate in your root directory, and you need this to use CLI tool.
+
+> It recommanded way to create path using keyword `__dirname`, for example, instead of using `src/components`, it's better to use `__dirname + '/src/components'`
+
+## Creating and exporting a new Fractal instance
+At min for the setting file, it needs to create a new instance and export it.
+```js
+const fractal = module.exports = require('@frctl/fractal').create();
 ```
 
-```yml
-context:
-    text: This is a sample component!
+## Project-related metadata(Customization)
+
+You can use `fractal.set()` to customize the metadata from defaults.
+
+```js
+fractal.set('project.title', 'FooCorp Component Library');
+fractal.set('project.version', 'v1.0');
+fractal.set('project.author', 'Mickey Mouse');
 ```
 
-```output
-<p>This is a sample component!</p>
+## Configuring components (path)
+
+```js
+fractal.components.set('path', __dirname+'/src/components');
 ```
 
-# View Template
+## Configuring documentation pages (path)
+
+```js
+fractal.docs.set('path', __dirname+'/src/docs');
+```
+
+## Configuring the web UI
+
+- Path of assets
+```js
+fractal.web.set('static.path', __dirname+'/public');
+```
+- Path of build destination
+```js
+fractal.web.set('builder.dest', __dirname+'/build');
+```
+
+# View templates
+Template is something static to each page, it is the reusable part. You can also pass variables into it.
+
+## File extensions
+By default, the componnet view templates with `.hbs` and documentation view templates with a `.md` extension name.
+
+You can customize this by
+```js
+fractal.components.set('ext', '.handlebars');
+fractal.docs.set('ext', '.html');
+```
+
+## Using Handlebars
+Handlebars is the default template engine for Fractal components.
+
+[Click here for Handlebars section](../OfficialDoc_Handlebars/Guide.md)
+
+### Handlebars helpers
 
 We can use handlebars in fractal. 
 ```hbs
@@ -46,12 +98,9 @@ We can use handlebars in fractal.
 
 This way will not pull the referenced partial context data in, so the output is empty.
 
+#### `render`
 
-## Using render helper
-
-But in this way, we cannot pass data and pull the context data into the referenced partials.
-
-So, we can use `render` helper built in fractal.
+We can use `render` helper built in fractal to pass in context data.
 
 ```hbs
 <!-- example.hbs -->
@@ -91,7 +140,7 @@ context:
 
 As result, we can see that context in referenced template, `example.hbs`, was replaced by referencer template, `render-example.hbs`.
 
-## Using render helper with merge
+#### `merge`
 
 ```hbs
 <!-- example.hbs -->
@@ -135,7 +184,7 @@ context:
 
 As result, we can see the context was first replaced by `someData`, then the `original`context was merged.
 
-## Using path helper
+#### `path`
 
 ```hbs
 {{path '/css/my-stylesheet.css'}}
@@ -145,7 +194,7 @@ It should begin with a slash `/`
 
 Always use this to reference static assets.
 
-## Using context helper
+#### `context`
 
 ```hbs
 {{context '@example'}}
@@ -162,7 +211,7 @@ context:
 { "text": "This is an example component!", "original": "ORIGINAL!" }
 ```
 
-## Using contextData helper
+#### `contextData`
 
 Will return the context object of a certain partial.
 
@@ -181,9 +230,16 @@ Will return the context object of a certain partial.
 {{> '@button-1' (contextData '@button-2' someData) }}
 ```
 
-## Special Variables
+#### `view`
+Output the raw view template for a component.
+```hbs
+{{view '@example'}}
 
-### _config
+```
+
+### Special Variables
+
+#### _config
 
 Contains full fractal configuration object
 
@@ -192,11 +248,100 @@ Contains full fractal configuration object
 {{ _config.components.ext }} <!-- outputs the extension used for components -->
 ```
 
-### _self
+#### _self
 
 ```hbs
 {{ _self.title }} <!-- outputs 'Button' -->
 ```
+
+#### _target
+Only available in component preview layout, and contains data object represnets the item rendered.
+
+### Customising Handlebars
+Before customising handlebar engine, you need to install package directly into your project.
+
+Try run `npm install --save @frctl/handlebars`
+
+Then here is the example of customization:
+```js
+// fractal.config.js file
+
+const hbs = require('@frctl/handlebars')(
+    {
+        helpers:{
+            uppercase: function(str){
+                return str.toUpperCase();
+            }
+        }
+    }
+);
+
+fractal.components.engine(hbs); /* set as the default template engine for components */
+fractal.docs.engine(hbs); /* you can also use the same instance for documentation, if you like! */
+```
+
+#### Configuration options
+There are other stuff you can put into the Handlebars
+
+- partials
+```js
+{
+    partials:{
+        foobar: "thi sis a partial!"
+    }
+}
+
+```
+- pristine
+If set to `true`, that means you DO NOT wish to automatically load any of the bundled helpers.
+```js
+{
+    pristine: true
+}
+```
+
+
+# Context Data
+
+Context data is data that is available to your view templates.
+
+It can be following data structure:
+1. strings
+2. booleans
+3. numbers
+4. arrays
+5. objects
+
+It can also contain Promises and 'static data references'
+
+## Defining & using context data
+To define context data, you need to set a `context` object in relevent configuration file:
+```json
+// my-component.config/json
+{
+    "context":{
+        // context data goes here
+    }
+}
+```
+
+For example:
+We can use `{{}}` in the template to access anything under context.
+
+```hbs
+<!-- example.hbs -->
+<p>{{text}}</p>
+```
+
+```yml
+context:
+    text: This is a sample component!
+```
+
+```html
+<p>This is a sample component!</p>
+```
+
 
 # Configuration Files
 We can set configuration files for 3 types of items, with 3 formats.
@@ -404,3 +549,43 @@ fractal.cli.command('foo', function(args,done){
 ```
 
 ## Interactive Mode
+
+It is a mode that allows you to start a dev server and do subsequent commands in the same CLI window.
+
+You can launch interactive CLI by running `fractal` command in your terminal.
+
+And following command would follow format as it originally was, but `fractal` prefix could be ignored.
+
+For example：
+```
+start --sync
+```
+
+### Interactiv CLI tips
+
+you can use `help`, `exit` commands, but global level commands cannot be run within interactive mode.
+
+## Commands reference
+
+### Project commands
+
+```
+fractal start
+```
+with following options:
+- `-p, --port <port-number>`
+- `-t, --theme <theme-name>`
+- `-s, --sync`
+- `-w, --watch`
+
+
+```
+build
+```
+with following option:
+- `-t, -theme <theme-name>`
+
+### Global commands
+```
+fractal new <directory-name>
+```
