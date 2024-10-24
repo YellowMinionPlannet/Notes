@@ -1,3 +1,14 @@
+# Introduction
+## Installation
+```html
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+
+<script>
+var template = Handlebars.compile("Handlebars" "<b>{{doesWhat}}</b>")
+console.log(template({"doesWhat": "rocks!"}))
+</script>
+```
+
 # Expressions
 ## Basic Usage
 ```hbs
@@ -177,14 +188,99 @@ data: {{./name}} {{this/name}} {{this.name}}
 
 ```js
 Handlebars.registerHelper("name", function(){
-  return "Nils"
-})
+  return "Nils"; 
+});
 ```
 
 ```html
 helper: Nils
 data: Yehuda Yehuda Yehuda
 ```
+
+### Subexpressions
+Helpers can be nested within single mustache expression, and result of nested helper could also turn into parameter to the parent helper.
+For example:
+```hbs
+{{outer-helper (inner-helper 'abc') 'def'}}
+```
+
+In this example, `inner-helper` was first invoked with parameter `abc`, the result of `inner-helper` becomes the first parameter when invoking `outer-helper` right after.
+
+### Whitespace control
+The mustache expression's default behavior is to reserve all the whitespaces on the both side of `{{}}`.
+
+For example:
+
+We have an input file that looks like this,
+```json
+{
+  "nav": [
+    {
+      "url": "foo", 
+      "test": true,
+      "title": "bar"
+    },
+    {
+      "url": "bar"
+    }
+  ]
+}
+```
+
+If our handlebars template is like this,
+
+```hbs
+{{#each nav}}
+  <a href="{{url}}">
+    {{#if test}}
+      {{title}}
+    {{^}}
+      Empty
+    {{/if}}
+  </a>
+{{/each}}
+```
+Then, the default whitespace behvior would give us,
+
+```html
+<a href="foo">
+  bar
+</a>
+<a href="bar">
+  Empty
+</a>
+```
+- but, using `~` at the beginning or ending of the mustache expression would ignore all the whitespaces on corresponding side.
+
+WIth the same input file, if we are having handlebars template like this,
+
+```hbs
+{{#each nav ~}}
+  <a href="{{url}}">
+    {{~#if test}}
+      {{~title}}
+    {{~^~}}
+      Empty
+    {{~/if~}}
+  </a>
+{{~/each}}
+```
+We would have output like this,
+
+```html
+<a href="foo">bar</a><a href="bar">Empty</a>
+```
+
+### Escaping Handlebars expressions
+There are 2 ways of preventing escaping
+1. `\{{unescaped}}`
+2. 
+```hbs
+{{{{raw}}}}
+  {{unescaped}}
+{{{{/raw}}}}
+```
+<sub>Here, escaping means to transform `&` to `&amp;`</sub>
 
 # Partials
 
@@ -196,6 +292,7 @@ For example:
 {{> myPartial}}
 ```
 
+Here, we register out Partial.
 ```js
 Handlebars.registerPartial("myPartial", "{{prefix}}");
 ```
@@ -207,6 +304,8 @@ Handlebars.registerPartial("myPartial", "{{prefix}}");
 ```output
 Hello
 ```
+
+## Dynamic Partials
 
 So partials are called by `{{> }}`, this statement also can be used to call Block Helpers.
 
@@ -283,6 +382,51 @@ Handlebars.registerPartial(
   Hello, Nils Knappmeier.
   Hello, Yehuda Katz.
 ```
+
+## Partial Blocks
+If we are using block expression and partial at the same time, for example `{{#> layout}}`, then the block content will render as default if the partial does not exists.
+
+For example:
+```hbs
+{{#> layout}}
+  Error: partial not registered.
+{{/layout}}
+```
+The sentence "Error: partial not registered" will appear only when `layout` is not registered.
+
+However, if `layout` is registered as follow,
+```js
+Handlebars.registerPartial("layout", "Site Content {{> partial-block}}")
+```
+
+and `layout` is a template like this:
+
+```hbs
+{{#> layout}}
+My Content
+{{/layout}}
+```
+
+and `@partial-block` is not registered, the output would be,
+```html
+Site Content My content
+```
+
+- You need to look out for the context when partial is nested within partial blocks. The context would remain relative to the partial block but not the partial.
+
+for example:
+```hbs
+{{#each people as |person|}}
+  {{#> childEntry}}
+    {{person.firstname}}
+  {{/childEntry}}
+{{/each}}
+```
+so the context remains `person` as available identifier within `childEntry` partial.
+
+## Inline Partials
+
+
 
 # Helpers
 
