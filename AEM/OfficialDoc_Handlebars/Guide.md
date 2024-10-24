@@ -1,3 +1,167 @@
+# Expressions
+## Basic Usage
+```hbs
+<!-- handlebar template -->
+<p>{{firstname}} {{lastname}}</p>
+```
+
+```json
+// input object
+{
+  "firstname":"Yehuda",
+  "lastname":"Katz"
+}
+```
+
+```html
+<!-- output file-->
+<p>Yehuda Katz</p>
+```
+## Path expressions
+Suppose we have input file that contains an object.
+```json
+{
+  "person":{
+    "firstname": "Yehuda",
+    "lastname":"Katz"
+  }
+}
+```
+Then we can use the expression in template like this:
+
+```hbs
+{{person.firstname}} {{person.lastname}}
+```
+
+## Changing the context
+When dealing with nested object or list of objects, you can use `../` to go back to parent context.
+
+```hbs
+{{prefix}}
+{{#each people}}
+  {{../prefix}} {{firstname}}
+{{/each}}
+```
+## Literal Segments
+Within the expression, if you want to reference a invalid identifier for a property, you can use `[]` to achieve this.
+
+Samples:
+|GOOD|BAD|
+|-|-|
+|`{{array.[0].item}}`|`{{array.0.item}}`|
+|`{{array.[0].[item-class]}}`|`{{array.[0].item-class}}`|
+|`{{./[true]}}`|`{{./true}}`|
+
+## HTML escaping
+To avoid html escaping for the special character, for example `&` into `&amp;`, we can use `{{{}}}`.
+
+```json
+// input object
+
+{
+  "specialChars": "& < > \" ' ` ="
+}
+```
+
+```hbs
+raw: {{{specialChars}}}
+html-escaped: {{specialChars}}
+```
+
+```html
+raw: & < > " ' ` =
+html-escaped: &amp; &lt; &gt; &quot; &#x27; &#x60; &#x3D;
+```
+
+## Helpers
+We can use `Handlebars.registerHelper` to register helpers. And to use them,within the expression, we first pass in the helper's identifier and then the parameters each seperated by space.
+
+```js
+Handlebars.registerHelper("loud", function(aString){
+  return aString.toUpperCase();
+})
+```
+
+```hbs
+{{firstname}} {{loud lastname}}
+```
+
+```html
+Yehuda KATZ
+```
+
+### Prevent HTML-escaping
+- Use `Handlebars.Safestring`, then the return value will not be escaped.
+- Use `Handlebars.escapeExpresssion` to enforce escaping.
+```js
+Handlebars.registerHelper("loud", function(text){
+  var result = "<b>" + Handlebars.escapeExpression(text) + "</b>";
+  return new Handlebars.SafeString(result);
+})
+```
+
+### Helpers with Multiple Parameters
+Let's see the sample:
+
+```hbs
+{{link "See Website", url}}
+```
+
+```js
+Handlebars.registerHelper("link", function(text, url){
+  var url = Handlebars.escapeExpression(url),
+      text = Handlebars.escapeExpression(text);
+
+  return new Handlebars.SafeString("<a href='" + url + "'>" + text + "</a>");
+})
+```
+
+```json
+
+{
+  "url": "https://yehudakatz.com/"
+}
+```
+
+```html
+<a href='https://yehudakatz.com/'>See Website</a>
+```
+
+### Helpers with Hash arguments
+```hbs
+{{link "See Website" href=person.url class="person"}}
+```
+
+```js
+Handlebars.registerHelper("link", function(text, options) {
+    var attributes = [];
+
+    Object.keys(options.hash).forEach(key => {
+        var escapedKey = Handlebars.escapeExpression(key);
+        var escapedValue = Handlebars.escapeExpression(options.hash[key]);
+        attributes.push(escapedKey + '="' + escapedValue + '"');
+    })
+    var escapedText = Handlebars.escapeExpression(text);
+    
+    var escapedOutput ="<a " + attributes.join(" ") + ">" + escapedText + "</a>";
+    return new Handlebars.SafeString(escapedOutput);
+});
+```
+
+```json
+{
+  "person": {
+    "firstname": "Yehuda",
+    "lastname": "Katz",
+    "url": "https://yehudakatz.com/",
+  },
+}
+```
+
+```html
+<a class="person" href="https://yehudakatz.com/">See Website</a>
+```
+
 # Partials
 
 Partials are expressions that can be reused. Expression means a string of statement that can be compiled by hbs.

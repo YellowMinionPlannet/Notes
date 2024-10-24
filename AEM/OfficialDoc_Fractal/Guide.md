@@ -264,7 +264,7 @@ Try run `npm install --save @frctl/handlebars`
 
 Then here is the example of customization:
 ```js
-// fractal.config.js file
+// fractal.config.js file 
 
 const hbs = require('@frctl/handlebars')(
     {
