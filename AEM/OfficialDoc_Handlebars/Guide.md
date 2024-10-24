@@ -162,6 +162,30 @@ Handlebars.registerHelper("link", function(text, options) {
 <a class="person" href="https://yehudakatz.com/">See Website</a>
 ```
 
+### Disambiguating helpers calls and property lookup
+If helper has the same identifier as input property, helper's name has priority. We can fix this by using `./`, `this.`, `this/` to enforce referening input property.
+
+```hbs
+helper: {{name}}
+data: {{./name}} {{this/name}} {{this.name}}
+```
+
+```json
+{
+  "name": "Yehuda"
+}
+
+```js
+Handlebars.registerHelper("name", function(){
+  return "Nils"
+})
+```
+
+```html
+helper: Nils
+data: Yehuda Yehuda Yehuda
+```
+
 # Partials
 
 Partials are expressions that can be reused. Expression means a string of statement that can be compiled by hbs.
