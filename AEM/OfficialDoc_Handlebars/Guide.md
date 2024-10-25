@@ -396,7 +396,7 @@ The sentence "Error: partial not registered" will appear only when `layout` is n
 
 However, if `layout` is registered as follow,
 ```js
-Handlebars.registerPartial("layout", "Site Content {{> partial-block}}")
+Handlebars.registerPartial("layout", "Site Content {{> @partial-block}}")
 ```
 
 and `layout` is a template like this:
@@ -425,8 +425,56 @@ for example:
 so the context remains `person` as available identifier within `childEntry` partial.
 
 ## Inline Partials
+Inline partial can be initialized within the template, and if registered partial has the same name, inline partial would override.
 
+Example for inline partial:
+```hbs
+{{#*inline "myPartial"}}
+  My Content
+{{/inline}}
 
+{{#each people}}
+  {{> myPartial}}
+{{/each}}
+```
+Within this example, `myPartial` would be available for each people's item.
+
+Example for overrides:
+```hbs
+{{#> layout}}
+  {{#*inline "nva"}}
+    My Nav
+  {{/inline}}
+  {{#*inline "content"}}
+    My Content
+  {{/inline}}
+{{/layout}}
+```
+
+```js
+Handlebars.registerPartial("layout", `
+  <div class='nav'>
+    {{> nav}}
+  </div>
+  <div class='content'>
+    {{> content}}
+  </div>
+`);
+
+Handlebars.registerPartial("nav", "nav");
+Handlebars.registerPartial("content", "content");
+```
+
+Although `nav` and `content` partials are registered, but inline partials issued at template take priority.
+
+```html
+<div class='nav'>
+    My Nav
+  </div>
+  <div class='content'>
+    My Content
+  </div>
+```
 
 # Helpers
 
@@ -455,12 +503,14 @@ Yehuda KATZ
 
 # Block Helpers
 
-Block Helpers are special function, it has `this` keyword which represents the current context, and `options.fn(this)` means to compile the content of block helper using current context.
+Block Helpers are special function, it has `this` keyword which represents the current context.
+
+And only Block Helper can receive a `options` parameter when registered as function. And `options.fn` represents the current template included within the block helper, so `options.fn(this)` means to compile the current template using current context.
 
 For example:
 
 ```hbs
-{{#noop}}{{body}}{{/noop}}
+{{#noop}}<div>{{body}}</div>{{/noop}}
 ```
 
 ```js
@@ -475,8 +525,10 @@ Handlebars.registerHelper("noop", function (options) {
 }
 ```
 
-```output
+```html
+<div>
 Yeah!
+</div>
 ```
 
 ## With
