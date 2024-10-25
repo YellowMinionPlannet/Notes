@@ -531,8 +531,9 @@ Yeah!
 </div>
 ```
 
-## With
+## Calling Block Helper with Specified Context Property
 
+Suppose we have template like below:
 ```hbs
 <div class="entry">
   <h1>{{title}}</h1>
@@ -542,6 +543,7 @@ Yeah!
   {{/with}}
 </div>
 ```
+Then `with` as block helper is registered below, and the context is a parameter we specified in the above template as `story` property in the current context.
 
 ```js
 Handlebars.registerHelper("with", function (context, options) {
@@ -569,6 +571,12 @@ Handlebars.registerHelper("with", function (context, options) {
     <div class="body">After the jump</div>
 </div>
 ```
+## Simple iterator
+
+> Just remember that all of the built-in helpers are block helpers, they work the same way as block helpers do.
+
+## Conditionals
+
 
 # Built-in Helpers
 ## #if
