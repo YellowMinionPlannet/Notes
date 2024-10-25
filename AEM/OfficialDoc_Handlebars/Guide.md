@@ -588,7 +588,54 @@ Handlebars.registerHelper("with", function (context, options) {
 > Just remember that all of the built-in helpers are block helpers, they work the same way as block helpers do.
 
 ## Conditionals
+Let's see special Block Helpers for `if` and `else`
 
+```hbs
+{{#if isActive}}
+  <img src='star.gif' alt='Active'>
+{{else}}
+  <img src='cry.gif' alt='Inactive'>
+{{/if}}
+```
+
+```js
+Handlebars.registerHelper("if", function(conditional, options){
+  if(conditional){
+    return options.fn(this);
+  }else{
+    return options.inverse(this);
+  }
+});
+```
+Here, `options.inverse()` will return the `else` statement part of template.
+
+## Hash arguments
+If we provide a hash arguments for block helper, then we can use `options.hash` to visit it.
+```hbs
+{{#list nav id='nav-bar' class='top'}}
+  <a href='{{url}}'>{{title}}</a>
+{{/list}}
+```
+
+```js
+Handlebars.registerHelper("list", function(context, options){
+  var attr = Object.keys(options.hash)
+    .map(function(key){
+      return key + '="' + options.hash[key] + '"';
+    })
+    .join(" ");
+
+  return (
+    "<ul " + attr + ">" + 
+    context
+      .map(function(item){
+        return "<li>" + options.fn(item) + "</li>";
+      })
+      .join("\n")
+    + "</ul>";
+  );
+});
+```
 
 # Built-in Helpers
 ## #if
