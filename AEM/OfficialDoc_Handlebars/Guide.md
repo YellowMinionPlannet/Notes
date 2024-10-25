@@ -503,6 +503,18 @@ Yehuda KATZ
 
 # Block Helpers
 
+## Before everything starts
+
+As previous notes state, we have helpers and partials. 
+- Helpers, using `Handlebars.registerHelper` to register, act as a function.
+- Partials, using `Handlebars.registerPartial` to register, being registered as a string.
+
+If we put thest two things into block expression, for example `{{# helper}}` or `{{#> partial}}`, they would behave little bit different.
+
+For block partials please refer to [Partial Blocks Section](#partial-blocks)
+
+## Section continued
+
 Block Helpers are special function, it has `this` keyword which represents the current context.
 
 And only Block Helper can receive a `options` parameter when registered as function. And `options.fn` represents the current template included within the block helper, so `options.fn(this)` means to compile the current template using current context.
