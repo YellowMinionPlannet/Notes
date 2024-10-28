@@ -98,6 +98,8 @@ We can use handlebars in fractal.
 
 This way will not pull the referenced partial context data in, so the output is empty.
 
+> Refering the [handlebar guide](../OfficialDoc_Handlebars/Guide.md#partial-can-be-called-with-parameters), the handlebar can play with parameters but you can pass in the whole context data.
+
 #### `render`
 
 We can use `render` helper built in fractal to pass in context data.
@@ -272,6 +274,10 @@ const hbs = require('@frctl/handlebars')(
             uppercase: function(str){
                 return str.toUpperCase();
             }
+        },
+        partials:{
+            foobar: "thi sis a partial!",
+            prestine: true,
         }
     }
 );
@@ -280,24 +286,28 @@ fractal.components.engine(hbs); /* set as the default template engine for compon
 fractal.docs.engine(hbs); /* you can also use the same instance for documentation, if you like! */
 ```
 
-#### Configuration options
-There are other stuff you can put into the Handlebars
+#### Accessing the underlying Handlebars instance
+We can register helper and partials the way as handlbar does by visiting `handlebars` instance in the fractal instance.
 
-- partials
 ```js
-{
-    partials:{
-        foobar: "thi sis a partial!"
-    }
-}
+const instance = fractal.components.engine();
+instance.handlebars.registerHelper("foo", function(str){
 
+});
 ```
-- pristine
-If set to `true`, that means you DO NOT wish to automatically load any of the bundled helpers.
+
+we can use way combined with handlebars adapter which is introduced previously.
+
 ```js
-{
-    pristine: true
-}
+const hbs = require('@frctl/handlebars')({
+    /* configuration options here */
+});
+
+const instance = fractal.components.engine(hbs);
+
+instance.handlebars.registerHelper('bar', function(str){
+    /* do something */
+});
 ```
 
 
@@ -342,6 +352,89 @@ context:
 <p>This is a sample component!</p>
 ```
 
+## Static data references
+within the conetext config file, you can reference another view template's context data by using syntax like `@otherContext`.
+
+For example,
+
+```yml
+# list-items.config.yml
+context:
+    title: My favorite list items
+    items:
+        - one
+        - two
+        - three
+        - four
+```
+```yml
+# another .config.yml
+context:
+    list: '@list-items.items'
+
+# this will resolve to
+context:
+    list:
+        - one
+        - two
+        - three
+        - four
+```
+
+## Dynamic data
+We can us framework such as *Faker* to program and generate dynamic data.
+
+Before we start coding, we need to use `npm install faker --save` to install *faker* framework.
+```js
+// within member-list.config.js
+
+const faker = require('faker');
+const memberCount = 10;
+const memberData = [];
+
+for(var i = 0; i < memberCount; i++){
+    memberData.push(
+        {
+            name: faker.name.findName(),
+            email: faker.internet.email()
+        }
+    );
+}
+
+module.exports = {
+    context:{
+        member: memberData
+    }
+}
+```
+
+### Using data from API
+By using `Promise` we can add remote data.
+```js
+const request = require('request-promise-native');
+
+const response = request({
+    uri: 'http://www.mysite-api.com/member',
+    json: true
+})
+
+response.then(function(membersApiData){
+    const memberData = [];
+    for(let member of membersApiData){
+        memberData.push({
+            name: `${member.firstName} ${member.lastName}`,
+            email: member.emailAddress
+        })
+    }
+    return memberData
+})
+
+module.exports ={
+    context:{
+        members: response //should be a promise type
+    }
+}
+```
 
 # Configuration Files
 We can set configuration files for 3 types of items, with 3 formats.
