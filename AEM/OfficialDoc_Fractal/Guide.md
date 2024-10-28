@@ -734,6 +734,14 @@ Be noticed that `{{{yield}}}` is where you render the individual component.
 # Preview Layouts
 In the preview file, remember that you can hook up with related files(css, js etc.) using `path` helper. For example, `{{path '/example.css'}}`
 
+## Preview rendering steps
+
+1. component is rendered using its own context
+2. rendered content passed into `yield`
+3. A json representation of component assigned to `_target`
+4. Layout view renders other yield and _target.
+
+
 # Variants
 
 ## Three ways of creating variants
