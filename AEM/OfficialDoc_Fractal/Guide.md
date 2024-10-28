@@ -192,7 +192,7 @@ As result, we can see the context was first replaced by `someData`, then the `or
 {{path '/css/my-stylesheet.css'}}
 ```
 
-It should begin with a slash `/`
+It should begin with a slash `/` and arguments are relative to the web root.
 
 Always use this to reference static assets.
 
@@ -660,11 +660,79 @@ fractal.components.set('statuses.prototype.color', 'pink');
 fractal.docs.set('statuses.ready.label', 'Good to go!')
 ```
 
-# Components
-> TODO, 
+# Components - Overview
+What is **required** to be a component in fractal:
+1. Live within the components directory which is defined by project settings
+2. Should have a extension file that match up the template engine file extension, which is also defined in project settings.
+
+What is **optional** for components:
+- configuration and preview data
+- organzied into directories or sub-directories
+- include related files, such as js, css, tests, README.md
+- have one or more variants.
+
+## Simple components
+It is defined as simple component if:
+- it only contains a template file. It can have a configuration file which must be reside in same directory.
+- And both of the files must NOT have same name as the folder.
+
+## Compound components
+It is compound component if:
+1. the template has the same name as the parent folder
+2. configuration file can be added
+3. other related files has no naming conventions
+
+For example,
+```
+|-- components
+|   |-- blockquote
+|       |-- blockquote.config.yml
+|       |-- blockquote.hbs
+|       |-- fancy-quote.js
+|       |-- README.md
+|       |-- style.css
+```
+
+## Hiding components and Ordering them
+- Ordering: using two digits in front of name
+- Hiding: using `hidden` property in config file or adding `_` underscore as prefix.
+
 # Creating a Component
+## Creating variants
+Using `--` to clarify this template is a variant, for example:
+```
+|-- components
+|   |-- blockquote.config.json
+|   |-- blockquote--fancy.hbs
+|   |-- blockquote.hbs
+```
+
+## Adding a preview layout
+We can use global config file to point to a component to be the default preview layout.
+```js
+fractal.components.set('default.preview', '@preview');
+```
+Here, we set template with handle 'preview' to be the default preview layout, which something looks like:
+```hbs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ path '/assets/main.css' }}">
+    <title>Preview</title>
+</head>
+<body>
+
+{{{ yield }}}
+
+<script src="{{ path '/assets/main.js' }}"></script>
+</body>
+</html>
+```
+Be noticed that `{{{yield}}}` is where you render the individual component.
 
 # Preview Layouts
+In the preview file, remember that you can hook up with related files(css, js etc.) using `path` helper. For example, `{{path '/example.css'}}`
 
 # Variants
 
