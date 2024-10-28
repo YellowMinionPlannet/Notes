@@ -449,45 +449,219 @@ Items:
 2. .config.yml
 3. .config.js
 
+## Configuration inheritance
+In fractal, the configuration context data is using *cascade* concept. This concept will reuse shared properties, for example, collection configuration file properties will pass down to the components.
+
 Rules for properties in config files. 
 
 1. If property is primitive, downstream entity override upstream
+    - Check if it is set directly in the component's configuration file, if so, use it.
+    - Otherwise, recursively work upwards to check any parent collections to see if any of them have the same identifier.
+    - I no values set in the upwards, use the default value.
 2. If property is missing in downstream, aggregate upstream to downstream.
-3. If property is object, aggregate upstream to downstream. 
+3. If property is object or array, aggregate upstream to downstream. 
+    - downstream is merged with upstream
     
 For example, No.3,
-```yml
-# upstream.config.yml
-context:
-    tags:
-        - sprint-1
-        - dashboard
-```
+```js
 
-```yml
-# downstream.config.yml
-context:
-    tags:
-        - dashboard
-        - needs-review
-```
+// fractal.config.js
+fractal.components.set('default.conetext', {
+    'background': 'sparkly'
+});
 
-then after aggregate, the downstream context will be:
+//upstream collection config file
+{
+    "context":{
+        "special-sauce": true,
+        "background": "stars"
+    }
+}
 
-```yml
-context:
-    tags:
-        - dashboard
-        - needs-review
-        - sprint-1
+//downstream component config file
+{
+    "context":{
+        "text":"Click here!"
+    }
+}
+
+// Finally resolved to 
+{
+    "background": "stars",
+    "special-sauce": true,
+    "text": "Click here!"
+}
 ```
 
 # Naming & Referencing
+Fractal auto identify templates through file path/structure, this gives hard time when trying to reference other templates. That's because if the path changes, we need to correct each path reference.
 
-# Statuses
+So, fractal also supports *handle* reference.
+
+## Generated names & handles
+Unless devloper specified through config, fractal will infer *name* of component/item, and use that *name* as *handle* for that component/item, then developer can reference other templates by using these *handles*.
+
+> TIP
+>
+> *name* and *handles* can only contain lowercase, alphanumeric, underscores and dashes.
+
+The *name* will be also used to generate *label* and *title*. *Label* is used for navigation, and *title* is used for name of item when it needs to appear as text.
+
+For example, if we have folder structure like
+```
+|-- components
+|   |-- blockquote-large.hbs
+```
+Then, we will have corresponding properties for `blockquote-large` as
+- name: blockquote-large
+- handle: blockquote-large
+- label: Blockquote Large
+- title: Blockquote Large
+
+## Uniqueness
+Fractal only recognize unique handle, so the later handle with the same name would be ignored.
+
+For example, we have folder structure like,
+```
+|-- components
+|   |-- standard
+|   |   |-- button.hbs
+|   |-- special
+|   |   |-- button.hbs
+```
+In this case, the second `button` will be ignored.
+
+You can solve this by:
+1. [collection prefix](#prefixes)
+2. [bespoke handle](#customising-names--handles)
+
+## Ordering and hiding
+### Ordering
+two digits could be used in front of the name in order to do ordering.
+```
+|-- pages
+|   |-- 01-index.md
+|   |-- 02-changelog.md
+|   |-- 03-naming-conventions.md
+```
+underscore is used to hide template.
+```
+|-- components
+|   |-- _hidden-components.hbs
+|   |-- article.hbs
+```
+The `hidden-components` could be referenced by others but will not appear in the navigation.
+
+## Prefixes
+The collection can have its own collection configuration file, whose property will apply to all the components.
+
+Within this file, there's `prefix` property will cause *handle* generation behave differently.
+
+for example,
+```
+|-- components
+|   |-- standard
+|   |   |-- button.hbs
+|   |-- special
+|   |   |-- special.config.json
+|   |   |-- button.hbs
+|   |   |-- alert.hbs
+```
+Upper example shows that `special.config.json` is a collection config file. If it contains property like `"prefix": "sparkly"`, then the `button.hbs` and `alert.hbs` handles would become `sparkly-button` and `sparkly-alert` correspondingly.
+
+## Customising names & handles
+
+- Customising *name* will also change the *handle*
+- Customising *name* will not prevent *prefix* logic, but customized *handle* will lead to ignorance of *prefix*
+
+## Referencing other items
+If we have file structure like:
+```
+|-- components
+|   |-- banner.hbs
+|   |-- standard
+|   |   |-- button.config.json
+|   |   |-- button.hbs
+|   |-- special
+|   |   |-- special.config.json
+|   |   |-- button.hbs
+|   |   |-- alert.hbs
+
+```
+and, we have  following customized config files:
+
+```json
+// components/standard/button.config.json
+{
+    "handle": "clickme"
+}
+
+// components/special/special.config.json
+{
+    "prefix": "sparkly"
+}
+```
+Then, we have reference relation as following
+|referenced file|reference syntax|
+|-|-|
+|banner.hbs|@banner|
+|standard/button.hbs|@clickme|
+|special/alert.hbs|@sparkly-alert|
+|special/button.hbs|@sparkly-button|
+
+## Statuses
+There are couple default options for components and documentation items.
+- components: `ready` `wip` `prototype`
+- documentation: `ready` `draft`
+
+So within the item's config file, you can set this through `status` property in the context.
+
+### Customising
+
+By the `fractal.config.json`, you can set the default statuses for components and docs like:
+```js
+fractal.components.set('statuses', {
+    prototype: {
+        label: "Prototype",
+        description: "Do not implement.",
+        color: "#FF3333"
+    },
+    wip: {
+        label: "WIP",
+        description: "Work in progress. Implement with caution.",
+        color: "#FF9233"
+    },
+    ready: {
+        label: "Ready",
+        description: "Ready to implement.",
+        color: "#29CC29"
+    }
+});
+
+fractal.docs.set('statuses', {
+    draft: {
+        label: 'Draft',
+        description: 'Work in progress.',
+        color: '#FF3333'
+    },
+    ready: {
+        label: 'Ready',
+        description: 'Ready for referencing.',
+        color: '#29CC29'
+    }
+})
+
+```
+
+Or more specifically, 
+
+```js
+fractal.components.set('statuses.prototype.color', 'pink');
+fractal.docs.set('statuses.ready.label', 'Good to go!')
+```
 
 # Components
-
+> TODO, 
 # Creating a Component
 
 # Preview Layouts
