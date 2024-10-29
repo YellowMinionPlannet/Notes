@@ -103,8 +103,8 @@ Where we need to omit Subjective:
 |书|honn|ほん|**ほ**ん|
 |杂志|zaltu shi|ざっし|ざ**っし**|
 |钢笔|mann nenn hi tsu|まんねんひつ|ま**んね**んひつ|
-|中国字典|chuu gokugo no ji sho|ちゅうごくのじしょ|ち**ゅうごく**ごの**じ**しょ|
-|日文字典|nihonngo no ji sho|にほんごのじしょ|に**ほん**ごの**じ**しょ|
+|中国语字典|chuu gokugo no ji sho|ちゅうごくのじしょ|ち**ゅうごく**ごの**じ**しょ|
+|日文语字典|nihonngo no ji sho|にほんごのじしょ|に**ほん**ごの**じ**しょ|
 
 ## (2)
 |CH|EN|JA|PR|
