@@ -1051,6 +1051,13 @@ To provide context data when including sub-components, there would be 3 ways:
 ```
 
 # Notes
+Notes can be done through explicit markdown file or `notes` property within config file.
+
+markdown file could be named as syntax `README.md` `readme.md` `<component-name>.readme.md` or `<component-name>--<variant-name>.readme.md`.
+
+Remember that `README.md` will be run through fractal engine before markdown parser. That means you can use mustache within your documentation.
+
+# Configuration reference(quick cheatsheet)
 
 
 # Fractal CLI
