@@ -864,15 +864,193 @@ We can utilize this default variant behavior to prevent sharing context data fro
 ## Collated components
 To show each variant in a individual preview page, you need to set `collated` property to `true`.
 
-
-
 # Including sub-components
 
-There are 3 ways of doing this.
+<sub>Following methods will include sub-components without individual context data</sub>
 
-## using render helper
-## using handlebar partial
-## using handlebar partial and reference partial context data in configuration file
+- Example #1:
+
+We have parent component 
+```hbs
+<!--search-box.hbs-->
+<div class="searchbox">
+    <input type="search" name="keywords">
+    {{> @button}}
+</div>
+```
+then, we have sub-component
+```hbs
+<!--button.hbs-->
+<button type="button" name="submit">Search</button>
+```
+
+- Example #2:
+Using `@partial-block`, buit in handlebars framework, will also work for including sub-component.
+
+We have parent template
+```hbs
+<!--container.hbs-->
+<div class="container">
+    {{> @partial-block}}
+</div>
+```
+
+Then we can have:
+```hbs
+<!--This will render anotherPartial with container div-->
+{{#> container}}
+    {{> anotherPartial}}
+{{/container}}
+```
+```hbs
+{{#> container}}
+    {{yield}}
+{{/container}}
+```
+
+Above 2 examples will not render sub-component with the context data even there is config file for sub-component.
+
+## Providing context data to sub-components
+To provide context data when including sub-components, there would be 3 ways:
+
+1. Using `render` helper
+```hbs
+<!-- button.hbs -->
+<button type='button' name='submit'>{{ button.text }}</button>
+```
+
+```json
+// button.config.json
+{
+    "context":{
+        "button":{
+            "text": "A Button"
+        }
+    }
+}
+```
+
+```hbs
+<!-- search-box.hbs -->
+<div class="search-box">
+    <label for="search">{{ label }}</label>
+    <input type="search" name="keywords" id="search">
+    {{ render '@button'}}
+</div>
+```
+
+```json
+// search-box.config.json
+{
+    "context": {
+        "label": "Search"
+    }
+}
+```
+
+```html
+<!-- output -->
+<div class="search-box">
+    <label for="search">Search</label>
+    <input type="search" name="keywords" id="search">
+    <button type='button' name='submit'>A Button</button>
+</div>
+```
+
+2. Define all context data in the parent component's config
+```hbs
+<!-- button.hbs -->
+<button type='button' name='submit'>{{ button.text }}</button>
+```
+
+```json
+// button.config.json
+{
+    "context":{
+        "button":{
+            "text": "A Button"
+        }
+    }
+}
+```
+
+```hbs
+<!-- search-box.hbs -->
+<div class="search-box">
+    <label for="search">{{ label }}</label>
+    <input type="search" name="keywords" id="search">
+    {{> @button}}
+</div>
+```
+
+```json
+// search-box.config.json
+{
+    "context": {
+        "label": "Search",
+        "button":{
+            "text": "Go!"
+        }
+    }
+}
+```
+
+```html
+<!-- output -->
+<div class="search-box">
+    <label for="search">Search</label>
+    <input type="search" name="keywords" id="search">
+    <button type='button' name='submit'>Go!</button>
+</div>
+```
+
+3. Use `@handle` syntax within context data (config file)
+
+```hbs
+<!-- button.hbs -->
+<button type='button' name='submit'>{{ button.text }}</button>
+```
+
+```json
+// button.config.json
+{
+    "context":{
+        "button":{
+            "text": "A Button"
+        }
+    }
+}
+```
+
+```hbs
+<!-- search-box.hbs -->
+<div class="search-box">
+    <label for="search">{{ label }}</label>
+    <input type="search" name="keywords" id="search">
+    {{ render '@button'}}
+</div>
+```
+
+```json
+// search-box.config.json
+{
+    "context": {
+        "label": "Search",
+        "button": "@button"
+    }
+}
+```
+
+```html
+<!-- output -->
+<div class="search-box">
+    <label for="search">Search</label>
+    <input type="search" name="keywords" id="search">
+    <button type='button' name='submit'>A Button</button>
+</div>
+```
+
+# Notes
 
 
 # Fractal CLI
