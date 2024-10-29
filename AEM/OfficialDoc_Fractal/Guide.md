@@ -744,9 +744,76 @@ In the preview file, remember that you can hook up with related files(css, js et
 
 # Variants
 
-## Three ways of creating variants
+In the context data, you can define a array property named `variants` to define your variants of current component. Each item in the `variants` array should contain a `name` property, which is the only required property.
 
-### By configuration files
+For example,
+```json
+{
+    "title": "Notification Banner",
+    "variants":[
+        {
+            "name": "warning"
+        },{
+            "name": "success"
+        }
+    ]
+}
+
+```
+
+## Defining variants in the component's config file
+
+Variants inherits the context data of parent component. And within each variant, you can set up individual `context` property, properties of which will overides the parent ones.
+
+For example,
+```hbs
+<!--notifications.config.json-->
+<div class="notification notification--{{modifier}}">
+    <p class="notification-message">{{message}}</p>
+    <a class="notification-close" href="#">{{closeButtonText}}</a>
+</div>
+```
+
+```json
+{
+    "title":"Notification Banner",
+    "status": "ready",
+    "context":{
+        "modifier":"default",
+        "closeButtonGText": "close",
+        "message":"This is the default banner"
+    },
+    "variants":[
+        {
+            "name": "warning",
+            "context":{
+                "modifier": "alert",
+                "message":"This is a warning banner"
+            }
+        },{
+            "name": "success",
+            "status":"prototype",
+            "context":{
+                "modifier":"success",
+                "message": "This is a success banner"
+            }
+        }
+    ]
+}
+```
+
+## Creating file-based variants
+If the variant has different markup from the default component, you can also create variant by adding another template file. The convention of naming is some syntax like `<component-name>--<variant name>`.
+
+Variants and default component shares the same context data from config file.
+
+```
+|-- components
+|   |-- notification
+|   |   |-- notification--success.hbs
+|   |   |-- notification--warning.hbs
+|   |   |-- notification.hbs
+```
 
 ```hbs
 <!-- button.hbs -->
@@ -759,23 +826,45 @@ variants:
     - name: warning
 ```
 
-There will be three components in the fractal to display.
+## Mixing configuration and file based variants
+Remember, you can mix both methods. You can have variants' own templates file and share the config file of default component. When rendering variants, if the config file `variants` property contains the same named item, that item will become the variant's context data.
 
-```output
-<input type="button" value="default"/>
-<input type="button" value="success"/>
-<input type="button" value="warning"/>
+## Default variant
+Even you don't have `variants` property set, there would be one variant implicitly created by fractal. That default variant is named *default*. This default name could be customized through `default` property within the config file.
+
+The implicit default variant is rendered by default. 
+
+For example,
+```hbs
+{{render @notification}}
+
+<!-- Same meaning with upper line even the config file does not *default* variant defined.-->
+{{render @notification--default}}
+```
+### Default variants and context data
+We can utilize this default variant behavior to prevent sharing context data from parent component context data.
+
+```json
+{
+    "title": "Notification Banner",
+    "context": {}, // no shared data
+    "variants":[
+        {
+            "name": "default",
+            "label": "Base",
+            "context":{
+                "message": "This is a standard notification"
+            }
+        },
+        // other variants
+    ]
+}
 ```
 
-### By view templates
+## Collated components
+To show each variant in a individual preview page, you need to set `collated` property to `true`.
 
-Just create button.hbs and button--success.hbs and button--warning.hbs.
 
-### By mixed method
-
-Just mix both method.
-
-> Note: The variant will aggregate configuration in the default ones.
 
 # Including sub-components
 

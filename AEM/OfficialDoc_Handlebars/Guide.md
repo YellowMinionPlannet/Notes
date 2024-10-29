@@ -394,22 +394,24 @@ For example:
 ```
 The sentence "Error: partial not registered" will appear only when `layout` is not registered.
 
-However, if `layout` is registered as follow,
-```js
-Handlebars.registerPartial("layout", "Site Content {{> @partial-block}}")
-```
+`@partial-block` is a very special syntax. It means render whatever within the partial block.
 
-and `layout` is a template like this:
-
+For example,
 ```hbs
+<!-- Define a partial block-->
 {{#> layout}}
 My Content
 {{/layout}}
 ```
 
-and `@partial-block` is not registered, the output would be,
-```html
-Site Content My content
+and layout is defined as following:
+
+```js
+Handlebars.registerPartail('layout', "Site Content {{> @partial-block}}")
+```
+This will resolve as
+```
+Site Content My Content
 ```
 
 - You need to look out for the context when partial is nested within partial blocks. The context would remain relative to the partial block but not the partial.
