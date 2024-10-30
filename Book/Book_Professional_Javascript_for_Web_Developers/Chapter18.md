@@ -625,7 +625,7 @@ const writableStreamDefaultWriter = writableStream.getWriter();
 ```
 > In general, as an enduser, when you read squential packet you use readable stream, and read method. When you write to a stream, and use write method.
 
-## Encoding API
+## ENCODING API
 Encoding works for converting string into typed arrays.
 
 Text Encoder, TextEncoderStream, TextDecoder, and TextDecoderStream.
@@ -877,7 +877,7 @@ window.addEventListener("message", (event) => {
 })
 ```
 
-## Fullscreen API
+## FULLSCREEN API
 - To enter fullscreen mode
 ```js
 myDiv.requestFullscreen().catch(err => {
@@ -925,3 +925,10 @@ navigator.geolocation.getCurrentPosition((position) => {
 `window.navigator`, to visit browser info, operationg system info, hardware.
 
 ### Browser and Operating System Identification
+
+
+## MEDIA ELEMENTS
+## NOTIFICATIONS API
+## PAGE VISIBILITY API
+## TIMING APIs
+## THE WEB CRYPTOGRAPHY API
