@@ -926,6 +926,8 @@ navigator.geolocation.getCurrentPosition((position) => {
 
 ### Browser and Operating System Identification
 
+## WEB COMPONENTS
+
 
 ## MEDIA ELEMENTS
 ## NOTIFICATIONS API
