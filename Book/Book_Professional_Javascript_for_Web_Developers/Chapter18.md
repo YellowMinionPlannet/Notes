@@ -925,9 +925,10 @@ navigator.geolocation.getCurrentPosition((position) => {
 `window.navigator`, to visit browser info, operationg system info, hardware.
 
 ### Browser and Operating System Identification
+> This is just a reference list of related properties, please refer to the original book.
 
 ## WEB COMPONENTS
-
+> Web components could be a complete and seperate concept to research, please refer the book and [webcomponent guide](https://webcomponents.guide/learn/) 
 
 ## MEDIA ELEMENTS
 ## NOTIFICATIONS API

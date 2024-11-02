@@ -72,7 +72,7 @@ One's Two(Two is of One)
 |-|-|
 |はい|いいえ|
 
-## Grammer II
+## Grammer I
 
 ### 1
 ||First Person|Second Person|Third Person|
@@ -127,7 +127,7 @@ Where we need to omit Subjective:
 |您好|konn ni chi wa|こんにちは|こ**んにちは**|
 |北京|pe kinn|ペキン|ペキン|
 
-## Grammer
+## Grammer II
 
 ### 1　This/That is Something
 |This/That|は|Something|です||
@@ -155,3 +155,17 @@ Where we need to omit Subjective:
 |-|-|-|-|-|-|
 |えいごの　ほん|は|どの|ほん|ですか|英语的书是哪本书|
 |あなたの　じしょ|は|どの|じしょ|ですか|你的字典是哪本字典|
+
+## Summary of [Grammer I](#grammer-i) and [Grammer II](#grammer-ii)
+
+The basic form and its extended form as:
+
+|Form||
+|-|-|
+|BASIC Statement|One　**は**　Two　**です**|
+|Extended I|**これ・それ・あれ**　**は**　One　**です**|
+|Extended II|**この・その・あの**　One　**は**　Ones　**です**|
+|BASIC Question|One　**は**　Two　**ですか**|
+|Extended I|**これ・それ・あれ**　**は**　One　**ですか**|
+|Extended II|One　**は**　**どの**　Ones　**ですか**|
+|Extended III|**この・その・あの**　One　**は**　**だれ（の）**　**ですか**|
