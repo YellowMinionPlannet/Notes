@@ -175,3 +175,15 @@ The basic form and its extended form as:
 |Extended I|**これ・それ・あれ**　**は**　One　**ですか**|
 |Extended II|One　**は**　**どの**　Ones　**ですか**|
 |Extended III|**この・その・あの**　One　**は**　**だれ（の）**　**ですか**|
+
+# 3
+## (1)
+|CH|EN|JA|PR|
+|-|-|-|-|
+|学校|ga kou|がっこう|が**っこう**|
+|教室|kyou shi|きょうし|**きょ**うし|
+|体育馆|tai yiku kann|たいいくかん|た**いいく**かん|
+|图书馆|to sho kann|としょかん|と**しょ**かん|
+|这里|ko ko|ここ|ここ|
+|这里|so ko|そこ|そこ|
+|那里|a so ko|あそこ|あそこ|
