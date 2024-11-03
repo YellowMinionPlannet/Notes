@@ -28,7 +28,7 @@
 |你|a na ta|あなた|あ**な**た|
 |不，不是|yiie|いいえ|いいえ|
 
-## Grammer
+## Grammer I
 
 ### 1
 
@@ -72,14 +72,12 @@ One's Two(Two is of One)
 |-|-|
 |はい|いいえ|
 
-## Grammer I
-
-### 1
+### 6
 ||First Person|Second Person|Third Person|
 |-|-|-|-|
 |Single|わたし|あなた|かれ(he), かのじょ(she)|
 
-### 2
+### 7
 `さん`　only goes after Second Person/Third Person
 |||||
 |-|-|-|-|
@@ -87,7 +85,7 @@ One's Two(Two is of One)
 |Second Person|あなた　おう|さん|ですが|
 |Third Person|かのじょ　おう|さん|です|
 
-### 3
+### 8
 Where we need to omit Subjective:
 
 - わたしは　かいしゃいんではありません。
@@ -126,6 +124,14 @@ Where we need to omit Subjective:
 |朋友|to mo da chi|ともだち|と**もだち**|
 |您好|konn ni chi wa|こんにちは|こ**んにちは**|
 |北京|pe kinn|ペキン|ペキン|
+|哪个|do re|どれ|どれ|
+|哪个的|do no|どの|どの|
+|照相机|camera|カメラ|カメラ|
+|电视机|terebu|テレビ|テレビ|
+|收音机|rajio|ラジオ|ラジオ|
+|房子|he ya|へや|へ**や**|
+|椅子|yi su|いす|い**す**|
+|桌子|su ku e|つくえ|つ**くえ**|
 
 ## Grammer II
 
