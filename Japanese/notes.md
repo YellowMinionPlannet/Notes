@@ -187,3 +187,12 @@ The basic form and its extended form as:
 |这里|ko ko|ここ|ここ|
 |这里|so ko|そこ|そこ|
 |那里|a so ko|あそこ|あそこ|
+
+## (2)
+|CH|EN|JA|PR|
+|-|-|-|-|
+|邮局|yu u binn kyo ku|ゆうびんきょく|ゆ**うび**んきょく|
+|电影院|ei ga kann|えいがかん|え**いが**かん|
+|火车站|e ki|えき|**え**き|
+|商场|de pa - to|デパート|デパート|
+|在。。。前面|ma e|まえ|**ま**え|
