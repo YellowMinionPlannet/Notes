@@ -196,3 +196,23 @@ The basic form and its extended form as:
 |火车站|e ki|えき|**え**き|
 |商场|de pa - to|デパート|デパート|
 |在。。。前面|ma e|まえ|**ま**え|
+
+## (3)
+|CH|EN|JA|PR|
+|-|-|-|-|
+|店员|tenn yinn|てんいん|て**んいん**|
+|欢迎光临|yi ra ltu sha yi ma se|いらっしゃいませ|い**らっしゃい**ませ|
+|衬衫|wa yi sha tsu|ワイシャツ|ワイシャツ|
+|收银台|wu ri ba|うりば|う**りば**|
+|多少钱|yi ku ra|いくら|**い**くら|
+|五千元|go senn enn|ごせんえん|ごせんえん|
+|请（do something）|ku da sa yi|ください|ください|
+|感谢|a ri ga tou go za yi ma su|ありがとうございます|ありがとうございます|
+|收下了,感谢|yi ta da ki ma su|いただきます|いただきます|
+|鞋|ku tsu|くつ|く**つ**|
+|第一层|yi ltu ka yi|いっかい|い**っかい**|
+|第二层|ni ka yi|にかい|に**かい**|
+|包|ka bann|かばん|か**ばん**|
+|在哪里|do ko|どこ|**ど**こ|
+|挨着|to na ri|となり|と**なり**|
+|多谢|dou mo a ri ga tou|どうもありがとう|どうもありがとう|
