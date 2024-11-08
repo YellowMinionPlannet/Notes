@@ -53,3 +53,5 @@ Pillars:
 3. Memory
 
 Right Data Structure + Right Algorithm = Good Code
+
+# Section 6: Data Structures: Arrays

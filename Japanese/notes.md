@@ -216,3 +216,59 @@ The basic form and its extended form as:
 |在哪里|do ko|どこ|**ど**こ|
 |挨着|to na ri|となり|と**なり**|
 |多谢|dou mo a ri ga tou|どうもありがとう|どうもありがとう|
+
+## Grammer III
+
+### Here/There is Something
+
+|Here/There|は|Something|です||
+|-|-|-|-|-|
+|ここ|は|おうさんのだいがく|です|这里是王的大学|
+|そこ|は|おうさんのきょうし|です|这里是王的教室|
+|あそこ|は|としょかん|です|那里是图书馆|
+
+### Something is Here/There
+|Something|は|Here/There|です||
+|-|-|-|-|-|
+|ゆうびんきょく|は|ここ|です|邮局在这里|
+|えいがかん|は|そこ|です|电影院在这里|
+|としょかん|は|あそこ|です|图书馆在那里|
+
+### Something is one or two?
+|Semething|は|one|ですか|two|ですか||
+|-|-|-|-|-|-|-|
+|くつのうりば|は|いっかい|ですか|にかい|ですか|鞋子的卖场在一楼还是二楼|
+
+### One is Two also
+|One|は|Something|です|Two|も|Something|です||
+|-|-|-|-|-|-|-|-|-|
+|わたし|は|にほんじん|です|たなか|も|にほんじん|です|我是日本人，田中也是日本人|
+
+### Something Please
+|Something|を|ください||
+|-|-|-|-|
+|それ|を|ください|This one, please.|
+
+### Counting
+|Number|EN|JA|Number|EN|JA|Number|EN|JA|
+|-|-|-|-|-|-|-|-|-|
+|1|yi chi|いち|11|juu yi chi|じゅういち|10|juu|じゅう|
+|2|ni|に|12|juu ni|じゅうに|20|ni juu|にじゅう|
+|3|sann|さん|13|juu sann|じゅうさん|30|sann juu|さんじゅう|
+|4|yonn/shi|よん/し|14|juu yonn/shi|じゅうよん/十四|40|yonn juu|よんじゅう|
+|5|go|ご|15|juu ko|じゅうご|50|go juuu|ごじゅう|
+|6|ro ku|ろく|16|juu ro ku|じゅうろく|60|ro ku juu|ろくじゅう|
+|7|na na/shi chi|なな/しち|17|juu na na/shi chi|じゅうなな/じゅうしち|70|na na juu|ななじゅう|
+|8|ha chi|はち|18|juu ha chi|じゅうはち|80|ha chi juu|はちじゅう|
+|9|kyu u/ku|きゅう/く|19|juu kyuu|じゅうきゅう|90|kyuu juu|きゅうじゅう|
+|10|juu|じゅう|20|ni juu|にじゅう|100|hya ku|ひゃく|
+|100|hya ku|ひゃく|1000|senn|せん||||
+|200|ni hya ku|にひゃく|2000|ni senn|にせん||||
+|300|sann byaku|さんびゃく|3000|sann senn|さんぜん||||
+|400|yonn hyaku|よんひゃく|4000|yonn senn|よんせん||||
+|500|go hyaku|ごひゃく|5000|go senn|ごせん||||
+|600|roltu byaku|ろっびゃく|6000|roku senn|ろくせん||||
+|700|nana hyaku|ななひゃく|7000|nana senn|ななせん||||
+|800|haltu byaku|はっびゃく|8000|haltu senn|はっせん||||
+|900|kyuu hyaku|きゅうひゃく|9000|kyuu senn|きゅうせん||||
+|1000|senn|せん|10000|せん|いちまん||||
