@@ -38,7 +38,6 @@ class SubArray{
             throw RangeError("end index less than begin index");
         }
         if(endIndex > this.endIndex){
-            debugger
             return new SubArray(this.beginIndex, endIndex, this.sum+extendedValue, this.mergeDirection);
         }
     };
@@ -53,139 +52,103 @@ class SubArray{
     }
 }
 
-function findMax(pnpArrays, lastRoundLength, result){
-    console.log("INIT", pnpArrays);
+function findMax(pnpArrays, lastRoundLength, result, originalNums){
+    
     let pnpArraysFromLeftToRight = [];
     if(pnpArrays.length === 1){
         result.push(pnpArrays[0].sum);
     }
     for(let k = 0; k < pnpArrays.length && pnpArrays.length >= 3; k = k + 2){
-        debugger
-        console.log(pnpArrays, pnpArraysFromLeftToRight, k);
+        
         if(!pnpArrays[k-1]){
-            if(pnpArrays[k+1].sum + pnpArrays[k].sum >=0){
+            if(pnpArrays[k+1].sum + pnpArrays[k].sum >=0){// <-
                 pnpArrays[k].setRightToLeft();
-                pnpArraysFromLeftToRight.push(pnpArrays[k].extendRight(pnpArrays[k + 2].endIndex, pnpArrays[k + 1].sum + pnpArrays[k+2].sum));
-            }else{
-
+                pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k]));
+            }else{// O
+                
             }
         }else if(!pnpArrays[k+1]){
-            if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){
+            if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){// -> 
                 pnpArrays[k].setLeftToRight();
-                if(pnpArrays[k - 2].mergeDirection.indexOf("->")>= 0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum+pnpArrays[k-1].sum);
-                }else if(pnpArrays[k-2].mergeDirection.length === 0){
+                if(pnpArrays[k - 2].mergeDirection.length > 0){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum+pnpArrays[k-1].sum);
+                }else{
                     pnpArraysFromLeftToRight.push(pnpArrays[k - 2].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum));
                 }
-            }else{
-                if(pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1]){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
-                }else{
+            }else{ // O
+                if(pnpArrays[k - 2].mergeDirection.indexOf("<-")>= 0 || pnpArrays[k-2].mergeDirection.length === 2){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum+pnpArrays[k-1].sum);
+                }else if(pnpArrays[k - 2].mergeDirection.length === 0){
                     pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
+                }else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
+                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
                 }
             }
         }else{
-            debugger
-            if(pnpArrays[k-1].sum + pnpArrays[k].sum >=0 && pnpArrays[k+1].sum + pnpArrays[k].sum >=0){
+            
+            if(pnpArrays[k-1].sum + pnpArrays[k].sum >=0 && pnpArrays[k+1].sum + pnpArrays[k].sum >=0){ // <- ->
                 pnpArrays[k].setLeftToRight();
                 pnpArrays[k].setRightToLeft();
-                if(pnpArrays[k-2].mergeDirection.length === 2 || pnpArrays[k-2].mergeDirection.indexOf("<-")>= 0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k+2].endIndex, pnpArrays[k+1].sum+pnpArrays[k+2].sum);
+                if(pnpArrays[k-2].mergeDirection.length > 0){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum);
                 }
-                if(pnpArrays[k-2].mergeDirection.length ===0){
-                    pnpArraysFromLeftToRight.push(pnpArrays[k-2].extendRight(pnpArrays[k+2].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum+pnpArrays[k+1].sum+pnpArrays[k+2].sum));
-                }
-                if(pnpArrays[k-2].mergeDirection.indexOf("->")){
-                    pnpArraysFromLeftToRight.push(pnpArrays[k].extendRight(pnpArrays[k+2].endIndex, pnpArrays[k+1].sum + pnpArrays[k+2].sum));
+                else if(pnpArrays[k-2].mergeDirection.length ===0){
+                    pnpArraysFromLeftToRight.push(pnpArrays[k-2].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum));
                 }
             }
-            else if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){
+            else if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){// ->
                 pnpArrays[k].setLeftToRight();
                 if(pnpArrays[k -2].mergeDirection.length === 0){
                     pnpArraysFromLeftToRight.push(pnpArrays[k-2].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum + pnpArrays[k-1].sum))
                 }
-                if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
-                    if(pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1]){
-                        pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum);
-                    }
+                else if(pnpArrays[k-2].mergeDirection.length > 0){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum+ pnpArrays[k].sum)
                 }
             }
-            else if(pnpArrays[k + 1].sum + pnpArrays[k].sum >=0){
+            else if(pnpArrays[k + 1].sum + pnpArrays[k].sum >=0){// <-
                 pnpArrays[k].setRightToLeft();
                 if(pnpArrays[k-2].mergeDirection.length === 0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]), pnpArrays[k].extendRight(pnpArrays[k+2].endIndex, pnpArrays[k+1].sum + pnpArrays[k+2].sum));
+                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
                 }
-                if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k+2].endIndex, pnpArrays[k+1].sum+ pnpArrays[k+2].sum)
+                else if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0 || pnpArrays[k-2].mergeDirection.length === 2){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum+ pnpArrays[k].sum)
                 }
-                if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
-                    pnpArraysFromLeftToRight.push(pnpArrays[k].extendRight(pnpArrays[k+2].endIndex,pnpArrays[k+1].sum + pnpArrays[k+2].sum));
+                else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
+                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]))
                 }
             }
-            else{
+            else{// O
                 if(pnpArrays[k-2].mergeDirection.length === 0){
                     pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]));
                 }
-                if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0){
-
+                else if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0 || pnpArrays[k-2].mergeDirection.length === 2){
+                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum);
                 }
-                if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
+                else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
 
                 }
             }
         }
+        
     }
-    debugger
-    console.log("LEFTEND", pnpArraysFromLeftToRight);
-    // for(let j = pnpArrays.length -1 ; j >=0 && pnpArrays.length >=3; j = j -2){
-    //     console.log(pnpArraysFromRightToLeft, j);
-    //     if(!pnpArrays[j+1]){
-           
-    //     }else if(!pnpArrays[j-1]){
-    //         if(pnpArrays[j + 1].sum + pnpArrays[j].sum >= 0){
-    //             pnpArrays[j].setRightToLeft();
-    //             if(pnpArrays[j + 2].mergeDirection.indexOf("<-") >= 0){
-    //                 pnpArraysFromRightToLeft[0].extendLeft(pnpArrays[j].beginIndex, pnpArrays[j+1].sum + pnpArrays[j].sum);
-    //             }else{
-    //                 pnpArraysFromRightToLeft.unshift(pnpArrays[j + 2].extendLeft(pnpArrays[j].beginIndex, pnpArrays[j+1].sum + pnpArrays[j].sum));
-    //             }
-    //         }else{
-    //             if(pnpArraysFromRightToLeft[0]){
-    //                 pnpArraysFromRightToLeft.unshift(pnpArrays[j+1], pnpArrays[j]);
-    //             }else{
-    //                 pnpArraysFromRightToLeft.unshift(pnpArrays[j+2], pnpArrays[j+1], pnpArrays[j]);
-    //             }
-    //         }
-    //     }else{
-    //         if(pnpArrays[j + 1].sum + pnpArrays[j].sum >= 0){
-    //             pnpArrays[j].setRightToLeft();
-    //             if(pnpArrays[j+2].mergeDirection.indexOf("<-")>=0){
-    //                 pnpArraysFromRightToLeft[0].extendLeft(pnpArrays[j].beginIndex, pnpArrays[j+1].sum + pnpArrays[j].sum);
-    //             }else{
-    //                 pnpArraysFromRightToLeft.unshift(pnpArrays[j+2].extendLeft(pnpArrays[j].beginIndex, pnpArrays[j+1].sum+pnpArrays[j].sum));
-    //             }
-    //         }else{
-    //             //pnpArraysFromRightToLeft.unshift(pnpArrays[j+1], pnpArrays[j]);
-    //         }
-    //     }
-    // }
-    // console.log("RIGHTEND", pnpArrays);
-
-
+    
+    for(let j = 0; j < pnpArraysFromLeftToRight.length - 1; j++){
+        pnpArraysFromLeftToRight[j].resetDirection();
+        if(pnpArraysFromLeftToRight[j].endIndex >= pnpArraysFromLeftToRight[j+1].beginIndex){
+            let tempSum = 0;
+            for(let x = pnpArraysFromLeftToRight[j+1].endIndex; x > pnpArraysFromLeftToRight[j].endIndex; x--){
+                tempSum = tempSum + originalNums[x];
+            }
+            pnpArraysFromLeftToRight[j] = pnpArraysFromLeftToRight[j].extendRight(pnpArraysFromLeftToRight[j+1].endIndex, tempSum);
+            pnpArraysFromLeftToRight.splice(j+1, 1);
+        }
+    }
+    
     if(pnpArraysFromLeftToRight.length !== lastRoundLength){
-        pnpArraysFromLeftToRight.forEach((ele) => { ele.resetDirection();});
-        findMax(pnpArraysFromLeftToRight, pnpArraysFromLeftToRight.length, result);
+        findMax(pnpArraysFromLeftToRight, pnpArraysFromLeftToRight.length, result, originalNums);
     }else{
-
-        result.push(pnpArraysFromLeftToRight.map((ele) => { return ele.sum;}));
+        result.push(...pnpArraysFromLeftToRight.map((ele) => { return ele.sum;}));
     }
-    // if(pnpArraysFromRightToLeft.length !== lastRoundLength){
-    //     pnpArraysFromRightToLeft.forEach((ele)=>{ele.mergeDirection = [];});
-    //     findMax(pnpArraysFromRightToLeft, pnpArraysFromRightToLeft.length, result);
-
-    // }else{
-    //     result.push(pnpArraysFromRightToLeft.map((ele) => {return ele.sum;}))
-    // }
 }
 
 function maxSubArray(nums) {
@@ -224,12 +187,12 @@ function maxSubArray(nums) {
     if(pnpArrays[pnpArrays.length - 1].sum < 0){
         pnpArrays.pop();
     }
-    //console.log(pnpArrays);
+    
     const result = [];
-    findMax(pnpArrays, pnpArrays.length, result);
+    findMax(pnpArrays, pnpArrays.length, result, nums);
 
     let maxSum = result[0];
-    for(let l = 1; l < result.length; l ++){
+    for(let l = 1; l < result.length; l++){
         maxSum < result[l]? maxSum = result[l]:maxSum = maxSum;
     }
 
