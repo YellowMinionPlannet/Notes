@@ -216,6 +216,13 @@ The basic form and its extended form as:
 |在哪里|do ko|どこ|**ど**こ|
 |挨着|to na ri|となり|と**なり**|
 |多谢|dou mo a ri ga tou|どうもありがとう|どうもありがとう|
+|后边|u shi ro|うしろ|う**しろ**|
+|旁边|yo ko|よこ|よ**こ**|
+|右边|mi ga|みぎ|み**ぎ**|
+|左边|hi da ri|ひだり|ひ**だり**|
+|银行|ginn kou|ぎんこう|ぎ**んこう**|
+|公园|kou enn|こうえん|こ**うえん**|
+|老师|senn sei|せんせい|せ**んせ**い|
 
 ## Grammer III
 
