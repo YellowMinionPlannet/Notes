@@ -14,8 +14,9 @@ class SubArray{
         }
         if(direction && direction.length > 0){
             this.mergeDirection = direction.slice(0);
+        }else{
+            this.mergeDirection = [];
         }
-        this.mergeDirection = [];
     }
 
     static clone(clone){
@@ -52,116 +53,107 @@ class SubArray{
     }
 }
 
-function findMax(pnpArrays, lastRoundLength, result, originalNums){
-    
-    let pnpArraysFromLeftToRight = [];
-    if(pnpArrays.length === 1){
-        result.push(pnpArrays[0].sum);
+function findMaxFromPnpArrayWithNegativeRange(pnpArrays, negativeRange, possibleMax){
+    // Mix and Match
+    console.log("nagtive", pnpArrays.slice(0));
+    for(let b = 0; b < pnpArrays.length - 2 && pnpArrays.length >= 5; b = b + 2){
+        for(let e = b + 2; e < pnpArrays.length; e = e + 2){
+            console.log([b, e]);
+            let extendedValue = 0;
+            let flag = b + 1;
+            while(flag <= e){
+                extendedValue = extendedValue + pnpArrays[flag].sum;
+                flag++;
+            }
+            console.log(extendedValue, "extended");
+            let tempMax = (pnpArrays[b].extendRight(pnpArrays[e].endIndex, extendedValue)).sum;
+            console.log(tempMax);
+            if(tempMax > possibleMax){
+                possibleMax = tempMax;
+            }
+        }
     }
-    for(let k = 0; k < pnpArrays.length && pnpArrays.length >= 3; k = k + 2){
-        
-        if(!pnpArrays[k-1]){
-            if(pnpArrays[k+1].sum + pnpArrays[k].sum >=0){// <-
-                pnpArrays[k].setRightToLeft();
-                pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k]));
-            }else{// O
-                
-            }
-        }else if(!pnpArrays[k+1]){
-            if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){// -> 
-                pnpArrays[k].setLeftToRight();
-                if(pnpArrays[k - 2].mergeDirection.length > 0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum+pnpArrays[k-1].sum);
-                }else{
-                    pnpArraysFromLeftToRight.push(pnpArrays[k - 2].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum));
-                }
-            }else{ // O
-                if(pnpArrays[k - 2].mergeDirection.indexOf("<-")>= 0 || pnpArrays[k-2].mergeDirection.length === 2){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length - 1].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum+pnpArrays[k-1].sum);
-                }else if(pnpArrays[k - 2].mergeDirection.length === 0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
-                }else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
-                }
-            }
-        }else{
-            
-            if(pnpArrays[k-1].sum + pnpArrays[k].sum >=0 && pnpArrays[k+1].sum + pnpArrays[k].sum >=0){ // <- ->
-                pnpArrays[k].setLeftToRight();
-                pnpArrays[k].setRightToLeft();
-                if(pnpArrays[k-2].mergeDirection.length > 0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum);
-                }
-                else if(pnpArrays[k-2].mergeDirection.length ===0){
-                    pnpArraysFromLeftToRight.push(pnpArrays[k-2].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum));
-                }
-            }
-            else if(pnpArrays[k - 1].sum + pnpArrays[k].sum >= 0){// ->
-                pnpArrays[k].setLeftToRight();
-                if(pnpArrays[k -2].mergeDirection.length === 0){
-                    pnpArraysFromLeftToRight.push(pnpArrays[k-2].extendRight(pnpArrays[k].endIndex, pnpArrays[k].sum + pnpArrays[k-1].sum))
-                }
-                else if(pnpArrays[k-2].mergeDirection.length > 0){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum+ pnpArrays[k].sum)
-                }
-            }
-            else if(pnpArrays[k + 1].sum + pnpArrays[k].sum >=0){// <-
-                pnpArrays[k].setRightToLeft();
-                if(pnpArrays[k-2].mergeDirection.length === 0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]));
-                }
-                else if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0 || pnpArrays[k-2].mergeDirection.length === 2){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length -1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum+ pnpArrays[k].sum)
-                }
-                else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-1]), SubArray.clone(pnpArrays[k]))
-                }
-            }
-            else{// O
-                if(pnpArrays[k-2].mergeDirection.length === 0){
-                    pnpArraysFromLeftToRight.push(SubArray.clone(pnpArrays[k-2]), SubArray.clone(pnpArrays[k-1]));
-                }
-                else if(pnpArrays[k-2].mergeDirection.indexOf("<-")>=0 || pnpArrays[k-2].mergeDirection.length === 2){
-                    pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1] = pnpArraysFromLeftToRight[pnpArraysFromLeftToRight.length-1].extendRight(pnpArrays[k].endIndex, pnpArrays[k-1].sum + pnpArrays[k].sum);
-                }
-                else if(pnpArrays[k-2].mergeDirection.indexOf("->")>=0){
+    return possibleMax;
+}
 
-                }
-            }
+function findMaxFromPnpArray(pnpArrays, possibleMax){
+    console.log("INIT", pnpArrays.slice(0), possibleMax);
+    // First we want to decrease size if possible.
+    let continueFromLeft = pnpArrays.length >= 3; 
+    while(continueFromLeft){
+        if(pnpArrays[0].sum + pnpArrays[1].sum + pnpArrays[2].sum < 0){
+            pnpArrays.splice(0, 2);
+            continueFromLeft = pnpArrays.length >=3;
+        }else{
+            continueFromLeft = false;
         }
+    }
+    console.log("decreassing", pnpArrays.slice(0));
+    let continueFromRight = pnpArrays.length > 3;
+    while(continueFromRight){
         
-    }
-    
-    for(let j = 0; j < pnpArraysFromLeftToRight.length - 1; j++){
-        pnpArraysFromLeftToRight[j].resetDirection();
-        if(pnpArraysFromLeftToRight[j].endIndex >= pnpArraysFromLeftToRight[j+1].beginIndex){
-            let tempSum = 0;
-            for(let x = pnpArraysFromLeftToRight[j+1].endIndex; x > pnpArraysFromLeftToRight[j].endIndex; x--){
-                tempSum = tempSum + originalNums[x];
-            }
-            pnpArraysFromLeftToRight[j] = pnpArraysFromLeftToRight[j].extendRight(pnpArraysFromLeftToRight[j+1].endIndex, tempSum);
-            pnpArraysFromLeftToRight.splice(j+1, 1);
+        if((pnpArrays[pnpArrays.length - 1].sum + pnpArrays[pnpArrays.length-2].sum + pnpArrays[pnpArrays.length-3].sum) < 0){
+            pnpArrays.splice(pnpArrays.length-2, 2);
+            continueFromRight = pnpArrays.length > 3;
+        }else{
+            continueFromRight = false;
         }
     }
-    
-    if(pnpArraysFromLeftToRight.length !== lastRoundLength){
-        findMax(pnpArraysFromLeftToRight, pnpArraysFromLeftToRight.length, result, originalNums);
-    }else{
-        result.push(...pnpArraysFromLeftToRight.map((ele) => { return ele.sum;}));
+    console.log("decreased", pnpArrays.slice(0));
+    if(pnpArrays.length === 3){
+        let tempMax = pnpArrays[0].sum + pnpArrays[1].sum + pnpArrays[2].sum;
+        if( tempMax > possibleMax){
+            possibleMax = tempMax;
+        }
+        return possibleMax;
+    }else if(pnpArrays.length === 1){
+        if(possibleMax < pnpArrays[0].sum){
+            return pnpArrays[0].sum;
+        }
+        return possibleMax;
+    }
+    else if(pnpArrays.length === 5){
+        return findMaxFromPnpArrayWithNegativeRange(pnpArrays, undefined, possibleMax);
+    }
+    else{
+        //First find the exclude range
+        // let possibleNegativeRange = [];
+        // for(let i = 0; i < pnpArrays.length && pnpArrays.length > 5; i++){
+            
+        // }
+        return findMaxFromPnpArrayWithNegativeRange(pnpArrays, undefined, possibleMax);
     }
 }
 
-function maxSubArray(nums) {
-    let pnpArrays = [];
-    if(nums.every((ele) => { return ele < 0;})){
-        pnpArrays = nums;
-    }else{
+function findMaxFromArray(array){
+    console.log("FindMaxFromArray", array.slice(0));
+    if(array.length <= 0){
+        throw new RangeError("Empty Array!");
+    }
+    let tempMax = array[0];
+    for(let i = 1; i < array.length; i++){
+        if(tempMax < array[i]){
+            tempMax = array[i];
+        }
+    }
+    return tempMax;
+}
 
+function maxSubArray(nums) {
+    // First excludes all negative numbers and input with only one number
+    if(nums.every((ele) => { return ele < 0;})){
+        return findMaxFromArray(nums);
+    }
+    else if(nums.length === 1){
+        return nums[0];
+    }
+    else{
+        let possibleMax = [], pnpArrays =[];
         for(let i = 0; i < nums.length; i++){
             let currentNum = nums[i];
 
             if(currentNum >= 0 ){
-                if(pnpArrays[pnpArrays.length - 1] && pnpArrays[pnpArrays.length - 1].sum >= 0){
+                if(pnpArrays[pnpArrays.length - 1] && pnpArrays[pnpArrays.length - 1].sum >=0){
                     pnpArrays[pnpArrays.length - 1] = pnpArrays[pnpArrays.length - 1].extendRight(i, currentNum);
                 }
                 else if(pnpArrays[pnpArrays.length - 1] && pnpArrays[pnpArrays.length - 1].sum < 0){
@@ -172,6 +164,7 @@ function maxSubArray(nums) {
                 }
             }else{
                 if(pnpArrays[pnpArrays.length - 1] && pnpArrays[pnpArrays.length - 1].sum >= 0){
+                    possibleMax.push(pnpArrays[pnpArrays.length - 1].sum);
                     pnpArrays.push(new SubArray(i, i, currentNum));
                 }
                 else if(pnpArrays[pnpArrays.length - 1] && pnpArrays[pnpArrays.length - 1].sum < 0){
@@ -182,19 +175,16 @@ function maxSubArray(nums) {
                 }
             }
         }
-    }
+        if(pnpArrays[pnpArrays.length - 1].sum < 0){
+            pnpArrays.pop();
+        }else{
+            possibleMax.push(pnpArrays[pnpArrays.length-1].sum);
+        }
+        if(pnpArrays.length === 1){
+            return pnpArrays[0].sum;
+        }
 
-    if(pnpArrays[pnpArrays.length - 1].sum < 0){
-        pnpArrays.pop();
+        let tempMax =  findMaxFromArray(possibleMax);
+        return findMaxFromPnpArray(pnpArrays,tempMax);
     }
-    
-    const result = [];
-    findMax(pnpArrays, pnpArrays.length, result, nums);
-
-    let maxSum = result[0];
-    for(let l = 1; l < result.length; l++){
-        maxSum < result[l]? maxSum = result[l]:maxSum = maxSum;
-    }
-
-    return maxSum;
 }
