@@ -54,30 +54,90 @@ class SubArray{
 }
 
 function findMaxFromPnpArrayWithNegativeRange(pnpArrays, negativeRange, possibleMax){
-    // Mix and Match
-    console.log("nagtive", pnpArrays.slice(0));
-    for(let b = 0; b < pnpArrays.length - 2 && pnpArrays.length >= 5; b = b + 2){
-        for(let e = b + 2; e < pnpArrays.length; e = e + 2){
-            console.log([b, e]);
-            let extendedValue = 0;
-            let flag = b + 1;
-            while(flag <= e){
-                extendedValue = extendedValue + pnpArrays[flag].sum;
-                flag++;
-            }
-            console.log(extendedValue, "extended");
-            let tempMax = (pnpArrays[b].extendRight(pnpArrays[e].endIndex, extendedValue)).sum;
-            console.log(tempMax);
-            if(tempMax > possibleMax){
-                possibleMax = tempMax;
-            }
+    // Solution from Other's Solution :(
+    console.log("final",pnpArrays.slice(0), possibleMax);
+    let accumulatedSum = 0;
+    for(let i = 0; i < pnpArrays.length; i++){
+         accumulatedSum = (accumulatedSum >= 0 ? accumulatedSum + pnpArrays[i].sum: pnpArrays[i].sum); 
+         if(accumulatedSum > possibleMax){
+            possibleMax = accumulatedSum;
         }
     }
     return possibleMax;
 }
 
+function findSumValue(array){
+    if(!array instanceof Array){
+        throw new TypeError("Only Array Type Please!");
+    }
+    return array.reduce((p, v) => {return p + v;}, 0);
+}
+
+function findAbsoluteValue(number){
+    if(number >= 0){
+        return number;
+    }else{
+        return number * -1;
+    }
+}
+
+function processThreePnps(pnpArrays){
+    if(!pnpArrays instanceof Array){
+        throw new TypeError("Only Array Type Please!");
+    }
+    let target = pnpArrays.map((ele) => {return ele.sum});
+    let result = findMinAbsoluteValues(target);
+    result.push(findSumValue(target));
+    return result;
+}
+
+function findMinAbsoluteValues(array) {
+    if(array instanceof Array && array.length === 0){
+        throw new RangeError("Empty array!");
+    }
+    if(!array instanceof Array){
+        throw new TypeError("Only Array Type Please!");
+    }
+    let result = findAbsoluteValue(array[0]);
+    let index = 0;
+    for(let i = 0; i < array.length; i++){
+        let current = findAbsoluteValue(array[i]);
+        if(current < result){
+            result = current;
+            index = i;
+        }
+    }
+    return [result, index];
+}
+
+function simplifyPnpArray(pnpArrays, lastRoundLength){
+    if(pnpArrays instanceof Array && pnpArrays.length < 5){
+        throw new RangeError("Too short to simplify");
+    }
+    
+    for(let i = 2; i < pnpArrays.length - 2; ){
+        let processed = processThreePnps([pnpArrays[i], pnpArrays[i-1], pnpArrays[i+1]]);
+        if(processed[1] === 0){
+            pnpArrays.splice(i-1, 3, pnpArrays[i - 1].extendRight(pnpArrays[i+1].endIndex, findSumValue([pnpArrays[i].sum, pnpArrays[i+1].sum])));
+            continue;
+        }else if(processed[2] > pnpArrays[i-2] && processed[2] > pnpArrays[i+2]){
+            pnpArrays.splice(i-2, 5, pnpArrays[i -2].extendRight(pnpArrays[i+2].endIndex, findSumValue([pnpArrays[i-1].sum, pnpArrays[i].sum, pnpArrays[i+1].sum, pnpArrays[i+2].sum])));
+        }else{
+            i = i + 2;
+        }
+    }
+    if(pnpArrays.length >= 5 && pnpArrays.length !== lastRoundLength){
+        simplifyPnpArray(pnpArrays, pnpArrays.length);
+    }
+}
+
 function findMaxFromPnpArray(pnpArrays, possibleMax){
-    console.log("INIT", pnpArrays.slice(0), possibleMax);
+
+    if(pnpArrays.length >=5 ){
+        simplifyPnpArray(pnpArrays, pnpArrays.length);
+    }
+    console.log("Simplified",pnpArrays.slice(0));
+    
     // First we want to decrease size if possible.
     let continueFromLeft = pnpArrays.length >= 3; 
     while(continueFromLeft){
@@ -88,7 +148,7 @@ function findMaxFromPnpArray(pnpArrays, possibleMax){
             continueFromLeft = false;
         }
     }
-    console.log("decreassing", pnpArrays.slice(0));
+    
     let continueFromRight = pnpArrays.length > 3;
     while(continueFromRight){
         
@@ -99,7 +159,7 @@ function findMaxFromPnpArray(pnpArrays, possibleMax){
             continueFromRight = false;
         }
     }
-    console.log("decreased", pnpArrays.slice(0));
+    
     if(pnpArrays.length === 3){
         let tempMax = pnpArrays[0].sum + pnpArrays[1].sum + pnpArrays[2].sum;
         if( tempMax > possibleMax){
@@ -126,7 +186,7 @@ function findMaxFromPnpArray(pnpArrays, possibleMax){
 }
 
 function findMaxFromArray(array){
-    console.log("FindMaxFromArray", array.slice(0));
+    
     if(array.length <= 0){
         throw new RangeError("Empty Array!");
     }
@@ -185,6 +245,6 @@ function maxSubArray(nums) {
         }
 
         let tempMax =  findMaxFromArray(possibleMax);
-        return findMaxFromPnpArray(pnpArrays,tempMax);
+        return findMaxFromPnpArrayWithNegativeRange(pnpArrays,undefined,tempMax);
     }
 }
