@@ -279,3 +279,20 @@ The basic form and its extended form as:
 |800|haltu byaku|はっびゃく|8000|haltu senn|はっせん||||
 |900|kyuu hyaku|きゅうひゃく|9000|kyuu senn|きゅうせん||||
 |1000|senn|せん|10000|せん|いちまん||||
+
+# 4
+## (1)
+|CH|EN|JA|PR|
+|-|-|-|-|
+|昨天|ki nou|きのう|き**の**う|
+|今天|kyou|きょう|**きょ**う|
+|明天|a su|あす|あ**す**|
+|休息日|kyuu ji tsu|きゅうじつ|きゅ**うじつ**|
+|月|ga su|がつ|がつ|
+|日|ta chi/ni chi|たち・にち|たち・にち|
+
+|周日|周一|周二|周三|周四|周五|周六|
+|-|-|-|-|-|-|-|
+|ni chi you bi|ge tsu you bi|ka you bi|sui you bi|mo ku you bi|kin you bi|do you bi|
+|にちようび|げつようび|かようび|すいようび|もくようび|きんようび|どようび|
+|に**ちよ**うび|げ**つよ**うび|か**よ**うび|す**いよ**うび|も**くよ**うび|き**んよ**うび|ど**よ**うび|
