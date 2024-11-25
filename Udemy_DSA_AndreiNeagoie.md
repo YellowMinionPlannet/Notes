@@ -175,7 +175,7 @@ function mergeSortedArray(a1, a2){
 }
 ```
 
-# Section 8: Data Structures: Hash Tables
+# Section 7: Data Structures: Hash Tables
 ## Hash Tables Introduction
 For Javascript, object is a hash table.
 
@@ -235,3 +235,152 @@ One of the solution is to create linked list when there is a collided index. We 
 So when we want to retrieve or store, there is extra cost, because we need to iterate that linked list.
 
 > Additional research: Wiki page about hash table and hash collision resolution
+
+## Hash Tables implementation
+```js
+class HashTable {
+  constructor(size){
+    this.data = new Array(size);
+    // this.data = [];
+  }
+
+  _hash(key) {
+    let hash = 0;
+    for (let i =0; i < key.length; i++){
+        hash = (hash + key.charCodeAt(i) * i) % this.data.length
+    }
+    return hash;
+  }
+
+  set(key, value) {
+    let address = this._hash(key);
+    if (!this.data[address]) {
+      this.data[address] = [];
+    }
+    this.data[address].push([key, value]);
+    return this.data;
+  }
+
+  get(key){
+    const address = this._hash(key);
+    const currentBucket = this.data[address]
+    if (currentBucket) {
+      for(let i = 0; i < currentBucket.length; i++){
+        if(currentBucket[i][0] === key) {
+          return currentBucket[i][1]
+        }
+      }
+    }
+    return undefined;
+  }
+
+  keys(){
+    const storedKeys = [];
+    for(let i = 0; i < this.data.length; i++){
+        if(this.data[i] !== undefined){
+            if(this.data[i].length > 1){
+                for(let j = 0; j < this.data[i].length; j++){
+                    storedKeys.push(this.data[i][j][0])
+                }
+            }else{
+                storedKeys.push(this.data[i][0][0]);
+            }
+        }
+    }
+    return storedKeys;
+  }
+}
+
+```
+
+# Section 8: Data Structures: Linked Lists
+<u>Linked List and Big O</u>
+|Operation|Big O|
+|-|-|
+|Prepend|O(1)|
+|Append|O(1)|
+|Lookup|O(n)|
+|Insert|O(n)|
+|Delete|O(n)|
+
+## Our First Linked List
+```js
+class LinkedListNode{
+    constructor(value){
+        this.value = value;
+        this.next = null;
+    }
+}
+
+class LinkedList{
+    constructor (value){
+        this.head = new LinkedListNode(value);
+        this.tail = this.head;
+        this.length = 1;
+    }
+
+    append(value) {
+        const newNode = new LinkedListNode(value);
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+    }
+
+    prepend(value){
+        const newNode = {
+            value: value,
+            next: null
+        }
+
+        newNode.next = this.head;
+        this.head = newNode;
+        this.length++;
+        return this;
+    }
+
+    printList(){
+        const array = [];
+        let currentNode = this.head;
+        while(currentNode !== null){
+            array.push(currentNode.value);
+            currentNode = currentNode.next;
+        }
+        return array;
+    }
+
+    insert(index, value){
+        if(index >== this.length){
+            return this.append(value);
+        }
+        const newNode = {
+            value: value,
+            next: null
+        }
+        const leader = this.traverseToIndex(index - 1);
+        const holdingPointer = leader.next;
+        leader.next = newNode;
+        newNode = holdingPointer;
+        this.length++;
+        return this;   
+    }
+
+    traverseToIndex(index){
+        let counter = 0;
+        let currentNode = this.head;
+        while(counter !== index){
+            currentNode = currentNode.next
+            counter++;
+        }
+        return currentNode;
+    }
+
+    remove(index){
+        const leader = this.traverseToIndex(index - 1);
+        const unwantedNode = leader.next;
+        leader.next = unwantedNode.next;
+        this.length--;
+        return this;
+    }
+}
+```
