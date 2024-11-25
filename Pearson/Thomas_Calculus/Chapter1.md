@@ -27,7 +27,7 @@ In this syntax, x is called independent variable, and y is called dependent vari
 <u>Extended Notes</u>
 - **Real Numbers** includes Zero, Natural Numbers, Negative Integer Numbers, Non-Integer Rational Numbers, and Irrational Numbers, where Zero and Natural Numbers also called Whole Number, Whole Number and Negative Integer Numbers consist Integers, and Integers with Non-Integer Rational Numbers become Rational Numbers. And Real Number contains both Rational Numbers and Irrational Numbers.
 
-- **Rational Numbers** means that any number that can be written in the form of p/q.
+- **Rational Numbers** means that any number that can be written in the form of p/q, where q is not Zero.
 - **Natural domain** of f means, domain of f is assumed to be the largest set of real x-values for which the formula gives real y-values.
 - **Real-Valued** when the range of f(x) is a set of real numbers, the function f(x) is said to be **real-valued**.
 
