@@ -593,7 +593,7 @@ Stacks go LIFO, which means always the last pushed item got poped out first.
 |Lookup|O(n)|a very heavy operation|
 |Push|O(1)|push the item from the bottom|
 |Pop|O(1)|pop out the last pushed item|
-|Peak|O(1)|Peak means to view the top item, which is the first pushed item (will be poped out last)|
+|Peak|O(1)|Peak means to view the top item, which is the last pushed item (will be poped out first)|
 
 ### Queues
 Queues go FIFO, which means always the first pushed item got poped out fist.
@@ -603,7 +603,7 @@ Queues go FIFO, which means always the first pushed item got poped out fist.
 |Lookup|O(n)||
 |Enqueue|O(1)||
 |Dequeue|O(1)||
-|Peek|O(1)|View the first item gonna come out|
+|Peek|O(1)|View the first item gonna come out, which should be the first item pushed|
 
 ## Solution: Stacks vs. Queues
 
@@ -650,3 +650,82 @@ For queue, we are not able to use Arrays to build queues, because FIFO needs to 
 >
 > What is JS RT then?
 > - To achieve Asynchronous Operations, we need not just JS Engine, which contains heap and stack, we need a JS RT Environment, it conatains JS engine, Web APIs where DOM, Ajax, and `timeout` etc.  locates, it also contains Callback Queue and Event Loop.
+
+## Exercise: Stack Implementation (Linked List)
+```js
+class Node{
+    constructor(value){
+        this.value = value;
+        this.next = null;
+    }
+}
+
+class Stack{
+    constructor(){
+        this.top = null;
+        this.bottom = null;
+        this.length = 0;
+    }
+
+    peek(){
+        return this.top;
+    }
+
+    push(value){
+        const newNode = new Node(value);
+        if(this.isEmpty()){
+            this.top = newNode;
+            this.bottom = newNode;
+        }else{
+            const holdingPointer = this.top;
+            this.top = newNode;
+            this.top.next = holdingPointer;
+        }
+        this.length++;
+        return this;
+    }
+
+    pop(){
+        if(!this.top){
+            return null;
+        }
+        this.top = this.top.next;
+        if(this.length === 1){
+            this.bottom = null;
+        }
+        this.length--;
+        return this;
+    }
+
+    isEmpty(){
+        return this.length === 0;
+    }
+}
+```
+
+## Exercise: Stack Implementation(Array)
+```js
+class Stack{
+    constructor(){
+        this.array = [];
+    }
+
+    peek(){
+        return this.array[this.array.length - 1];
+    }
+
+    push(value){
+        this.array.push(value);
+        return this.array;
+    }
+
+    pop(){
+        this.array.pop();
+        return this.array;
+    }
+
+    isEmpty(){
+        return this.array.length === 0;
+    }
+}
+```
