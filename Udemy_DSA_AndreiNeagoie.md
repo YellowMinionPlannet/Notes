@@ -384,3 +384,269 @@ class LinkedList{
     }
 }
 ```
+
+## Doubly Linked List
+
+A linked list with every node point to **next** and **previous** node. It can traverse from the tail to the head where normal linked list is not able to do so.
+
+## Solution: Doubly Linked List
+
+```js
+class DoublyLinkedList{
+    constructor(value){
+        this.head = {
+            value: value,
+            next: null,
+            previous: null
+        }
+        this.tail = this.head;
+        this.length = 1;
+    }
+
+    append(value){
+        const newNode = {
+            value: value,
+            next: null,
+            previous: null,
+        }
+        newNode.previous = this.tail;
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+    }
+
+    prepend(value){
+        const newNode ={
+            value: value,
+            next: null,
+            previous: null
+        }
+        newNode.next = this.head;
+        this.head.previous = newNode;
+        this.head = newNOde;
+        this.length++;
+        return this;
+    }
+
+    insert(index, value){
+        if(index >== this.length){
+            return this.append(value);
+        }
+        const newNode = {
+            value: value,
+            next: null,
+            previous: null
+        }
+        const leader = this.traverseToIndex(index-1);
+        const follower = leader.next;
+        leader.next = newNode;
+        follower.previous = newNode;
+        newNode.next = follower;
+        newNode.previous = leader;
+        this.length++;
+        return this;
+    }
+
+     traverseToIndex(index){
+        let counter = 0;
+        let currentNode = this.head;
+        while(counter !== index){
+            currentNode = currentNode.next
+            counter++;
+        }
+        return currentNode;
+    }
+
+    remove(index){
+        const unwantedNode = this.traverseToIndex(index-1);
+        unwantedNode.previous.next = unwantedNode.next;
+        unwantedNode.next.previous = unwantedNode.previous;
+        unwantedNode.previous = null;
+        unwantedNode.next = null;
+        return this;
+    }
+}
+```
+
+## Single vs Double?
+
+<u>Doubly Linked List and Big O</u>
+|Operation|Big O|
+|-|-|
+|append|O(1)|
+|prepend|O(1)|
+|lookup|O(n)|
+|insert|O(n)|
+|remove|O(n)|
+
+But remember double linked list is able to operate at O(n/2) at optimized algorithm.
+
+## Reverse
+
+```js
+class DoublyLinkedList{
+    constructor(value){
+        this.head = {
+            value: value,
+            next: null,
+            previous: null
+        }
+        this.tail = this.head;
+        this.length = 1;
+    }
+
+    append(value){
+        const newNode = {
+            value: value,
+            next: null,
+            previous: null,
+        }
+        newNode.previous = this.tail;
+        this.tail.next = newNode;
+        this.tail = newNode;
+        this.length++;
+        return this;
+    }
+
+    prepend(value){
+        const newNode ={
+            value: value,
+            next: null,
+            previous: null
+        }
+        newNode.next = this.head;
+        this.head.previous = newNode;
+        this.head = newNOde;
+        this.length++;
+        return this;
+    }
+
+    insert(index, value){
+        if(index >== this.length){
+            return this.append(value);
+        }
+        const newNode = {
+            value: value,
+            next: null,
+            previous: null
+        }
+        const leader = this.traverseToIndex(index-1);
+        const follower = leader.next;
+        leader.next = newNode;
+        follower.previous = newNode;
+        newNode.next = follower;
+        newNode.previous = leader;
+        this.length++;
+        return this;
+    }
+
+     traverseToIndex(index){
+        let counter = 0;
+        let currentNode = this.head;
+        while(counter !== index){
+            currentNode = currentNode.next
+            counter++;
+        }
+        return currentNode;
+    }
+
+    remove(index){
+        const unwantedNode = this.traverseToIndex(index-1);
+        unwantedNode.previous.next = unwantedNode.next;
+        unwantedNode.next.previous = unwantedNode.previous;
+        unwantedNode.previous = null;
+        unwantedNode.next = null;
+        return this;
+    }
+
+    reverse(index){
+        if(this.length === 1){
+            return this.head;
+        }
+
+        let first = this.head;
+        this.tail = this.head;
+        let second = first.next;
+        while(second){
+            const temp = second.next;
+            second.next = first;
+            first = second;
+            second = temp;
+        }
+
+        this.head.next = null;
+        this.head = first;
+        return this;
+    }
+}
+```
+
+# Data Structures: Stacks + Queues
+## Stacks + Queues Introduction
+
+### Stacks
+Stacks go LIFO, which means always the last pushed item got poped out first.
+<u>Stacks and Big O</u>
+|Operation|Big O|Description|
+|-|-|-|
+|Lookup|O(n)|a very heavy operation|
+|Push|O(1)|push the item from the bottom|
+|Pop|O(1)|pop out the last pushed item|
+|Peak|O(1)|Peak means to view the top item, which is the first pushed item (will be poped out last)|
+
+### Queues
+Queues go FIFO, which means always the first pushed item got poped out fist.
+<u>Queues and Big O</u>
+|Operation|Big O|Description|
+|-|-|-|
+|Lookup|O(n)||
+|Enqueue|O(1)||
+|Dequeue|O(1)||
+|Peek|O(1)|View the first item gonna come out|
+
+## Solution: Stacks vs. Queues
+
+For stacks, we can both use Arrays and Linked List as basic data structure. But Array has continuous memory allocation which makes it very fast. Linked List needs more memo because of the pointer. However, array needs to double up when it meets it size limit, where linked list is more like use as needed plan.
+
+For queue, we are not able to use Arrays to build queues, because FIFO needs to unshift when we do Dequeue operation, where unshift is a O(n) heavy algorithm.
+
+## Optional  (***very important***)
+> How Does javascript Work? OR What is a Program?
+> - Need to allocate memo
+> - Need to parse and execute
+>
+> How to explain JS is a single threaded language that is non-blocking.
+> - If JS is running in browser, different browser will have different JS engine, Chrome is V8 Engine. Engine is where our lines of JS code got parsed and translated to executable instructions for Browsers. This engine has 2 parts, Memory Heap and Call Stack.
+> - Memo Heap vs. Call Stack
+>   - Memo Heap is used to allocate memory, (where it locates at RT).
+>   - Call Stack is where to parse and execute lines of code, which contained by threads.
+> - Single Threaded means there is only one thread and one call stack.
+> - Non-blocking means JS operation/function could behave asynchronously
+>
+> What is a Memory Leak?
+> - Memo leak is happenning in the Memory Heap, for example `const a = 1;` will allocate a piece of memory in the heap, but the amount of content stored within Memo Heap is limited, when you use beyond that limit, it's a memory leak. Or, you never remove unused reference, or declare too many global variables.
+>
+> What is a Stack Overflow?
+> - When we do `console.log(1)`, the `console.log` function got pushed in to the call stack as the first item, because JS is single threaded program, the first function must got executed and then it got poped out and the following function got executed.
+> - But when we have nested functions
+> ```js
+>   const one = () =>{
+>       const two = () => {
+>           console.log(1);
+>       }
+>       two();
+>   }
+>   one();
+> ```
+> - So when execute `one()` we push `one` in the Call Stack, and `two` got pushed, then `two` got executed and poped out, then `one` got poped out.
+> - We can create a Stack Overflow condition when we do recursion:
+> ```js
+>   function foo(){
+>       foo();
+>   }
+>   foo();
+> ```
+>
+> What is JS RT then?
+> - To achieve Asynchronous Operations, we need not just JS Engine, which contains heap and stack, we need a JS RT Environment, it conatains JS engine, Web APIs where DOM, Ajax, and `timeout` etc.  locates, it also contains Callback Queue and Event Loop.
