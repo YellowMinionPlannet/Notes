@@ -299,7 +299,7 @@ The basic form and its extended form as:
 |日曜日|月曜日|火曜日|水曜日|木曜日|金曜日|土曜日|
 
 ## (2)
-|CH|EN|JA|PR|Note|
+|CH|EN|JA|PR|Notes|
 |-|-|-|-|-|
 |钟表|to kei|とけい|と**けい**|時計|
 |现在|yi ma|いま|**い**ま|今|
@@ -309,3 +309,13 @@ The basic form and its extended form as:
 |起床|o ki ru|おきる|お**き**る|起きる|
 |午后|go go|ごご|**ご**ご|午後|
 |劳动|ha ta ra ki|はたらき|は**たらき**|働き|
+
+## (3)
+
+|CH|EN|JA|PR|Notes|
+|-|-|-|-|-|
+|早上好|o ha you go za yi ma su|おはようございます|おはようございます||
+|下一个|tsu gi|つぎ|つ**ぎ**|次の|
+|休息日|ya su mi|やすみ|や**すみ**|休み|
+|暑假|na tsu ya su mi|なつやすみ|なつやすみ|夏休み|
+|什么时候|yi tsu|いつ|**い**つ|何時|
