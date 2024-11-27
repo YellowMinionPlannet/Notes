@@ -805,3 +805,81 @@ And this Perfect Binary Tree structure gives us a new Big O expression, which is
 
 ## O(log n)
 
+A tree structure, where we can treat every node as an element in squential number collection, , allow us to search a specific node more efficiently.
+
+We don't need to search node one by one as O(n) operation, instead, we can have O(log<sub>2</sub><sup>n</sup>) operation.
+
+Because at each level, the total number of nodes, which is n,  would be 2<sup>h</sup> - 1, where h is the count of the level. So to reach our targeted node, we only need to operate h times. Therefore,
+
+n = 2<sup>h</sup> - 1
+
+implies
+
+h = log<sub>2</sub><sup>n</sup>
+
+where h is the step count when we need to search a node, having total of n input numbers.
+
+## Binary Serach Trees
+
+```js
+class Node{
+    constructor(value){
+        this.left = null;
+        this.right = null;
+        this.value = null;
+    }
+}
+
+class BinarySearchTree{
+    constructor(){
+        this.root = null;
+    }
+
+    insert(value){
+        const newNode = new Node(value);
+        if(this.root === null){
+            this.root = newNode;
+        }else{
+            let currentNode = this.root;
+            while(true){
+                if(value < currentNode.value){
+                    // go left
+                    if(!currentNode.left){
+                        currentNode.left = newNode;
+                        return this;
+                    }
+                    currentNode = currentNode.left;
+                }else{
+                    // go right
+                    if(!currentNode.right){
+                        currentNode.right = newNode;
+                        return this;
+                    }
+                    currentNode = currentNode.right;
+                }
+            }
+        }
+    }
+
+    lookup(value){
+        if(!this.root){
+            return false;
+        }
+        let currentNode = this.root;
+        while(currentNode){
+            if(value < currentNode.value){
+                currentNode = currentNode.left;
+            }else if(value >= currentNode.value){
+                currentNode = currentNode.right;
+            }else if(value === currentNode.value){
+                return currentNode;
+            }
+        }
+        return false;
+    }
+
+    remove(value){
+        
+    }
+}
+```
