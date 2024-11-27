@@ -582,7 +582,7 @@ class DoublyLinkedList{
 }
 ```
 
-# Data Structures: Stacks + Queues
+# Section 9: Data Structures: Stacks + Queues
 ## Stacks + Queues Introduction
 
 ### Stacks
@@ -777,3 +777,31 @@ class Queue{
 }
 
 ```
+
+# Section 10: Data Structures: Trees
+
+Linked List is also a type of tree, that each node in linked list could be thought as a child in tree, and each node only have one child, `next` reference. For trees, one node can have multiple children, but each node only have one parent.
+
+## Binary Trees
+Binary Tree could be a tree that each node could only have 0, 1, 2 children. To express each binary tree node through code, we could have something like:
+```js
+class BinaryTreeNode{
+    constructor(value){
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
+```
+
+There are types of binary tree, one type is called **perfect binary tree**, which means each node in this tree has exact 2 children.
+
+And Perfect Binary Tree would have some pattern like:
+1. Total number of nodes from each level always double when we move down to the tree
+2. Total number of a level always equals to all the level up nodes' total + 1.
+    - for example, on the third level of Perfect Binary Tree, there would be 4 nodes, and that number equals to first level and second level's nodes count plus one. which is 2 + 1 + 1.
+
+And this Perfect Binary Tree structure gives us a new Big O expression, which is O(log n).
+
+## O(log n)
+
