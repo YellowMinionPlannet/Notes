@@ -320,6 +320,13 @@ The basic form and its extended form as:
 |暑假|na tsu ya su mi|なつやすみ|なつやすみ|夏休み|
 |什么时候|yi tsu|いつ|**い**つ|何時|
 |半|hann|はん|**は**ん|半|
+|学习|benn kyou|べんきょう|べ**んきょう**|勉強|
+|前天|o to to yi|おととい|お**とと**い||
+|雨|a me|あめ|**あ**め|雨|
+|上周|senn syuu|せんしゅう|せ**んしゅう**|先週|
+|生日|tann jyou bi|たんじょうび|た**んじょ**うび|誕生日|
+|睡觉|ne ru|ねる|ね**る**|寝る|
+|电影|e yi ga|えいが|え**いが**|映画|
 
 ## Grammer IV
 
@@ -360,3 +367,39 @@ The basic form and its extended form as:
 |きょう　は|きゅうじ|から|||です|
 |たなかさんは|||なんじ|まで|はたらきますか|
 ||||ごじ|まで|です|
+
+### Special Number Usage in Month
+
+|Month|PR|Month|PR|
+|-|-|-|-|
+|January|いちがつ|Febuary|にがつ|
+|March|さんがつ|April|しがつ|
+|May|ごがつ|June|ろくがつ|
+|July|しちがつ|August|はちがつ|
+|September|くがつ|October|じゅうがつ|
+|November|じゅういちがつ|December|じゅうにがつ|
+
+
+### Special Number Usage in Day
+
+|Day|PR|Day|PR|
+|-|-|-|-|
+|**1**|ついにち|**2**|ふつか|
+|**3**|みっか|**4**|よっか|
+|**5**|いつか|**6**|むいか|
+|**7**|なのか|**8**|ようか|
+|**9**|ここのか|**10**|とおか|
+|11|じゅういちにち|12|じゅうににち|
+|13|じゅうさんにち|**14**|じゅうよっか|
+|15|じゅうごにち|16|じゅうろくにち|
+|17|じゅうしちにち|18|じゅうはちにち|
+|19|じゅうくにち|20|はつか|
+|**24**|にじゅうよっか|||
+
+### Special Number Usage in Hour
+
+|Hour|PR|
+|-|-|
+|4|よじ|
+|7|しちじ|
+|9|くじ|
