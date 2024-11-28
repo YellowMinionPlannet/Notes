@@ -783,7 +783,7 @@ class Queue{
 Linked List is also a type of tree, that each node in linked list could be thought as a child in tree, and each node only have one child, `next` reference. For trees, one node can have multiple children, but each node only have one parent.
 
 ## Binary Trees
-Binary Tree could be a tree that each node could only have 0, 1, 2 children. To express each binary tree node through code, we could have something like:
+Comparing to normal tree structure where each node could have any number of children, Binary Tree could be a tree that each node could only have 0, 1, 2 children. To express each binary tree node through code, we could have something like:
 ```js
 class BinaryTreeNode{
     constructor(value){
@@ -794,9 +794,9 @@ class BinaryTreeNode{
 }
 ```
 
-There are types of binary tree, one type is called **perfect binary tree**, which means each node in this tree has exact 2 children.
+There are types of binary tree, one type is called **full binary tree**, which means each node in this tree has exact 0 or 2 children.
 
-And Perfect Binary Tree would have some pattern like:
+**Perfect Binary Tree** could be a **Full Binary Tree** that have mirored left subtree and right tree. And Perfect Binary Tree would have some pattern like:
 1. Total number of nodes from each level always double when we move down to the tree
 2. Total number of a level always equals to all the level up nodes' total + 1.
     - for example, on the third level of Perfect Binary Tree, there would be 4 nodes, and that number equals to first level and second level's nodes count plus one. which is 2 + 1 + 1.
@@ -807,19 +807,21 @@ And this Perfect Binary Tree structure gives us a new Big O expression, which is
 
 A tree structure, where we can treat every node as an element in squential number collection, , allow us to search a specific node more efficiently.
 
-We don't need to search node one by one as O(n) operation, instead, we can have O(log<sub>2</sub><sup>n</sup>) operation.
+We don't need to search node one by one as O(n) operation, instead, we can have O($log_2^n$) operation.
 
-Because at each level, the total number of nodes, which is n,  would be 2<sup>h</sup> - 1, where h is the count of the level. So to reach our targeted node, we only need to operate h times. Therefore,
+Because at each level, the total number of nodes, which is n,  would be $2^h - 1$, where h is the count of the level. So to reach our targeted node, we only need to operate h times. Therefore,
 
-n = 2<sup>h</sup> - 1
+$n = 2^h - 1$
 
 implies
 
-h = log<sub>2</sub><sup>n</sup>
+$h = log_2^n$
 
 where h is the step count when we need to search a node, having total of n input numbers.
 
 ## Binary Serach Trees
+
+For tree, binary tree, there is no order within them. For **Binary Search Tree** left child node must be less than the parent node, and right child node must be greater than the parent node. That gives some ordering especially benefit for searching.
 
 ```js
 class Node{
@@ -883,3 +885,10 @@ class BinarySearchTree{
     }
 }
 ```
+
+## AVL Trees
+
+A sepecial BST, where Left subtree or Right subtree's height difference should not exceeds 1. So root node could be different from the root node when it's created. Whenever we insert or delete, we need to check this balance status, and manipulate the tree structure when it's necessary.
+
+## Red Black Trees
+
