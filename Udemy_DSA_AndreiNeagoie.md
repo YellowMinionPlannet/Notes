@@ -892,3 +892,73 @@ A sepecial BST, where Left subtree or Right subtree's height difference should n
 
 ## Red Black Trees
 
+## Binary Heap, Priority Queue, and Trie
+
+Binary Heap is a Binary Tree that each child is less than the parent, Priority Queue adding ordering when doing insert within Binary Heap, we insert from left to right. And Trie can have a root and each node could have multiple children, it is most used in intellegent input linking.
+
+# Section 11: Data Structures: Graphs
+
+## Solution: Graph Implementation
+```js
+class Graph{
+    constructor(){
+        this.numberOfNodes = 0;
+        this.adjacentList = {
+
+        };
+    }
+
+    addVertex(node){
+        this.adjacentList[node] = [];
+        this.numberOfNodes++;
+    }
+
+    addEdge(node1, node2){
+        this.adjacentList[node1].push(node2);
+        this.adjacentList[node2].push(node1);
+    }
+
+    showConnections(){
+
+    }
+}
+```
+
+# Section 12: Algorithms: Recursion
+
+```js
+function factorialRecursion(number){
+    if(number > 1){
+        return number * factorialRecursion(number - 1);
+    }
+    return 1;
+}
+
+//Fibonacci Recursion O(n)
+function fabonacciRecursion(n){
+    let beforePrevious = 0, previous = 1, counter = 2;
+    if(n === 0){
+        return beforePrevious;
+    }
+    if(n === 1){
+        return previous;
+    }
+    return sum(beforePrevious, previous, counter, n)
+}
+
+function sum(beforePrevious, previous, counter, n){
+    if(counter < n){
+        counter++;
+        return sum(previous, beforePrevious+previous, counter, n);
+    }
+    return previous + beforePrevious;
+}
+
+// O(2^n) Solution to Fibonacci
+function fibonacciRecursion(n){
+    if(n < 2){
+        return n;
+    }
+    return fibonacciRecursion(n-1) + fibonacciRecursion(n-2);
+}
+```
