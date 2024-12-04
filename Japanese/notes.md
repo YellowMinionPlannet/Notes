@@ -405,6 +405,7 @@ The basic form and its extended form as:
 |9|くじ|
 
 # 5 
+## (1)
 |CH|EN|JA|PR|Notes|
 |-|-|-|-|-|
 |去|yi ku|いく|い**く**|行く|
