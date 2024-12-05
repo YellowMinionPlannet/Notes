@@ -421,3 +421,4 @@ The basic form and its extended form as:
 |美术馆|bi jyu tsu kann|びじゅつかん|び**じゅつ**かん|美術館|
 |他们|||||
 |到达|tsu ki|つき|**つ**き|着き|
+|用|ka ka ri|かかり|かかり|かかり|
