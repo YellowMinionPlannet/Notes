@@ -414,3 +414,10 @@ The basic form and its extended form as:
 |回来，回去|ka e ru|かえる|か**える**|帰る|
 |去年|kyo nenn|きょねん|**きょ**ねん|去年|
 |来，来到|ku ru|くる|**く**る|来る|
+
+## (2)
+|CH|EN|JA|PR|Notes|
+|-|-|-|-|-|
+|美术馆|bi jyu tsu kann|びじゅつかん|び**じゅつ**かん|美術館|
+|他们|||||
+|到达|tsu ki|つき|**つ**き|着き|
