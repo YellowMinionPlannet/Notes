@@ -422,3 +422,9 @@ The basic form and its extended form as:
 |他们|||||
 |到达|tsu ki|つき|**つ**き|着き|
 |用|ka ka ri|かかり|かかり|かかり|
+
+## (3)
+|CH|EN|JA|PR|Notes|
+|-|-|-|-|-|
+|前天|ototoi|おととい|おととい|一昨日|
+|后天|asatte|あさって|あさって|明後日|
