@@ -931,7 +931,111 @@ navigator.geolocation.getCurrentPosition((position) => {
 > Web components could be a complete and seperate concept to research, please refer the book and [webcomponent guide](https://webcomponents.guide/learn/) 
 
 ## MEDIA ELEMENTS
+There are two media related elements to enable cross-browser,  `audio` and `video`, they allow media files embeded to the page and custom controls. 
+
+Minimum requirement for these two elements is `src` attribute.
+
+`width`, `height` properties are used to specify the player's dimension. `poster` attribute is used to store URI for cover image. `controls` attribute if appears indicates browser should display a UI for user to interact to the media.
+
+To supports multiple media format, you need to omit `src` attribute and use `source` tag within the target media element.
+
+for example:
+```html
+<video id="myVideo">
+    <source src="conference.webm" type="video/webm; codecs='vp8, vorbis'">
+    <source src="conference.ogv" type="video/ogg; codecs='theora, vorbis'">
+    <source src="conference.mpg">
+</video>
+
+<audio id="myAudio">
+  <source src="song.ogg" type="audio/ogg">
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+```
+
+To learn about different media format, you need to search for ***codecs*** 
+
+### Properties
+*table of shared properties between audio and video.*
+
+### Events
+*table of events for media elements*
+
+### Custom Media Players
+You can use `play()` and `pause()` methods that are available on `audio` and `video` elements, and combine other properties and events to create custom player.
+
+for example:
+```html
+<div class="mediaplayer">
+  <div classs="video">
+    <video id="player" src="movie.mov" poster="mymovie.jpg" width="300" height="200">
+      Video player is not available.
+    </video>
+  </div> 
+  <div class="controls">
+    <input type="button" value="Play" id="video-btn">
+    <span id="curtime">0</span>/<span id="duration">0</span>
+  </div>
+</div>
+<script>
+  // get referenes to the elements
+  let player = document.getElemetnById("player"),
+  btn = document.getElementById("video=-btn"),
+  curtime = document.getElementById("curtime"),
+  duration = document.getElementById("duration");
+  duration.innerHTML = player.duration;
+
+  btn.addEventListener("click", (event) => {
+    if(player.paused){
+      player.play();
+      btn.value = "Pause";
+    }else{
+      player.pause();
+      btn.value = "Play";
+    }
+  })
+
+  setInterval(() =>{
+    curtime.innerHTML = player.currentTime;
+  }, 250)
+</script>
+```
+### Codec Support Detection
+We can use JS API to determine if a given format and codec is supported by the browser.
+
+`canPlayType()` method is available for media elements, it will return truthy value if it's "probably" or "maybe" status.
+
+```js
+if(audio.canPlayType("audio/mpeg")){
+  //do something
+}
+```
+
+Remember that if you provide both MIME Type and codec format, this method is more likely accurate.
+
+```js
+if(audo.canPlayType("audio/ogg; codecs=\"vorbis\"")){
+  // do something
+}
+```
+
+### The Audio Type
+// TODO
 ## NOTIFICATIONS API
+// TODO
+
 ## PAGE VISIBILITY API
+These APIS gives developer the tab's status, for example, if the tab is minimized or hidden.
+`document.visibilityState` have 3 conditions:
+1. `visible`
+2. `hidden`, currently hidden or minimized
+3. `prerender`, page is being prerendered and it is not visible to the user.
+
+`visibilitychange` event, fires when condition updated from visible to hidden or vice versa.
+
+`document.hidden` indicates if the page is hidden or minimized. Work for backwards compatibility.
 ## TIMING APIs
+Interfaces exposed through `window.performance` object is used to show performance status.
+
+
 ## THE WEB CRYPTOGRAPHY API
