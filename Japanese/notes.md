@@ -428,3 +428,44 @@ The basic form and its extended form as:
 |-|-|-|-|-|
 |前天|ototoi|おととい|おととい|一昨日|
 |后天|asatte|あさって|あさって|明後日|
+
+## Grammer V
+
+### Action Somewhere
+
+||Somewhere|へ|Action|
+|-|-|-|-|
+|たなかさんは|会社|へ|行きます|
+|王さんは|家|へ|帰りです|
+|あなたは|どこ|へ|行きますか|
+
+### Come from somewhere
+
+|||から||来ます|
+|-|-|-|-|-|
+|友達は|上野|から|王さんの　家へ|来ます|
+|王さんは|北京|から||来ます|
+|あなたは|どこ|から||きます|
+|田中さんは|||王さんの　家へ|来ませんでした|
+
+### Action by
+
+||Trafic option|で||Action|
+|-|-|-|-|-|
+|田中さんは|電車|で|会社|いきます|
+|東京まで|何|で||行きますか|
+
+### Action with someone
+||someone|と|Action|
+|-|-|-|-|
+|王さんは|友達|と|帰ります|
+|あなたは|どれ|と|行きますか|
+
+### From somewhere to somewhere costs sometime
+
+Somewhereから　somewhereまで　sometimeかかります
+
+### The Someone do something
+
+Someoneが　somewhereから 行きます
+
