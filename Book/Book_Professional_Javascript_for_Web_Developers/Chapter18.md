@@ -1035,7 +1035,10 @@ These APIS gives developer the tab's status, for example, if the tab is minimize
 
 `document.hidden` indicates if the page is hidden or minimized. Work for backwards compatibility.
 ## TIMING APIs
-Interfaces exposed through `window.performance` object is used to show performance status.
+Interfaces exposed through `window.performance` object is used to show performance status. Use `Window.performance` object to measure performance or timing duration is more accurate. 
 
 
 ## THE WEB CRYPTOGRAPHY API
+
+Cryptography is a big topic within Security Area, I don't like it, but I know some of it. That's good enough.
+
