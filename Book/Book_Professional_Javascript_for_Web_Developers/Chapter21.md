@@ -99,3 +99,69 @@ fetch('send-me-json', {
     headers: jsonHeaders
 })
 ```
+
+#### Sending Parameters in a Request Body
+```js
+
+let payload = 'foo=bar&baz=qux';
+let paramHeaders = new Headers({
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+});
+
+fetch('/send-meparams', {
+    method: 'POST',
+    body: payload,
+    headers: paramHeaders
+});
+```
+
+#### Sending Files
+```js
+let imageFormData = new FormData();
+let imageInput = document.querySelector('input[type='file']');
+imageFormData.append('image', imageInput.file[0]);
+fetch('img-upload', {
+    method: 'POST',
+    body: imageFormData
+})
+```
+
+#### Loading Files as Blobs
+```js
+const imageElement = document.querySelector('img');
+fetch('my-image.png')
+.then((response) => response.blob())
+.then((blob) => {
+    imageElement.src = URL.creageObjectURL(blob)
+})
+
+```
+
+#### Sending a Cross-Origin Request
+If you want to access response from cross-origin, you need to check the CORS policy. At min, you need response to be set with CORS headers.
+
+If you don't need to access response from cross-origin, 
+
+```js
+fetch('//cross-origin.com', {
+    method: 'no-cors',
+})
+.then((response) => console.log(response.type)); // opaque
+
+```
+
+#### Aborting Request
+```js
+let abortController = new AbortControlloer();
+
+fetch('wikipedia.zip', {
+    signal: abortController.signal
+})
+.catch(() => console.log('aborted!'));
+// Abort the fetch after 10ms
+setTimeout(() => abortController.abort(), 10);
+
+//aborted!
+```
+
+### The Headers Object
