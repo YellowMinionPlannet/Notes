@@ -215,6 +215,48 @@ export {default} from './user.js'; // to re-export the default export
 
 ## Javascript dynamic import explained
 
+We can achieve dynamic import by `import()`
+```js
+let modulePath = prompt("Which module to load?");
+
+import(modulePath)
+  .then(obj => <module object>)
+  .catch(err => <loading error, e.g. if no such module>)
+
+
+// 📁 say.js
+export function hi() {
+  alert(`Hello`);
+}
+
+export function bye() {
+  alert(`Bye`);
+}
+
+// 📁 index.js
+let {hi, bye} = await import('./say.js');
+
+hi();
+bye();
+
+// 📁 index_version2.js
+let obj = await import('./say.js');
+let say = obj.default;
+
+say();
+```
+In HTML:
+```html
+<!doctype html>
+<script>
+  async function load() {
+    let say = await import('./say.js');
+    say.hi(); // Hello!
+    say.bye(); // Bye!
+    say.default(); // Module loaded (export default)!
+  }
+</script>
+<button onclick="load()">Click me</button>
+```
 ## Javascript strict mode explained
-
-
+Use `"use strict"` or `'use strict'` to say below is for new features. Or by default, new feature won't work. Remember class and module are automatically new featured.
