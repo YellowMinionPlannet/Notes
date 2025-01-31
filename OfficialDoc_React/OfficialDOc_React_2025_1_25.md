@@ -185,3 +185,147 @@ Then each `MyButton` component has a its own state, each click will cause corres
 
 Functions starting with `use` are called *Hooks*, they are buit-in functions, and very restrictive functions. You can build your own hooks on the top of other hooks. And it is required that you put hooks on the top of your components. If you want to use hooks in a condition or a loop, you need to extract a new component and put it there.
 
+
+#### `useState` vs. `useReducer`
+||`useState`|`useReducer`|
+|-|-|-|
+|Code size|coder will have less boilerplate code| with `useReducer`, coder can have state modified by different type of events|
+|Readability|code is more centralized and easy to read, but when logic got complex, it's hard to scan| code is "categorized" corresponding to the type|
+|Debugging|difficult to debug|scan each action, if no clue, then must be reducer|
+|Testing||require pure function, and isolated, so easy to test|
+
+### Sharing data between componets
+
+`useState` usually located at the beginning of a component(template) and it's isolated among component's instances.
+
+If you want to control multiple components using a same state. You need to scale up the state into their shared parent component. Please see example below:
+```jsx
+export default function MyApp() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    setCount(count + 1);
+  }
+
+  return (
+    <div>
+      <h1>Counters that update together</h1>
+      <MyButton count={count} onClick={handleClick} />
+      <MyButton count={count} onClick={handleClick} />
+    </div>
+  );
+}
+```
+
+## Installation
+# LEARN REACT
+## Describing the UI
+## Adding Interactivity
+`useState` and `useReducer` all act like a memory or snapshot of the current rendering page. When the state changes, by calling setState or dispatch, it triggers the page to re-render.
+
+Local variable is different from the state. When you use something like `setState([Primitive Value])` it changes the state, but this does not affect the local variable at current rendering round, but the local variable related will be updated when re-rendering is done. This change happens immediately through triggered event, and will cause the re-rendering if there's no further state manipulation.
+
+If you want to persist the updates in a sequence of changing state, you need to use *updater* function.
+
+Please see following example:
+```jsx
+import { useState } from 'react';
+function MyButton() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    console.log("first time, "count);
+    setCount(count + 1);
+    console.log("second time, "count);
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
+
+```
+
+In the previous example, both `console.log` will output [0, 0]at the initial rendering, and [1, 1], [2, 2], in the following re-rendering.
+
+Now let's see if this happens in a sequence.
+
+```jsx
+import { useState } from 'react';
+function MyButton() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    console.log("first time, "count);
+    setCount(count + 1);
+    setCount(count + 1);
+    console.log("second time, "count);
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
+```
+
+In previous example, the output should be the same, [0,0], [1,1],[2,2].
+
+Now if we want to persist value an do it in a sequence:
+```jsx
+import { useState } from 'react';
+function MyButton() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    console.log("first time, "count);
+    setCount(count => count + 1);// updater function
+    console.log("second time, "count);
+    setCount(count => count + 1);
+    
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
+```
+
+The output would be [0, 0], [2, 2], [4, 4], because each time we call `setCount` the count will be persisted to the next calling. It's like a queue.
+
+Let's see a more tricky example:
+```jsx
+import { useState } from 'react';
+function MyButton() {
+  const [count, setCount] = useState(0);
+
+  function handleClick() {
+    console.log("first time, "count);
+    setCount(count => count + 1);// updater function
+    console.log("second time, "count);
+    setTimeout(()=> {
+        setCount(count + 1);
+    }, 5000)
+    setCount(count => count + 1);
+    
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
+```
+This example output will be [0, 0] [1, 1] and [2, 2].
+
+That's because the async operation will final trigger a rendering with **count = 0 and count + 1**, 
+
+But observe the text on the button, it first appear as 2, because 2 updater function was executed in a sequence. And 5 senconds later, the text on button will become 1. 
+
+## Managing State
