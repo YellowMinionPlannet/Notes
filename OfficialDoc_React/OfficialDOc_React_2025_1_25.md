@@ -329,3 +329,511 @@ That's because the async operation will final trigger a rendering with **count =
 But observe the text on the button, it first appear as 2, because 2 updater function was executed in a sequence. And 5 senconds later, the text on button will become 1. 
 
 ## Managing State
+### Reacting to Input with State
+Declarative vs. Imperative UI Design
+
+- Imperative UI Design, you have to give command to every detail operations, step by step, this would be hard to debug or read through when UI gets complex and nested.
+
+- Declarative UI Design, you need to do several things:
+1. **Identify** different state of your UI
+2. **Determine** what triggers those state changes, events?
+3. **Represent** the state in memory using `useState`
+4. **Remove** any non-essential state variables
+5. **Connect** the event handlers to change state
+
+#### Identify
+For a submit function form, there might be states like:
+1. Empty
+2. Typing
+3. Submitting
+4. Success
+5. Error
+
+```jsx
+export default function Form({
+  // Try 'submitting', 'error', 'success':
+  status = 'empty'
+}) {
+  if (status === 'success') {
+    return <h1>That's right!</h1>
+  }
+  return (
+    <>
+      <h2>City quiz</h2>
+      <p>
+        In which city is there a billboard that turns air into drinkable water?
+      </p>
+      <form>
+        <textarea disabled={
+          status === 'submitting'
+        } />
+        <br />
+        <button disabled={
+          status === 'empty' ||
+          status === 'submitting'
+        }>
+          Submit
+        </button>
+        {status === 'error' &&
+          <p className="Error">
+            Good guess but a wrong answer. Try again!
+          </p>
+        }
+      </form>
+      </>
+  );
+}
+```
+Also, you can be benefit from mocking the status, to see if each states work. Easy to test and read.
+
+#### Determine
+For form, there might be 2 events, which will trigger the state changes, that you need to consider:
+1. Human inputs, like clicking buttong, typing in a field, etc.
+2. Computer inputs, like network response arrives, timeouts, image loading, etc.
+
+#### Represent
+When trying to represent your visual states using `useState`.
+
+Remembert that the principal is you want to put in only what is neccessary. And duplicate or complex states lead to bugs.
+
+But as initial process, we can put whatever we have for visual states now, and in the next step, we will refactor and remove the redundant ones.
+
+#### Remove(Refactor)
+At the end of this step, we must have the least states that is only necessary to perform the functionality.
+
+#### Connect the event handlers to set state
+Build up events to change corresponding state.
+
+#### Complete example
+Finished example:
+```jsx
+import { useState } from 'react';
+
+export default function Form() {
+  const [answer, setAnswer] = useState('');
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('typing');
+
+  if (status === 'success') {
+    return <h1>That's right!</h1>
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('submitting');
+    try {
+      await submitForm(answer);
+      setStatus('success');
+    } catch (err) {
+      setStatus('typing');
+      setError(err);
+    }
+  }
+
+  function handleTextareaChange(e) {
+    setAnswer(e.target.value);
+  }
+
+  return (
+    <>
+      <h2>City quiz</h2>
+      <p>
+        In which city is there a billboard that turns air into drinkable water?
+      </p>
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={answer}
+          onChange={handleTextareaChange}
+          disabled={status === 'submitting'}
+        />
+        <br />
+        <button disabled={
+          answer.length === 0 ||
+          status === 'submitting'
+        }>
+          Submit
+        </button>
+        {error !== null &&
+          <p className="Error">
+            {error.message}
+          </p>
+        }
+      </form>
+    </>
+  );
+}
+
+function submitForm(answer) {
+  // Pretend it's hitting the network.
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      let shouldError = answer.toLowerCase() !== 'lima'
+      if (shouldError) {
+        reject(new Error('Good guess but a wrong answer. Try again!'));
+      } else {
+        resolve();
+      }
+    }, 1500);
+  });
+}
+```
+
+### Choosing the State Structure
+
+#### Principles for structuring state
+1. Group related states:
+this example shows to combine x index and y index into one object state.
+```jsx
+import { useState } from 'react';
+
+export default function MovingDot() {
+  const [position, setPosition] = useState({
+    x: 0,
+    y: 0
+  });
+  return (
+    <div
+      onPointerMove={e => {
+        setPosition({
+          x: e.clientX,
+          y: e.clientY
+        });
+      }}
+      style={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+      }}>
+      <div style={{
+        position: 'absolute',
+        backgroundColor: 'red',
+        borderRadius: '50%',
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        left: -10,
+        top: -10,
+        width: 20,
+        height: 20,
+      }} />
+    </div>
+  )
+}
+```
+
+2. Avoid contradictons in state
+Because `isSending` and `isSent` never happened at the same time, we can use `status` as one state to represent "typing", "submitting", "sent"
+```jsx
+import { useState } from 'react';
+
+export default function FeedbackForm() {
+  const [text, setText] = useState('');
+  const [status, setStatus] = useState('typing');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus('sending');
+    await sendMessage(text);
+    setStatus('sent');
+  }
+
+  const isSending = status === 'sending';
+  const isSent = status === 'sent';
+
+```
+
+3. Avoid redundant state
+You can substitute state like `fullName` which depends on other two states: `firstName` and `lastNmae` into a local variable:
+```jsx
+import { useState } from 'react';
+
+const initialItems = [
+  { title: 'pretzels', id: 0 },
+  { title: 'crispy seaweed', id: 1 },
+  { title: 'granola bar', id: 2 },
+];
+
+export default function Menu() {
+  const [items, setItems] = useState(initialItems);
+  const [selectedItem, setSelectedItem] = useState(
+    items[0]
+  );
+
+  return (
+    <>
+      <h2>What's your travel snack?</h2>
+      <ul>
+        {items.map(item => (
+          <li key={item.id}>
+            {item.title}
+            {' '}
+            <button onClick={() => {
+              setSelectedItem(item);
+            }}>Choose</button>
+          </li>
+        ))}
+      </ul>
+      <p>You picked {selectedItem.title}.</p>
+    </>
+  );
+}
+
+```
+
+5. Avoid deeply nested state
+For example, if you have items and selectedItem, you can change to items and selectedItemId
+
+6. Avoid deeply nested state
+When you have hierchy in the list data, you'd better express them in 'flat' version:
+```js
+export const initialTravelPlan = {
+  0: {
+    id: 0,
+    title: '(Root)',
+    childIds: [1, 42, 46],
+  },
+  1: {
+    id: 1,
+    title: 'Earth',
+    childIds: [2, 10, 19, 26, 34]
+  },
+  2: {
+    id: 2,
+    title: 'Africa',
+    childIds: [3, 4, 5, 6 , 7, 8, 9]
+  }, 
+  3: {
+    id: 3,
+    title: 'Botswana',
+    childIds: []
+  },
+  4: {
+    id: 4,
+    title: 'Egypt',
+    childIds: []
+  },
+  5: {
+    id: 5,
+    title: 'Kenya',
+    childIds: []
+  },
+  6: {
+    id: 6,
+    title: 'Madagascar',
+    childIds: []
+  }, 
+  7: {
+    id: 7,
+    title: 'Morocco',
+    childIds: []
+  },
+  8: {
+    id: 8,
+    title: 'Nigeria',
+    childIds: []
+  },
+  9: {
+    id: 9,
+    title: 'South Africa',
+    childIds: []
+  },
+  10: {
+    id: 10,
+    title: 'Americas',
+    childIds: [11, 12, 13, 14, 15, 16, 17, 18],   
+  },
+  11: {
+    id: 11,
+    title: 'Argentina',
+    childIds: []
+  },
+  12: {
+    id: 12,
+    title: 'Brazil',
+    childIds: []
+  },
+  13: {
+    id: 13,
+    title: 'Barbados',
+    childIds: []
+  }, 
+  14: {
+    id: 14,
+    title: 'Canada',
+    childIds: []
+  },
+  15: {
+    id: 15,
+    title: 'Jamaica',
+    childIds: []
+  },
+  16: {
+    id: 16,
+    title: 'Mexico',
+    childIds: []
+  },
+  17: {
+    id: 17,
+    title: 'Trinidad and Tobago',
+    childIds: []
+  },
+  18: {
+    id: 18,
+    title: 'Venezuela',
+    childIds: []
+  },
+  19: {
+    id: 19,
+    title: 'Asia',
+    childIds: [20, 21, 22, 23, 24, 25],   
+  },
+  20: {
+    id: 20,
+    title: 'China',
+    childIds: []
+  },
+  21: {
+    id: 21,
+    title: 'India',
+    childIds: []
+  },
+  22: {
+    id: 22,
+    title: 'Singapore',
+    childIds: []
+  },
+  23: {
+    id: 23,
+    title: 'South Korea',
+    childIds: []
+  },
+  24: {
+    id: 24,
+    title: 'Thailand',
+    childIds: []
+  },
+  25: {
+    id: 25,
+    title: 'Vietnam',
+    childIds: []
+  },
+  26: {
+    id: 26,
+    title: 'Europe',
+    childIds: [27, 28, 29, 30, 31, 32, 33],   
+  },
+  27: {
+    id: 27,
+    title: 'Croatia',
+    childIds: []
+  },
+  28: {
+    id: 28,
+    title: 'France',
+    childIds: []
+  },
+  29: {
+    id: 29,
+    title: 'Germany',
+    childIds: []
+  },
+  30: {
+    id: 30,
+    title: 'Italy',
+    childIds: []
+  },
+  31: {
+    id: 31,
+    title: 'Portugal',
+    childIds: []
+  },
+  32: {
+    id: 32,
+    title: 'Spain',
+    childIds: []
+  },
+  33: {
+    id: 33,
+    title: 'Turkey',
+    childIds: []
+  },
+  34: {
+    id: 34,
+    title: 'Oceania',
+    childIds: [35, 36, 37, 38, 39, 40, 41],   
+  },
+  35: {
+    id: 35,
+    title: 'Australia',
+    childIds: []
+  },
+  36: {
+    id: 36,
+    title: 'Bora Bora (French Polynesia)',
+    childIds: []
+  },
+  37: {
+    id: 37,
+    title: 'Easter Island (Chile)',
+    childIds: []
+  },
+  38: {
+    id: 38,
+    title: 'Fiji',
+    childIds: []
+  },
+  39: {
+    id: 40,
+    title: 'Hawaii (the USA)',
+    childIds: []
+  },
+  40: {
+    id: 40,
+    title: 'New Zealand',
+    childIds: []
+  },
+  41: {
+    id: 41,
+    title: 'Vanuatu',
+    childIds: []
+  },
+  42: {
+    id: 42,
+    title: 'Moon',
+    childIds: [43, 44, 45]
+  },
+  43: {
+    id: 43,
+    title: 'Rheita',
+    childIds: []
+  },
+  44: {
+    id: 44,
+    title: 'Piccolomini',
+    childIds: []
+  },
+  45: {
+    id: 45,
+    title: 'Tycho',
+    childIds: []
+  },
+  46: {
+    id: 46,
+    title: 'Mars',
+    childIds: [47, 48]
+  },
+  47: {
+    id: 47,
+    title: 'Corn Town',
+    childIds: []
+  },
+  48: {
+    id: 48,
+    title: 'Green Hill',
+    childIds: []
+  }
+};
+```
+
+You can use childIds to check if this is higher level item.
+
+
+
