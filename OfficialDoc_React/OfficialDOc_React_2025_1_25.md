@@ -98,10 +98,10 @@ return (
   )}
 </div>
 
-// and more extreme way
+// and more extreme way, where AdminPanel always exists in React UI Structure no matter the condition of isLoggedIn.
 
 <div>
-  {isLoggedIn && <AdminPanel />}
+  {isLoggedIn && <AdminPanel />} 
 </div>
 ```
 
@@ -198,7 +198,7 @@ Functions starting with `use` are called *Hooks*, they are buit-in functions, an
 
 `useState` usually located at the beginning of a component(template) and it's isolated among component's instances.
 
-If you want to control multiple components using a same state. You need to scale up the state into their shared parent component. Please see example below:
+If you want to control multiple components using a same state. You need to lift up the state into their shared parent component. Please see example below:
 ```jsx
 export default function MyApp() {
   const [count, setCount] = useState(0);
