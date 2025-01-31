@@ -835,5 +835,286 @@ export const initialTravelPlan = {
 
 You can use childIds to check if this is higher level item.
 
+### Sharing State Between Components
+Just remember to lift up the child compoent's state to common parents when you want to change the state among child components simultaneously.
 
 
+### Preserving and Resetting State
+So there is a concept called *UI tree*, this is important to know. React keeps track of which state belongs to which component based on their place in the UI tree.
+
+Beside of that there is also a *Dependency tree* which depicts module imports operations from dependency modules.
+
+- State does not lives in component and isolated by compoents themselves. States actually are stored in React, and React "remember" states to corresponding component by the position of *UI tree*.
+
+To demonstrate this concept, please see following example:
+```jsx
+import { useState } from 'react';
+
+export default function App() {
+  const counter = <Counter />;
+  return (
+    <div>
+      {counter}
+      {counter}
+    </div>
+  );
+}
+
+function Counter() {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = 'counter';
+  if (hover) {
+    className += ' hover';
+  }
+
+  return (
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{score}</h1>
+      <button onClick={() => setScore(score + 1)}>
+        Add one
+      </button>
+    </div>
+  );
+}
+```
+In above example, two counters have seperated `score` and `hover` properties. That's because if you see the position in *UI tree*, it will be like:
+
+
+![UITree_1](UITree_div&2counter.png)
+
+So two counters have different positions, and they will have different states.
+
+- When you try to make a conditional rendering, and when component is stoped rendered, its state will be removed also. So remove a component, destroy a state. Please see example:
+
+```jsx
+import { useState } from 'react';
+
+export default function App() {
+  const [showB, setShowB] = useState(true);
+  return (
+    <div>
+      <Counter />
+      <!-- Conditional Rendering HERE!!! -->    
+      {showB && <Counter />} 
+      <label>
+        <input
+          type="checkbox"
+          checked={showB}
+          onChange={e => {
+            setShowB(e.target.checked)
+          }}
+        />
+        Render the second counter
+      </label>
+    </div>
+  );
+}
+
+function Counter() {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = 'counter';
+  if (hover) {
+    className += ' hover';
+  }
+
+  return (
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{score}</h1>
+      <button onClick={() => setScore(score + 1)}>
+        Add one
+      </button>
+    </div>
+  );
+}
+```
+
+Above example will have *UI tree* like:
+
+![UITree_2](UITree_div&secondcounterremoved.png)
+
+When the Second counter is added back, the state will be initialized from scratch.
+
+- Now, if we have different components(same type) at the same position, it will share the same state. TO demo this, please see:
+
+```jsx
+import { useState } from 'react';
+
+export default function App() {
+  const [isFancy, setIsFancy] = useState(false);
+  return (
+    <div>
+      {isFancy ? (
+        <Counter isFancy={true} /> 
+      ) : (
+        <Counter isFancy={false} /> 
+      )}
+      <label>
+        <input
+          type="checkbox"
+          checked={isFancy}
+          onChange={e => {
+            setIsFancy(e.target.checked)
+          }}
+        />
+        Use fancy styling
+      </label>
+    </div>
+  );
+}
+
+function Counter({ isFancy }) {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = 'counter';
+  if (hover) {
+    className += ' hover';
+  }
+  if (isFancy) {
+    className += ' fancy';
+  }
+
+  return (
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{score}</h1>
+      <button onClick={() => setScore(score + 1)}>
+        Add one
+      </button>
+    </div>
+  );
+}
+
+```
+
+This will be resolved as:
+
+![UITree_3](UITree_div&optionalcounters.png)
+
+So React discards the `isFancy` props value, and treat both Counter as same state.
+
+- If you have different type of component appearing at the same position, React will remove the previous one and destroy the state, and add the later and intiate from scratch.
+
+#### Resetting state at the same position
+The defualt behavior is to render same type but different components at the same postion with same state.
+
+If you want to reset, you have 2 options:
+1. render at different position for these 2 same typed components
+2. give them different identity by using `key` property.
+
+
+##### Demo 1
+```jsx
+import { useState } from 'react';
+
+export default function Scoreboard() {
+  const [isPlayerA, setIsPlayerA] = useState(true);
+  return (
+    <div>
+      <!-- these && operators will make counter available at different position -->
+      {isPlayerA &&
+        <Counter person="Taylor" />
+      }
+      {!isPlayerA &&
+        <Counter person="Sarah" />
+      }
+      <button onClick={() => {
+        setIsPlayerA(!isPlayerA);
+      }}>
+        Next player!
+      </button>
+    </div>
+  );
+}
+
+function Counter({ person }) {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = 'counter';
+  if (hover) {
+    className += ' hover';
+  }
+
+  return (
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{person}'s score: {score}</h1>
+      <button onClick={() => setScore(score + 1)}>
+        Add one
+      </button>
+    </div>
+  );
+}
+
+```
+
+##### Demo 2
+```jsx
+import { useState } from 'react';
+
+export default function Scoreboard() {
+  const [isPlayerA, setIsPlayerA] = useState(true);
+  return (
+    <div>
+      <!-- There is a key property for each counter -->
+      {isPlayerA ? (
+        <Counter key="Taylor" person="Taylor" />
+      ) : (
+        <Counter key="Sarah" person="Sarah" />
+      )}
+      <button onClick={() => {
+        setIsPlayerA(!isPlayerA);
+      }}>
+        Next player!
+      </button>
+    </div>
+  );
+}
+
+function Counter({ person }) {
+  const [score, setScore] = useState(0);
+  const [hover, setHover] = useState(false);
+
+  let className = 'counter';
+  if (hover) {
+    className += ' hover';
+  }
+
+  return (
+    <div
+      className={className}
+      onPointerEnter={() => setHover(true)}
+      onPointerLeave={() => setHover(false)}
+    >
+      <h1>{person}'s score: {score}</h1>
+      <button onClick={() => setScore(score + 1)}>
+        Add one
+      </button>
+    </div>
+  );
+}
+
+```
+
+So `different keys === different positions`.
+
+### Extracting State Logic into a Reducer
