@@ -220,7 +220,21 @@ export default function MyApp() {
 ## Installation
 # LEARN REACT
 ## Describing the UI
+SUMMARY:
+- Basic concept about JSX component and Nested Component
+- Curly Braces Expression
+- Concept about Props and special Props children
+- Conditional Rendering
+- Iterate collection of components
+- Concept about pure component
+- UI Tree concept
 ## Adding Interactivity
+SUMMARY:
+- How to add events to component
+- State concept
+- Batch state updates
+- Example and pitfalls about updating reference type state.
+
 `useState` and `useReducer` all act like a memory or snapshot of the current rendering page. When the state changes, by calling setState or dispatch, it triggers the page to re-render.
 
 Local variable is different from the state. When you use something like `setState([Primitive Value])` it changes the state, but this does not affect the local variable at current rendering round, but the local variable related will be updated when re-rendering is done. This change happens immediately through triggered event, and will cause the re-rendering if there's no further state manipulation.
@@ -329,6 +343,11 @@ That's because the async operation will final trigger a rendering with **count =
 But observe the text on the button, it first appear as 2, because 2 updater function was executed in a sequence. And 5 senconds later, the text on button will become 1. 
 
 ## Managing State
+- Concept about how to construct state
+- Pitfalls when using state
+- Using useReducer
+- Using Context
+
 ### Reacting to Input with State
 Declarative vs. Imperative UI Design
 
@@ -1483,3 +1502,41 @@ function Task({ task }) {
   );
 }
 ```
+
+## Escape Hatches
+- Exceptions for memory and behavior when re-rendering
+    - Refs
+        - Why using Refs, memo for non-reactive value
+        - Reference to DOM
+    - Effect
+        - Why using Effect, example about using Ref to update DOM
+        - Avoid Effect when it's not necessary
+        - Lifecyle of Effect
+        - Seperate Logic for Reactive logic and User Interactive Logic
+        - Refactor Dependency
+        - Custom Hooks
+### Referencing Values with Refs
+You want to persist some values among rending, and also the manipulation of that value does not trigger new renders, you want to use ref.
+For example, 
+```jsx
+import { useRef } from 'react';
+
+export default function Counter() {
+  let ref = useRef(0);
+
+  function handleClick() {
+    ref.current = ref.current + 1;
+    alert('You clicked ' + ref.current + ' times!');
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Click me!
+    </button>
+  );
+}
+```
+
+Ref can be pointed to anything, like value, string, object, function.
+
+
