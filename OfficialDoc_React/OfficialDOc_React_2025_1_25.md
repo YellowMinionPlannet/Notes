@@ -1539,4 +1539,30 @@ export default function Counter() {
 
 Ref can be pointed to anything, like value, string, object, function.
 
+# React
 
+## Hooks
+
+### State Hooks
+#### `useState`
+##### Parameters
+- `initialState`: You coud pass value or function. If you pass function, then the passed function will be treated as *initializer*. The *initializer* should be pure, has no arguments, and return a value of any type.
+##### Retures
+1. current state
+2. set function, which lets you update the state and trigger re-render.
+
+##### Caveats
+- `useState` is a Hook, so call it at top level of your component. It can NOT be called within loop or conditions.
+
+##### `set` function
+
+###### Parameters
+- you can pass value or function
+  - if you pass a function, it will be treated as an *updater* function. shoud take only **the pending(previous/current) state** as its only argument, should return the next state.
+
+###### Returns
+No Returns
+
+###### Caveats
+- What causes re-render is the new value you provided into that set function must be different examined by `Object.is` comparison. If different then re-render.
+- re-render will happen after **all the event handlers have run**, you can change this behavior using `flushSync`
