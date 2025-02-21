@@ -184,5 +184,90 @@ match color:
         print("Grass is green")
     case Color.BLUE:
         print("I'm feeling the blues :(")
-
 ```
+
+Funciton can accept tuples and dictionary, specified by `*` and `**`
+```python
+def cheeseshop(kind, *arguments, **keywords):
+    print(kind)
+    print(arguments)
+    print(keywords)
+
+cheeseshop('a', 'b', 'c', name=1, school=2)
+# a
+# ('b', 'c')
+# {'name': 1, 'school': 2}
+
+args = [3, 6]
+list(range(*args))
+[3, 4, 5]
+```
+
+Function parameters could be seperated into 3 types:
+1. standard
+2. positional only, must have `/` at the end of arguments
+3. keyword only, must have `*` at the begining of arguments
+
+```python
+def standard_arg(arg):
+    print(arg)
+
+def pos_only_arg(arg, /):
+    print(arg)
+
+def kwd_only_arg(*, arg):
+    print(arg)
+
+def combined_example(pos_only, /, standard, *, kwd_only):
+    print(arg)
+```
+
+Potential parameter name collision, use `/` to clarify the keyword only parameters will solve the parameter name collision.
+
+```python
+def foo(name, **kwds):
+    return 'name' in kwds
+
+foo(1, name=2) # name = 1, and name = 2
+# Traceback (most recent call last):
+# File "<stdin>", line 1, in <module>
+# TypeError: foo() got multiple values for argument 'name'
+
+def foo(name, /, **kwds):
+    return 'name' in kwds
+
+foo(1, name=2)
+# True
+```
+
+Lambda
+```python
+pairs = [(1, 'one'), (2, 'two'), (3, 'three'), (4, 'four')]
+pairs.sort(key=lambda pair: pair[1]) # specify sort by each pair's second element
+pairs
+# [(4, 'four'), (1, 'one'), (3, 'three'), (2, 'two')]
+```
+
+Coding Convention:
+
+- Use 4-space indentation, and no tabs.
+
+4 spaces are a good compromise between small indentation (allows greater nesting depth) and large indentation (easier to read). Tabs introduce confusion, and are best left out.
+
+- Wrap lines so that they don’t exceed 79 characters.
+
+This helps users with small displays and makes it possible to have several code files side-by-side on larger displays.
+
+- Use blank lines to separate functions and classes, and larger blocks of code inside functions.
+
+- When possible, put comments on a line of their own.
+
+- Use docstrings.
+
+- Use spaces around operators and after commas, but not directly inside bracketing constructs: a = f(1, 2) + g(3, 4).
+
+- Name your classes and functions consistently; the convention is to use UpperCamelCase for classes and lowercase_with_underscores for functions and methods. Always use self as the name for the first method argument (see A First Look at Classes for more on classes and methods).
+
+- Don’t use fancy encodings if your code is meant to be used in international environments. Python’s default, UTF-8, or even plain ASCII work best in any case.
+
+- Likewise, don’t use non-ASCII characters in identifiers if there is only the slightest chance people speaking a different language will read or maintain the code.
