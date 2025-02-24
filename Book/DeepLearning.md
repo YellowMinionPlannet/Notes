@@ -131,3 +131,22 @@ $$A_{2,1}x_1 + A_{2,2}x_2 + ...+ A_{2,n}x_{n} = b_2$$
 $$A_{m,1}x_1 + A_{m,2}x_2 + ...+ A_{m,n}x_{n} = b_m$$
 
 ## 2.3 Identity and Inverse Matrices
+
+
+# 5 Machine Learning Basics
+
+## Why we study Machine Learning in Deep Learning book
+
+Deep learning is a specific kind of machine learning
+
+## What type of task Machine Learning can do?
+1. Classification
+2. Regression, predict output based on inputs
+3. Transcription, identify or abstract text through image / voice
+4. Machine translation, translate one language to another
+5. Stuctured outputs, produce a sentence that can describe a image
+6. Anomaly detection
+7. Synthesis and sampling
+8. Imputation of missing
+9. Denoising
+10. Density estimation or probability mass function estimation
