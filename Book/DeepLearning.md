@@ -139,7 +139,11 @@ $$A_{m,1}x_1 + A_{m,2}x_2 + ...+ A_{m,n}x_{n} = b_m$$
 
 Deep learning is a specific kind of machine learning
 
-## What type of task Machine Learning can do?
+## The Task, T?
+Task is the description or specific goal we want to achieve. Usually different Task will use different algorithm, with Experience E(data) as input, and output a result. That result will be measured by Performance P. Machine Learning's ultimate goal is to improve the Perfomance P with more Experience E(data), so that next time we have Task T, with new data, or unobserved data, the Task's Performance is better. 
+
+Moreover, Model is a system that not only can do machine learning tasks, but also can observe the Performance from the output and adjust the Task's algorithm by tuning parameters without human's intervention. Paramters mostly mean internal parameters, or weights of deep learning neural networks. Chat says it's not possible for model to re-create algorithm from scratch by itself yet. But there are advanced model, like Generative Adversial Model, which can create new data for training, and self-improving process. But those new data still sits in normal data distribution.
+
 1. Classification
 2. Regression, predict output based on inputs
 3. Transcription, identify or abstract text through image / voice
@@ -149,4 +153,28 @@ Deep learning is a specific kind of machine learning
 7. Synthesis and sampling
 8. Imputation of missing
 9. Denoising
-10. Density estimation or probability mass function estimation
+10. Density estimation or probability mass function estimation, it is a task to study how possiblly to observe a different value in feature space.
+
+## The Performance Measure, P
+Quantitive measure of performance P is specific to the task T being carried out by the system.
+
+- For classification, classification with missing inputs, and transcription, we measure the **accuracy** of the model. It is the proportion of examples, which also is called **data points**, for which the model produces the correct output.
+
+- **error rate**, is the proportion of examples for which the model produces an incorrect output. It is expected to be between 0 and 1. For example, 0 error rate on a specific example means it is correctly classified, and 1 it is not. And density estimation task does not use **accuracy** or **error rate** to measure.
+
+- We measure the performance by using a **test set** of data that is seperately collected from training set.
+
+- We tune about the measure in different application. For exampole, can give partial credits for getting some elements of the sequence correct, also can penalize more if it frequently makes medium-sized mistake.
+
+## The Experience, E
+Experience is the **data**.
+
+
+
+## Capacity, Overfitting and Underfitting
+- The real challenge in machine learning is to perform well on new, previously unseen inputs. The ability to perform well on previously unobserved inputs is called **generalization**.
+
+- Training error, is the error we measure on the training set.
+- Generalization error, or test error, is the error we measure on a test set that were collected separately from the training set.
+
+
