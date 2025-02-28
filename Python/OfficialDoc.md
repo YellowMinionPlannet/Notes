@@ -110,6 +110,27 @@ list(range(-10, -100, -30))
 # [-10, -40, -70]
 ```
 
+```python
+letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+letters
+# ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+
+# replace some values
+letters[2:5] = ['C', 'D', 'E']
+letters
+# ['a', 'b', 'C', 'D', 'E', 'f', 'g']
+
+# now remove them
+letters[2:5] = []
+letters
+# ['a', 'b', 'f', 'g']
+
+# clear the list by replacing all the elements with an empty list
+letters[:] = []
+letters
+# []
+```
+
 Combine `range()` and `len()` function with `for` statement
 ```python
 a = ['Mary', 'had', 'a', 'little', 'lamb']
@@ -271,3 +292,61 @@ This helps users with small displays and makes it possible to have several code 
 - Don’t use fancy encodings if your code is meant to be used in international environments. Python’s default, UTF-8, or even plain ASCII work best in any case.
 
 - Likewise, don’t use non-ASCII characters in identifiers if there is only the slightest chance people speaking a different language will read or maintain the code.
+
+# 5 Data Structures
+
+## List Comprehensions
+
+```python
+squares = []
+for x in range(10):
+    squares.append(x**2)
+
+squares
+# [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+squares = list(map(lambda x: x**2, range(10)))
+squares = [x**2 for x in range(10)]
+# two has the same output as first logic.
+
+[(x, y) for x in [1,2,3] for y in [3,1,4] if x != y]
+# [(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
+
+combs = []
+for x in [1,2,3]:
+    for y in [3,1,4]:
+        if x != y:
+            combs.append((x, y))
+
+combs
+# [(1, 3), (1, 4), (2, 3), (2, 1), (2, 4), (3, 1), (3, 4)]
+
+vec = [-4, -2, 0, 2, 4]
+# create a new list with the values doubled
+[x*2 for x in vec]
+# [-8, -4, 0, 4, 8]
+
+# filter the list to exclude negative numbers
+[x for x in vec if x >= 0]
+# [0, 2, 4]
+
+# apply a function to all the elements
+[abs(x) for x in vec]
+# [4, 2, 0, 2, 4]
+
+# call a method on each element
+freshfruit = ['  banana', '  loganberry ', 'passion fruit  ']
+[weapon.strip() for weapon in freshfruit]
+# ['banana', 'loganberry', 'passion fruit']
+
+# create a list of 2-tuples like (number, square)
+[(x, x**2) for x in range(6)]
+# [(0, 0), (1, 1), (2, 4), (3, 9), (4, 16), (5, 25)]
+
+# flatten a list using a listcomp with two 'for'
+vec = [[1,2,3], [4,5,6], [7,8,9]]
+[num for elem in vec for num in elem]
+# [1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+## Nested List Comprehensions
