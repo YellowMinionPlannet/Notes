@@ -169,12 +169,8 @@ Quantitive measure of performance P is specific to the task T being carried out 
 ## The Experience, E
 Experience is the **data**.
 
-
-
 ## Capacity, Overfitting and Underfitting
 - The real challenge in machine learning is to perform well on new, previously unseen inputs. The ability to perform well on previously unobserved inputs is called **generalization**.
 
 - Training error, is the error we measure on the training set.
 - Generalization error, or test error, is the error we measure on a test set that were collected separately from the training set.
-
-
