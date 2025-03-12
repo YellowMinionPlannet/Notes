@@ -350,3 +350,117 @@ vec = [[1,2,3], [4,5,6], [7,8,9]]
 ```
 
 ## Nested List Comprehensions
+```python
+# to transpose this matrix, we have several methods to do it, and it will result the same.
+
+matrix = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9,10,11,12]
+]
+
+# Method1
+[[row[i] for row in matrix] for i in range(4)]
+
+# [[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]
+
+# Method2
+transposed = []
+for i in range(4):
+    transposed.append([row[i] for row in matrix])
+
+transposed
+#[[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]
+
+# Method3
+transposed = []
+for i in range(4)
+    transposed_row = []
+    for row in matrix:
+        transposed_row.append(row[i])
+    transposed.append(transposed_row)
+
+transposed
+
+# Method4
+list(zip(*matrix))
+# [(1, 5, 9), (2, 6, 10), (3, 7, 11), (4, 8, 12)]
+```
+
+### About `zip()` function
+```python
+for item in zip([1, 2, 3], ['sugar', 'spice', 'everything nice']):
+    print(item)
+
+# (1, 'sugar')
+# (2, 'spice')
+# (3, 'everything nice')
+```
+
+### About Unpacking Argument Lists
+```python
+list(range(3, 6))
+# [3, 4, 5]
+args = [3, 6]
+list(range(*args))
+# [3, 4, 6]
+```
+
+## The `del` statement
+`del` is used for removing item in a list by its index given.
+```python
+a = [-1, 1, 66.25, 333, 333, 1234.5]
+del a[0]
+a
+#[1, 66.25, 333, 333, 1234.5]
+del a[2:4]
+a
+#[1, 66.25, 1234.5]
+del a[:]
+a
+#[]
+
+del a
+# delete variable a
+```
+
+## Tuples and Sequences
+In python, tuple is a standard way to express squence of data.
+```python
+t = 12345, 54321, 'hello!'
+t[0]
+# 12345
+
+t
+#(12345, 54321, 'hello!')
+
+u = t, (1, 2, 3, 4, 5)
+u
+#((12345, 54321, 'hello!'), (1, 2, 3, 4, 5))
+
+t[0] = 88888
+# Error, because tuples are immutable
+
+v = ([1, 2, 3], [3, 2, 1])
+v
+# ([1, 2, 3], [3, 2, 1])
+
+empty = ()
+
+singleton = 'hello',
+
+len(empty)
+# 0
+
+len(singleton)
+# 1
+
+singleton
+# ('hello', )
+
+# multiple assignment for unpacking tuple/squence
+
+x, y, z = t
+```
+
+## Sets
