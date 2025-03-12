@@ -464,3 +464,90 @@ x, y, z = t
 ```
 
 ## Sets
+No duplicate elements, have to use `set()` function to create empty set.
+```python
+emptySet = set()
+emptySet
+# set()
+
+basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+basket
+# {'apple', 'orange', 'pear', 'banana'}
+
+'orange' in basket
+# true
+
+'some other fruit' in basket
+# false
+
+# CAUTION: using set() instead of {}
+a = set('asdfasdf')
+b = set('asd')
+a
+# {'a','s','d','f'}
+a - b
+# in a but not b
+# {'f'}
+
+a|b
+# in a or b or both
+# {'a', 's', 'd', 'f'}
+
+a&b
+# in both a and b
+# {'a','s','d'}
+
+a^b
+# in a or b but not both
+# {'f'}
+```
+
+## Dictionaries
+It is indexed by keys, and keys can be any immutable types, strings and numbers, Tuples can be keys if they only contain strings, numbers.
+```python
+tel = {'jack': 4098, 'sape': 4139}
+tel['guido'] = 4127
+tel
+# {'jack': 4098, 'sape': 4139, 'guido': 4127}
+tel['jack']
+# 4098
+
+del tel['sape']
+tel['irv'] = 4127
+tel
+# {'jack': 4098, 'guido': 4127, 'irv': 4127}
+
+list(tel)
+#['jack', 'guido', 'irv']
+
+sorted(tel)
+#['guido', 'irv', 'jack']
+
+'guido' in tel
+# true
+
+{x: x**2 for x in (2, 4, 6)}
+# {2:4, 4:16, 6:36}
+
+dict(sape=4139, guido=4127, jack=4098)
+#{'sape': 4139, 'guido': 4127, 'jack':4098}
+```
+
+## Looping Techniques
+
+## Comparing Squences and Other TYpes
+```python
+(1, 2, 3)              < (1, 2, 4)
+[1, 2, 3]              < [1, 2, 4]
+'ABC' < 'C' < 'Pascal' < 'Python'
+(1, 2, 3, 4)           < (1, 2, 4)
+(1, 2)                 < (1, 2, -1)
+(1, 2, 3)             == (1.0, 2.0, 3.0)
+(1, 2, ('aa', 'ab'))   < (1, 2, ('abc', 'a'), 4)
+
+# all of these statements are true
+
+```
+
+python compare two squences by elements one by one, and if the same position are two squence typed element, the comparing will be recursive. The comparison will be ended when one of the sequence / subsequence is exhausted.
+
