@@ -551,3 +551,71 @@ dict(sape=4139, guido=4127, jack=4098)
 
 python compare two squences by elements one by one, and if the same position are two squence typed element, the comparing will be recursive. The comparison will be ended when one of the sequence / subsequence is exhausted.
 
+# 6 Modules
+To achieve code reuse, we can use scripts or modules.
+
+A module is a file containing Python definitions and statements.
+- file name must be module name with suffix `.py`
+- module name is available as a global variable called `__name__`
+
+Take a example for module:
+
+```python
+def fib(n):
+    a, b = 0, 1
+    while a < n:
+        print(a, end=' ')
+        a, b = b, a+b
+    print()
+
+def fib2(n):
+    result = []
+    a, b = 0, 1
+    while a < n:
+        result.append(a)
+        a, b = b, a+b
+    return result
+
+# in another python script
+
+import fibo
+
+fibo.fib(1000)
+# 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+
+fib = fibo.fib
+fib(500)
+# 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377
+```
+
+Several syntax about importing:
+```python
+from fibo import fib as fibonacci
+
+from fibo import fib, fib2
+
+from fibo import *
+
+import fibo as fib
+
+```
+
+You need to call `importlib.reload()` to reload module if you have updated the code.
+
+## Executing modules as scripts
+This is the syntax to run a module as script
+
+```python
+python fibo.py 50
+
+
+```
+
+That means u set `__name__` global variable to "__main__" and run like:
+```python
+if __name__ == "__main__":
+    import sys
+    fib(int(sys.argv[1]))
+```
+
+## The Module Search Path
