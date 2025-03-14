@@ -350,3 +350,286 @@ vec = [[1,2,3], [4,5,6], [7,8,9]]
 ```
 
 ## Nested List Comprehensions
+```python
+# to transpose this matrix, we have several methods to do it, and it will result the same.
+
+matrix = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9,10,11,12]
+]
+
+# Method1
+[[row[i] for row in matrix] for i in range(4)]
+
+# [[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]
+
+# Method2
+transposed = []
+for i in range(4):
+    transposed.append([row[i] for row in matrix])
+
+transposed
+#[[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]
+
+# Method3
+transposed = []
+for i in range(4)
+    transposed_row = []
+    for row in matrix:
+        transposed_row.append(row[i])
+    transposed.append(transposed_row)
+
+transposed
+
+# Method4
+list(zip(*matrix))
+# [(1, 5, 9), (2, 6, 10), (3, 7, 11), (4, 8, 12)]
+```
+
+### About `zip()` function
+```python
+for item in zip([1, 2, 3], ['sugar', 'spice', 'everything nice']):
+    print(item)
+
+# (1, 'sugar')
+# (2, 'spice')
+# (3, 'everything nice')
+```
+
+### About Unpacking Argument Lists
+```python
+list(range(3, 6))
+# [3, 4, 5]
+args = [3, 6]
+list(range(*args))
+# [3, 4, 6]
+```
+
+## The `del` statement
+`del` is used for removing item in a list by its index given.
+```python
+a = [-1, 1, 66.25, 333, 333, 1234.5]
+del a[0]
+a
+#[1, 66.25, 333, 333, 1234.5]
+del a[2:4]
+a
+#[1, 66.25, 1234.5]
+del a[:]
+a
+#[]
+
+del a
+# delete variable a
+```
+
+## Tuples and Sequences
+In python, tuple is a standard way to express squence of data.
+```python
+t = 12345, 54321, 'hello!'
+t[0]
+# 12345
+
+t
+#(12345, 54321, 'hello!')
+
+u = t, (1, 2, 3, 4, 5)
+u
+#((12345, 54321, 'hello!'), (1, 2, 3, 4, 5))
+
+t[0] = 88888
+# Error, because tuples are immutable
+
+v = ([1, 2, 3], [3, 2, 1])
+v
+# ([1, 2, 3], [3, 2, 1])
+
+empty = ()
+
+singleton = 'hello',
+
+len(empty)
+# 0
+
+len(singleton)
+# 1
+
+singleton
+# ('hello', )
+
+# multiple assignment for unpacking tuple/squence
+
+x, y, z = t
+```
+
+## Sets
+No duplicate elements, have to use `set()` function to create empty set.
+```python
+emptySet = set()
+emptySet
+# set()
+
+basket = {'apple', 'orange', 'apple', 'pear', 'orange', 'banana'}
+basket
+# {'apple', 'orange', 'pear', 'banana'}
+
+'orange' in basket
+# true
+
+'some other fruit' in basket
+# false
+
+# CAUTION: using set() instead of {}
+a = set('asdfasdf')
+b = set('asd')
+a
+# {'a','s','d','f'}
+a - b
+# in a but not b
+# {'f'}
+
+a|b
+# in a or b or both
+# {'a', 's', 'd', 'f'}
+
+a&b
+# in both a and b
+# {'a','s','d'}
+
+a^b
+# in a or b but not both
+# {'f'}
+```
+
+## Dictionaries
+It is indexed by keys, and keys can be any immutable types, strings and numbers, Tuples can be keys if they only contain strings, numbers.
+```python
+tel = {'jack': 4098, 'sape': 4139}
+tel['guido'] = 4127
+tel
+# {'jack': 4098, 'sape': 4139, 'guido': 4127}
+tel['jack']
+# 4098
+
+del tel['sape']
+tel['irv'] = 4127
+tel
+# {'jack': 4098, 'guido': 4127, 'irv': 4127}
+
+list(tel)
+#['jack', 'guido', 'irv']
+
+sorted(tel)
+#['guido', 'irv', 'jack']
+
+'guido' in tel
+# true
+
+{x: x**2 for x in (2, 4, 6)}
+# {2:4, 4:16, 6:36}
+
+dict(sape=4139, guido=4127, jack=4098)
+#{'sape': 4139, 'guido': 4127, 'jack':4098}
+```
+
+## Looping Techniques
+
+## Comparing Squences and Other TYpes
+```python
+(1, 2, 3)              < (1, 2, 4)
+[1, 2, 3]              < [1, 2, 4]
+'ABC' < 'C' < 'Pascal' < 'Python'
+(1, 2, 3, 4)           < (1, 2, 4)
+(1, 2)                 < (1, 2, -1)
+(1, 2, 3)             == (1.0, 2.0, 3.0)
+(1, 2, ('aa', 'ab'))   < (1, 2, ('abc', 'a'), 4)
+
+# all of these statements are true
+
+```
+
+python compare two squences by elements one by one, and if the same position are two squence typed element, the comparing will be recursive. The comparison will be ended when one of the sequence / subsequence is exhausted.
+
+# 6 Modules
+To achieve code reuse, we can use scripts or modules.
+
+A module is a file containing Python definitions and statements.
+- file name must be module name with suffix `.py`
+- module name is available as a global variable called `__name__`
+
+Take a example for module:
+
+```python
+def fib(n):
+    a, b = 0, 1
+    while a < n:
+        print(a, end=' ')
+        a, b = b, a+b
+    print()
+
+def fib2(n):
+    result = []
+    a, b = 0, 1
+    while a < n:
+        result.append(a)
+        a, b = b, a+b
+    return result
+
+# in another python script
+
+import fibo
+
+fibo.fib(1000)
+# 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+
+fib = fibo.fib
+fib(500)
+# 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377
+```
+
+Several syntax about importing:
+```python
+from fibo import fib as fibonacci
+
+from fibo import fib, fib2
+
+from fibo import *
+
+import fibo as fib
+
+```
+
+You need to call `importlib.reload()` to reload module if you have updated the code.
+
+## Executing modules as scripts
+This is the syntax to run a module as script
+
+```python
+python fibo.py 50
+```
+
+That means u set `__name__` global variable to "__main__" and run like:
+```python
+if __name__ == "__main__":
+    import sys
+    fib(int(sys.argv[1]))
+```
+
+## The Module Search Path
+
+When a module named *spam* is imported, the interpreter will look for this module in following places:
+- `sys.builtin_module_names`
+- Directories given by the variable `sys.path`:
+    - The directory containing the input script
+    - PYTHONPATH
+    - Standard Python modules(`prefix`) and Extension modules(`.pyd`, `exec_prefix`)
+    - Installation-dependent default
+
+## "Compiled" Python files
+
+To speed up loading modules, Python caches the compiled version of each module in the `__pycache__` directory under the name `module.version.pyc`. For example, in CPython(the windows version of python?) release 3.3, the compiled version of spam.py would be cached as `__pycache__/spam.cpython-33.pyc`.
+
+So when running if the current modified date is later than the compiled one, then the module will be recompiled. Command line is always recompiled, and if there is no source module, then the cache is ignored.
+
+## Standard Modules
