@@ -607,8 +607,6 @@ This is the syntax to run a module as script
 
 ```python
 python fibo.py 50
-
-
 ```
 
 That means u set `__name__` global variable to "__main__" and run like:
@@ -619,3 +617,19 @@ if __name__ == "__main__":
 ```
 
 ## The Module Search Path
+
+When a module named *spam* is imported, the interpreter will look for this module in following places:
+- `sys.builtin_module_names`
+- Directories given by the variable `sys.path`:
+    - The directory containing the input script
+    - PYTHONPATH
+    - Standard Python modules(`prefix`) and Extension modules(`.pyd`, `exec_prefix`)
+    - Installation-dependent default
+
+## "Compiled" Python files
+
+To speed up loading modules, Python caches the compiled version of each module in the `__pycache__` directory under the name `module.version.pyc`. For example, in CPython(the windows version of python?) release 3.3, the compiled version of spam.py would be cached as `__pycache__/spam.cpython-33.pyc`.
+
+So when running if the current modified date is later than the compiled one, then the module will be recompiled. Command line is always recompiled, and if there is no source module, then the cache is ignored.
+
+## Standard Modules
