@@ -78,6 +78,8 @@ There are some tech to do this:
 - ARM stands for Azure Resource Manager Template, a JSON file to describe what setup your creating resources would be.
 - It can be exported, modified, uploaded, and deployed.
 
+- ARM Template is a declarative way to create/deploy resources.
+
 |Declarative|Imperative|
 |--|--|
 |Describes the end result|send instructions to run|

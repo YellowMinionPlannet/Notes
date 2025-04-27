@@ -658,3 +658,12 @@ import sound.formats.wavread
 
 from sound.effects.echo import echofilter
 ```
+
+# 7 Input and Output
+Finished reading
+
+# 8 Errors and Exceptions
+Finished reading
+
+# 9 Classes
+Finished reading
