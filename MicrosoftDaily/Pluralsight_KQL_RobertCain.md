@@ -171,3 +171,33 @@ StormEvents
 -- then the rows are ordered by StormsWithCropDamage, by default is desending
 ```
 
+## make_set()
+Will make the cell value into array format.
+
+```sql
+StormEvents
+| where DeathsDirect > 0 or DeathsIndirect > 0
+| summarize StormTypesWithDeaths = make_set(EventType) by State
+| project State, StormTypesWithDeaths
+| sort by array_length(StormTypesWithDeaths)
+
+-- there would be two column for output, and the StormTypesWithDeaths columns' cells are all array of eventtypes
+```
+
+## case()
+enter conditions and corresponding expressions of conditions, so that the cell will be the value of the expressions
+
+```sql
+StormEvents
+| summarize InjuriesCount = sum(InjuriesDirect) by State
+| extend InjuriesBucket = case(
+        InjuriesCount > 50,
+        "Large",
+        InjuriesCount > 10,
+        "Medium",
+        InjuriesCount > 0,
+        "Small",
+        "No injuries"
+)
+| sort by State asc
+```
