@@ -168,6 +168,6 @@ StormEvents
 -- 1. where TotalStromsInState is the count of total rows which grouped by state, 
 -- 2. StormsWithCropDamage is count of DamageCrops column when DamageCrops is greater of 0
 -- after extend, there is additional column, PercentWithCropDamage, which is a percentage number.
--- then the rows are ordered by StormsWithCropDamage
+-- then the rows are ordered by StormsWithCropDamage, by default is desending
 ```
 
