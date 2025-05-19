@@ -136,7 +136,7 @@ Perf
 | where TimeGenerated>=ago(7d)
 | summarize NumberOfEntries=count()
         by bin(TimeGenerated, 1d)
--- bin is used to break into bucket, here we break TimeGenerated into 1 day of period
+-- bin is used to break into bucket, here we break TimeGenerated into 1 day of period, and everything is grouped by these 1 day periods.
 
 Perf
 | where TimeGenerated>=ago(7d)
@@ -200,4 +200,27 @@ StormEvents
         "No injuries"
 )
 | sort by State asc
+
+-- there would be 3 columns, InjuriesCount, State, InjuriesBucket(created by Extend keyword)
 ```
+
+# Join data from multiple tables
+```sql
+StormEvents
+| summarize PropertyDamage = sum(DamageProperty) by State
+| join kind=innerunique PopulationData on State
+| project State, PropertyDamagePerCapita = PropertyDamage / Population
+| sort by PropertyDamagePerCapita
+```
+
+- If left table and right table has different name, we can use `| join kind=innerunique PopulationData on $left.State == $right.Statename`
+- Join operaters' kind:
+        - innerunique
+        - inner
+        - leftouter
+        - rightouter
+        - fullouter
+        - leftsemi
+        - leftanti
+        - rightsemi
+        - rightanti
