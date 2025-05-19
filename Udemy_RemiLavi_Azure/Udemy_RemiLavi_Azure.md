@@ -93,3 +93,25 @@ Steps of using ARM template:
 
 2. When you download, it has two files: `parameters.json`, and `template.json`.
 
+```md
+continued on 2025.05.19, topics are skipped:
+- App Service
+- docker
+- AKS
+```
+# Azure Functions
+
+- A function that executes when a event is triggered.
+
+## Concept: Triggers vs. Bindings
+- Trigger is when event is raised.
+- trigger is deeply binded with other Azure Services
+- Trigger makes function to execute
+
+- Bindings is connection to other resources
+- Can be used for inputs and outputs
+
+## Concept: Cold Start
+
+- Azure Function is cold start by default. That means, Azure Function host will be shut down if there's no activity. And the host needs time for the next time when triggered on. To avoid this, you need to choose the right hosting plan.
+
