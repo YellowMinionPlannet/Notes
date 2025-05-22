@@ -224,3 +224,9 @@ StormEvents
         - leftanti
         - rightsemi
         - rightanti
+
+- How to search a specific column name in a database
+```sql
+.show database schema
+| where ColumnName == "xxx"
+```
