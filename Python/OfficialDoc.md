@@ -633,3 +633,37 @@ To speed up loading modules, Python caches the compiled version of each module i
 So when running if the current modified date is later than the compiled one, then the module will be recompiled. Command line is always recompiled, and if there is no source module, then the cache is ignored.
 
 ## Standard Modules
+
+Python comes with standard module, they might vary due to different OS. But `sys` module is a common module built into every Python interpreter.
+
+## Packages
+
+Package will use `__init__.py` to identify itself as a package directory. `__init__.py` could be empty or treat as initialization code of a package.
+
+for example, if we have file structure like:
+```py
+sound/
+    __init__.py
+    formats/
+        __init__.py
+        wavread.py
+        wavwirte.py
+        ...
+```
+
+Then we can have
+
+```py
+import sound.formats.wavread
+
+from sound.effects.echo import echofilter
+```
+
+# 7 Input and Output
+Finished reading
+
+# 8 Errors and Exceptions
+Finished reading
+
+# 9 Classes
+Finished reading
