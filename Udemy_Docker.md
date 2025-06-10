@@ -35,6 +35,18 @@ docker container ls -a
 
 docker conatiner logs 690
 # to show logs for 690* container
+
+docker container top 690
+# to show actual processes to the running container, this should be different count from the container, nginx should have 2 processes for one nginx running container, for example.
+
+docker container --help
+# to show all the command available for docker container
+
+docker container rm 690 691 692
+# to remove container, but this won't remove anything that is running by default, we need force mode
+
+docker container rm -f 690
+# to remove in force mode
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
