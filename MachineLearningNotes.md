@@ -20,7 +20,7 @@ $$
 
 # Logistic Regression Analysis
 
-The concept of Logistic Regression is to categorize dots. For example, we have study hours and pass/fail result
+The concept of Logistic Regression is to categorize dots, y range is 0 to 1 corresponding to value of x. For example, we have study hours and pass/fail result
 
 |Hours Studied|Pass/Fail|
 |-|-|
