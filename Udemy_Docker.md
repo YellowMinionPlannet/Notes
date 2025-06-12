@@ -56,3 +56,12 @@ docker container rm -f 690
     - Container is the instance conducted by the image
     - We can work with registry to download/upload image, and the default registry for docker is called Docker Hub
 
+
+5. what happens when running `docker container run`
+    1. Looks ofr that image locally in image cache, if doesn't find anything go 2.
+    2. Then looks in remote image repository (docker hub)
+    3. downloads the latest version 
+    4. create new container based on that image and prepares to start
+    5. gives it a virtual IP on private network inside docker engine
+    6. opens up 80 on host and forwards to port 80 inside
+    7. starts container by using CMD in the DOCKERFILE
