@@ -47,6 +47,31 @@ docker container rm 690 691 692
 
 docker container rm -f 690
 # to remove in force mode
+
+docker container top
+# process list in that specific container
+
+docker container inspect 
+# details of one container config, json formatted
+
+docker container stats 
+# all containers', what they are using when running
+
+docker container run -it
+# iteractively command prompt when creating a container
+
+docker container exec -it
+# iteractive command prompt open for a existing container
+# where -it means 2 things, -i means interactively keep input stdin open, -t means a terminal
+
+docker container start -ai ubuntu
+# start runing a stopped container with terminal
+
+# the command following the -it must be something in the container's PATH, for example, if that container does not provide bash, you can't do like docker container run -it mysql bash, because bash is not in that container, you have to hack in there with sh, maybe, to download package that support bash
+
+docker container port containername
+# to give you ports info on that container
+
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
