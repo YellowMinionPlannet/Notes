@@ -72,6 +72,26 @@ docker container start -ai ubuntu
 docker container port containername
 # to give you ports info on that container
 
+dcoker container exec -it --rm CONTAINER bash
+# when exit the interactive terminal, clear the container and volume
+
+
+# NetWork
+
+docker network ls
+
+docker network inspect
+
+docker network create --driver
+
+docker network connect
+
+docker network disconnect
+
+docker container run --link
+# connect container that created at default bridge network, so that the specified container can have DNS link with the created one.
+# Usually, we just create a new network, and create container in that new network, so that by default, the containers in the same network will have DNS identified by container name.
+
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
