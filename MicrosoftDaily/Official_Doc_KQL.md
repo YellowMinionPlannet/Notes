@@ -158,3 +158,22 @@ ISO 8601 format for datetime
 4. `==` applying on null value and non-null value return false, applying on null values on both sides return bool(null)
 5. `!=` applying on null value and non-null value return true, applying on null values on both sides return bool(null)
 
+### Functions
+#### User-defined functions
+
+- Arguments
+
+|Syntax	Input |arguments list description|
+|-|-|
+|()	|No arguments|
+|(s:string)	|Single scalar argument called s taking a value of type string|
+|(a:long, b:bool=true)	|Two scalar arguments, the second of which has a default value|
+|(T1:(*), T2:(r:real), b:bool)	|Three arguments (two tabular arguments and one scalar argument)|
+
+Example:
+```sql
+let MyFilter = (T:(x:long), v:long) {
+  T | where x >= v
+};
+MyFilter((range x from 1 to 10 step 1), 9)
+```
