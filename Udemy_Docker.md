@@ -92,6 +92,13 @@ docker container run --link
 # connect container that created at default bridge network, so that the specified container can have DNS link with the created one.
 # Usually, we just create a new network, and create container in that new network, so that by default, the containers in the same network will have DNS identified by container name.
 
+docker image tag ORIGINALIMAGENAME:TAG NEWIMAGENAME:TAG
+
+docker image ls
+
+docker image pull 
+
+docker image push
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
@@ -122,4 +129,8 @@ docker container run --link
         2. Metadata
     - We can use `docker image inspect` to show metadata of an image
     - When we create containers by the same layer, the containers shares the same part of that image, until some container change something perticularly itself. But this won't cause the changed container got whole new stack of image, but only cause COW to the changed part/file. COW means, copy on write, it means only copy the written part to the different container.
-    
+
+7. ATTENTION: about `docker login`
+    - ALWAYS remember to logout using `docker logout` on a shared machine, it might store a credential on the .docker/config/json file, you can use `cat .docker/config.json` to find out
+
+
