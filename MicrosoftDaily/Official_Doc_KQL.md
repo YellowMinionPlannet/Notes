@@ -89,4 +89,72 @@ ISO 8601 format for datetime
 |dict[['where']]	|Keyword used as entity name (column)	|Subscripts a dictionary using the values of column where as the key	|Entity names that are identical to some query language keywords must be quoted|
 |dict.['where'] or dict['where']	|Constant	|Subscripts a dictionary using where string as the key|
 
-##### Casting
+##### Building dynamic objects
+```sql
+-- Creating dynamic objects
+    bag_pack("Level", "Information", "ProcessID", 1234, "Data", back_pack("url", "www.bing.com"))
+    -- {"Level": "Information", "ProcessID": 1234, "Data":{"url": "www.bing.com"}}
+
+    range x from 1 to 3 step 1
+    | extend y = x*2
+    | extend z = y*2
+    | project pack_array(x, y, z)
+    -- [1, 2, 4]
+    -- [2, 4, 8]
+    -- [3, 6, 12]
+
+    datatable(a:int, b:string) [1, "One", 2, "Two", 3, "Three"]
+    | summarize a = make_list(a), b = make_list(b)
+    | project zip(a, b)
+    --[[1, "One"], [2, "Two"], [3, "Three"]]
+
+-- Aggregate functions
+    datatable(value: dynamic) [
+        dynamic({"x":1, "y":3.5}),
+        dynamic({"x":"somevalue", "z":[1, 2, 3]}),
+        dynamic({"y":{"w":"zzz"}, "t":["aa", "bb"], "z":["foo"]})
+    ]
+    | summarize buildschema(value)
+    -- {"x":["long","string"],"y":["double",{"w":"string"}],"z":{"indexer":["long","string"]},"t":{"indexer":"string"}}
+
+    let T = datatable(prop:string, value:string)
+    [
+        "prop01", "val_a",
+        "prop02", "val_b",
+        "prop03", "val_c",
+    ];
+    T
+    | extend p = bag_pack(prop, value)
+    | summarize dict=make_bag(p)
+    -- { "prop01": "val_a", "prop02": "val_b", "prop03": "val_c" }
+    
+    let shapes = datatable (name: string, sideCount: int)
+    [
+        "triangle", 3,
+        "square", 4,
+        "rectangle", 4,
+        "pentagon", 5,
+        "hexagon", 6,
+        "heptagon", 7,
+        "octagon", 8,
+        "nonagon", 9,
+        "decagon", 10
+    ];
+    shapes
+    | summarize mylist = make_list(name)
+    -- ["triangle","square","rectangle","pentagon","hexagon","heptagon","octagon","nonagon","decagon"]
+
+    StormEvents 
+    | summarize states=make_set(State) by DamageCrops
+    -- DamageCrops states
+    -- 0            ["North Carolina", "Wisconsin", ...]
+    -- 30000        ["Texas", "Nebraska", ...]
+    -- 4000000      ["California", "Kentucky", ....]
+```
+#### Null Value
+1. print bool(null), datetime(null), dynamic(null), guid(null), int(null), long(null), real(null), double(null), timespan(null) gives you ` ` in every cell
+2. string datatype does not supports null value, so use isempty() function instead
+3. use isnull() and isnotnull() for null value identification
+4. `==` applying on null value and non-null value return false, applying on null values on both sides return bool(null)
+5. `!=` applying on null value and non-null value return true, applying on null values on both sides return bool(null)
+
