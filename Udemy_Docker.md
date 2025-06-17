@@ -110,3 +110,16 @@ docker container run --link
     5. gives it a virtual IP on private network inside docker engine
     6. opens up 80 on host and forwards to port 80 inside
     7. starts container by using CMD in the DOCKERFILE
+
+
+6. Concept of Docker Image
+    - Image has a Image ID, which is sha, like github
+    - each image is built on layers, we can show this by `docker image history` command
+    - these layers is built on uppon each other like a stack
+    - so different image with partially same layers will share these identical partial layers, for example, Image A with top 2 layers same with Image B, will not store the whole Image A and B, it will only store, one copy of top 2 layers, and other different layers seperately corresponding to A and B.
+    - Image has 2 parts:
+        1. Binaries of the application and dependencies
+        2. Metadata
+    - We can use `docker image inspect` to show metadata of an image
+    - When we create containers by the same layer, the containers shares the same part of that image, until some container change something perticularly itself. But this won't cause the changed container got whole new stack of image, but only cause COW to the changed part/file. COW means, copy on write, it means only copy the written part to the different container.
+    
