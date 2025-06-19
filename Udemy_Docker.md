@@ -99,6 +99,9 @@ docker image ls
 docker image pull 
 
 docker image push
+
+docker build -f some-dockerfile
+# use specific some-dockerfile instead of default Dockerfile
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
@@ -133,4 +136,15 @@ docker image push
 7. ATTENTION: about `docker login`
     - ALWAYS remember to logout using `docker logout` on a shared machine, it might store a credential on the .docker/config/json file, you can use `cat .docker/config.json` to find out
 
+8. Image Building Concept:
+    1. Every Dockerfile requires a `FROM` command to specify the minimum distribution of the image, this will be the base of your image
+    2. Use `ENV` to inject key/value which will work on every OS and config
+    3. USe `RUN` for running command at shell inside container at build time
+    4. Use `RUN` and `ln -sf/dev/stdout/ /var/log/nginx/access.log`  and  `ln - sf- /dev/stder /var/log/nginx/error.log` to forward log to container
+    5. use `EXPOSE` to expose ports to the newly created virtual network
+    6. use `CMD` to run command after container is launced.
+    7. Mind your order of lines of code in Dockerfile, because one line is changed, all lines after that would be not benefits of using cache, if all lines are the same, it should be built all based on cache.
+        - Best practice, put the lease possibility of changes lines at top, and things change the most at bottom
 
+    8. Use `WORKDIR` to change root directory to a specified path, this is preferred over `RUN cd ....`
+    
