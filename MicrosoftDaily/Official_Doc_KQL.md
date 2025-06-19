@@ -177,3 +177,12 @@ let MyFilter = (T:(x:long), v:long) {
 };
 MyFilter((range x from 1 to 10 step 1), 9)
 ```
+
+### Query statements
+
+#### Alias Statement
+```sql
+alias database samplesAlias = cluster("https://help.kusto.windows.net").database("Samples");
+database("sampleAlias").StormEvents | count
+```
+
