@@ -102,6 +102,9 @@ docker image push
 
 docker build -f some-dockerfile
 # use specific some-dockerfile instead of default Dockerfile
+
+docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresql/data -p 5432:5432 postgres:17
+# use the same volume with a named volume
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
