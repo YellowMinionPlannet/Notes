@@ -148,3 +148,67 @@ docker build -f some-dockerfile
 
     8. Use `WORKDIR` to change root directory to a specified path, this is preferred over `RUN cd ....`
     
+9. To master how image is built, we'd better recognize there are categories of statment that used in the Dockerfile. These categories include:
+    1. Runtime vs. Buildtime:
+        CMD vs. RUN
+    2. Overwritten vs. Addictive:
+        CMD vs. EXPOSE
+
+10. ENTRYPOINT vs. CMD
+    1. CMD could be overwritten through `docker container run [options] IMAGE [command][arguments]`
+    2. ENTRYPOINT could be oeverwritten by `docker container run --entrypoint CMD IMAGE`
+    3. ENTRYPOINT is supposed to be a complementary statemen to the CMD.
+    4. ENTRYPOINT and CMD can be used together, where these two statement shine, to achieve:
+        1. use container as a CLI tool
+        2. run a start script
+
+        ```dockerfile
+        FROM ubuntu:latest
+        RUN apt-get update && \
+            apt-get install -y --no-install-recommends \
+            curl \
+            && rm -rf /var/lib/apt/lists/*
+
+        ENTRYPOINT ["curl"]
+
+        CMD ["--help"]
+        ```
+
+        so we coud use something like
+
+        `docker container run passengerjia/curl www.google.com`
+
+        because with these 2 statements, the command becomes: ENTRYPOINT + " " + CMD
+        
+        and remember that CMD part can be easily replaced by command after IMAGE name.
+
+
+        TO run script:
+
+        We can create a script file, and ask sh to execute that file within CMD command.
+
+        But this will end up with your startuped app being run as a sub-process, which will lead to kill process when shutting down. This inappropriate shutdown operation will cause data breakage.
+
+        INSTEAD:
+
+        ```dockerfile
+        FROM python:slim
+        USER www-data
+        COPY requirement.txt .
+        RUN pip install --no-cache-dir -r requirement.txt
+        COPY . .
+        ENTRYPOINT ["./startup.sh"]
+        CMD ["python", "app.py"]
+        
+        ```
+        ```bash
+        -- startup.sh
+        echo ""
+        mkdir -p /var/www/html/upload
+        chown -R www-data:www-data /var/www/html/upload
+
+        exec "$@"
+        ```
+
+
+
