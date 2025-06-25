@@ -62,5 +62,23 @@ plt.plot(x_train, y_train, c="b")
     
     - So cost function of $f_{w, b} = wx + b$ could be calculated as $J(w,b) =  \frac{1}{2m} \sum_{i = 1}^m{(f_{w,b}(x^{(i)})- y^{(i)})^2}$. Where, this states that we want sum of square of the error, where each error at ith training example is $y^{(i)} - \widehat{y}^{(i)}$
 
-    - 
+    - With squared error cost function, the J is always shaped like a bowl or hammock, where the bottom of the shape is the minimized value of J.
+    
+- Gradient Descent
+    - the principle is, each step, adjust w and b simultaneously, and always find the steepest change(decrease) on J to the next step, until we reach the bottom of the valley. (where J is minimized)
+    $$ 
+        tmp\_w = w - \alpha \frac{d}{dw}J(w,b)
+    $$
+    $$
+        tmp\_b = b - \alpha \frac{d}{db}J(w,b)
+    $$
+    $$
+        w = tmp\_w, b = tmp\_b 
+    $$
 
+    - To understand this, imagine the model is single parameterized with w, so that 
+        $w = w - \alpha \frac{d}{dw}J(w)$, is the whole process, because when the tagent line(derivative) is positive, that means next w is decreasing, and leading the J(w) more closer to the bottom of the bowl shape.
+
+    - Convex function, the function has bowl shape that only has one local/global minima
+
+    - batch gradient descent, is the one that every step we consider all the training examples, instead of subset of training examples.
