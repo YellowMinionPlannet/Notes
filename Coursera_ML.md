@@ -63,9 +63,19 @@ plt.plot(x_train, y_train, c="b")
     - So cost function of $f_{w, b} = wx + b$ could be calculated as $J(w,b) =  \frac{1}{2m} \sum_{i = 1}^m{(f_{w,b}(x^{(i)})- y^{(i)})^2}$. Where, this states that we want sum of square of the error, where each error at ith training example is $y^{(i)} - \widehat{y}^{(i)}$
 
     - With squared error cost function, the J is always shaped like a bowl or hammock, where the bottom of the shape is the minimized value of J.
+
+    - final formula with derivatives:
+        $$
+            \frac{d}{dw}J(w, b) = \frac{1}{m} \sum_{i=1}^m(wx^{(i)} + b - y^{(i)})x^{(i)}
+            = \frac{1}{m} \sum_{i=1}^m(f_{w,b}(x^{(i)}) - y^{(i)})x^{(i)}
+        $$
+        $$
+            \frac{d}{db}J(w, b) = \frac{1}{m} \sum_{i=1}^m(wx^{(i)} + b - y^{(i)})
+            = \frac{1}{m} \sum_{i=1}^m(f_{w,b}(x^{(i)}) - y^{(i)})
+        $$
     
 - Gradient Descent
-    - the principle is, each step, adjust w and b simultaneously, and always find the steepest change(decrease) on J to the next step, until we reach the bottom of the valley. (where J is minimized)
+    - the principle is, each step, adjust w and b simultaneously, and always find the steepest change(decrease) on J to the next step, where J is the cost, or difference of training example y and estimated y, until we reach the bottom of the valley. (where J is minimized)
     $$ 
         tmp\_w = w - \alpha \frac{d}{dw}J(w,b)
     $$
@@ -82,3 +92,148 @@ plt.plot(x_train, y_train, c="b")
     - Convex function, the function has bowl shape that only has one local/global minima
 
     - batch gradient descent, is the one that every step we consider all the training examples, instead of subset of training examples.
+
+- Vector
+    - ordered arrays of numbers, or something in same type
+    - denoted as lower and bold letter such as $ \bold x$
+    - the length of array is called dimension, or rank in math
+    - the first / 0-indexed element in vector is denoted $ x_0 $, no bold
+    
+    - NumPy
+        - basic data structure is an indexable, n-dimensional array in `dtype`, now we are using 1-D arrays, which shape is `(n, )`, where n is length of that array
+
+```python
+# all in float64
+a = np.zeros(4)
+a
+# [0. 0. 0. 0.] 
+
+a = np.zeros((4, ))
+a
+# [0. 0. 0. 0.]
+
+a = np.random.random_sample(4)
+a
+# [0.30399562 0.66090592 0.5716815 0.466666743]
+
+a = np.arrange(4.)
+a
+# [0. 1. 2. 3.]
+
+a = np.random.rand(4)
+a
+# [0.26086281 0.64821136 0.52117968 0.01779252]
+
+a = np.array([5,4,3,2])
+a
+# [5 4 3 2]
+
+a = np.array([5.,4,3,2]);
+a
+# [5. 4. 3. 2.]
+
+#vector slicing operations
+a = np.arange(10)
+print(f"a         = {a}")
+
+#access 5 consecutive elements (start:stop:step)
+c = a[2:7:1];     print("a[2:7:1] = ", c)
+
+# access 3 elements separated by two 
+c = a[2:7:2];     print("a[2:7:2] = ", c)
+
+# access all elements index 3 and above
+c = a[3:];        print("a[3:]    = ", c)
+
+# access all elements below index 3
+c = a[:3];        print("a[:3]    = ", c)
+
+# access all elements
+c = a[:];         print("a[:]     = ", c)
+
+# a         = [0 1 2 3 4 5 6 7 8 9]
+# a[2:7:1] =  [2 3 4 5 6]
+# a[2:7:2] =  [2 4 6]
+# a[3:]    =  [3 4 5 6 7 8 9]
+# a[:3]    =  [0 1 2]
+# a[:]     =  [0 1 2 3 4 5 6 7 8 9]
+
+a = np.array([1,2,3,4])
+print(f"a             : {a}")
+# negate elements of a
+b = -a 
+print(f"b = -a        : {b}")
+
+# sum all elements of a, returns a scalar
+b = np.sum(a) 
+print(f"b = np.sum(a) : {b}")
+
+b = np.mean(a)
+print(f"b = np.mean(a): {b}")
+
+b = a**2
+print(f"b = a**2      : {b}")
+
+# a             : [1 2 3 4]
+# b = -a        : [-1 -2 -3 -4]
+# b = np.sum(a) : 10
+# b = np.mean(a): 2.5
+# b = a**2      : [ 1  4  9 16]
+
+a = np.array([ 1, 2, 3, 4])
+b = np.array([-1,-2, 3, 4])
+print(f"Binary operators work element wise: {a + b}")
+# Binary operators work element wise: [0 0 6 8]
+
+#try a mismatched vector operation
+c = np.array([1, 2])
+try:
+    d = a + c
+except Exception as e:
+    print("The error message you'll see is:")
+    print(e)
+# The error message you'll see is:
+# operands could not be broadcast together with shapes (4,) (2,) 
+
+a = np.array([1, 2, 3, 4])
+
+# multiply a by a scalar
+b = 5 * a 
+print(f"b = 5 * a : {b}")
+# b = 5 * a : [ 5 10 15 20]
+
+
+# test 1-D
+a = np.array([1, 2, 3, 4])
+b = np.array([-1, 4, 3, 2])
+c = np.dot(a, b)
+print(f"NumPy 1-D np.dot(a, b) = {c}, np.dot(a, b).shape = {c.shape} ") 
+c = np.dot(b, a)
+print(f"NumPy 1-D np.dot(b, a) = {c}, np.dot(a, b).shape = {c.shape} ")
+# NumPy 1-D np.dot(a, b) = 24, np.dot(a, b).shape = () 
+# NumPy 1-D np.dot(b, a) = 24, np.dot(a, b).shape = () 
+
+
+# equivalent code
+a = np.arange(6).reshape(-1, 2)
+a = np.arange(6).reshape(3, 2)
+```
+
+- Matrix
+    - is a 2 dimensional arrays, where m is the row length and n is the column length.
+    
+- n features Gradient descent
+$$
+    w_1 = w_1 - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})x_1^{(i)}
+$$
+
+$$
+    w_n = w_n - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})x_n^{(i)}
+$$
+
+$$
+    b = b - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})
+$$
+
+- Normal Equation
+    
