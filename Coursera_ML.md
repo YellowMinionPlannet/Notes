@@ -236,4 +236,20 @@ $$
 $$
 
 - Normal Equation
-    
+
+- Feature Scaling
+    - when features' range has huge difference among each other, it will take more step to get to the bottom of bowl shape. for example, the number of bed room and thousands of square feet of the house area. In this case, small change on the large scale feature, thousands of square feet of area, will make greate impact on the prediction, and the cost, the contour map also shaped as unbalanced eclipses.
+
+    - the solution is feature scaling, for example, if the area range `300 < area < 2000`, then we can devide the area by 2000, so that teh area range `0.15 < area < 1` and # of bed room devide the max, becomes `0.2 < room < 1`. the contour map will shape more like circle this way, so that it's faster to get to the lowest cost function point.
+
+    - Or, by mean normalization method, we calculate the mean value.
+        room = r - M / 5 - 1  =>   -0.46 <= r <= 0.54
+        area = a - M / 2000-300    -0.18 <= a <= 0.82
+
+    - z-score normalization
+        room = r - M / standard deviation
+        area = a - M / standard deviation
+
+    just rescale the features that range very differently from other features, and basically keep range between -1 and 1.
+
+- Decide if Gradient Descent is converging(working well)
