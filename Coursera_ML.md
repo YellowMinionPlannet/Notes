@@ -252,4 +252,18 @@ $$
 
     just rescale the features that range very differently from other features, and basically keep range between -1 and 1.
 
+    -standard deviation:
+        $$\sigma = \sqrt{\frac{1}{N}\sum^{N}_{i=1}(x_i - \mu)^2}$$
+
 - Decide if Gradient Descent is converging(working well)
+
+- Classification
+    - Binary classification where there are only two class/category possible
+    - false, 0, are called negative class, and true, 1 are called positive class
+
+- Logistic regression model
+    $$
+    f_{\vec{w}, b} = \frac{1}{1+e^{-(\vec{w}\vec{x} + b)}}
+    $$
+
+    if threshold needs to be 0.5, then $-(\vec{w}\vec{x} + b)$ needs to be 0, so when $\vec{w}\vec{x} + b = 0$ is called the decision boundry line.
