@@ -267,3 +267,38 @@ $$
     $$
 
     if threshold needs to be 0.5, then $-(\vec{w}\vec{x} + b)$ needs to be 0, so when $\vec{w}\vec{x} + b = 0$ is called the decision boundry line.
+
+- Logistic Loss Function
+    - if we use square error which is used in the linear/polynomial regression model, we will never able to use gradient descent since the error function is not convex. Meaning there are so many local minimum point on the graph, and gradient descent will be trapped in local, and not get to the global minimum.
+
+    - new cost function:
+    $$
+        J(\vec{w}, b) = \frac{1}{m}\sum_{i=1}^m\frac{1}{2}(f_{\vec{w}, b}(\vec{x}^{(i)}) - y^{(i)})^2
+    $$
+
+    and, we will call the part $\frac{1}{2}(f_{\vec{w}, b}(\vec{x}^{(i)}) - y^{(i)})^2$, loss function
+
+    when target (y value) equals to 1, our $\vec{w}\vec{x} + b$ part must equal to $\infty$,. and target(y value) equals to 0 our $1 + e^{-(\vec{w}\vec{x} + b)}$ part must equalt to -$\infty$.
+
+    so, 
+
+    $$
+    \begin{cases}
+    -log(f_{\vec{w}, b}(\vec{x}^{(i)})), when\  y^{(i)} = 1\\
+    -log(1-f_{\vec{w}, b}(\vec{x}^{(i)})), when \ y^{(i)} = 0
+    \end{cases}
+    $$
+
+    or
+
+    $$
+    J(\vec{w}, b) = \frac{1}{m}\sum_{i=1}^m[y^{(i)}log(f_{\vec{w}, b}(\vec{x}^{(i)}))+(1-y^{(i)})log(1-f_{\vec{w}, b}(\vec{x}^{(i)}))]
+    $$
+
+    - Gradient Descent of Logistic Regression
+        $$
+        w_j = w_j - \sigma[\frac{1}{m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})x_j^{(i)}]
+        $$
+        $$
+        b = b - \sigma[\frac{1}{m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
+        $$
