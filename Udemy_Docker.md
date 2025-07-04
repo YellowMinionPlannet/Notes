@@ -158,6 +158,9 @@ docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresq
         CMD vs. EXPOSE
 
 10. ENTRYPOINT vs. CMD
+
+    Entrypoint and cmd will only execute once.
+    
     1. CMD could be overwritten through `docker container run [options] IMAGE [command][arguments]`
     2. ENTRYPOINT could be oeverwritten by `docker container run --entrypoint CMD IMAGE`
     3. ENTRYPOINT is supposed to be a complementary statemen to the CMD.
@@ -181,12 +184,12 @@ docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresq
 
         `docker container run passengerjia/curl www.google.com`
 
-        because with these 2 statements, the command becomes: ENTRYPOINT + " " + CMD
+    - because with these 2 statements, the command becomes: ENTRYPOINT + " " + CMD
         
-        and remember that CMD part can be easily replaced by command after IMAGE name.
+        - and remember that CMD part can be easily replaced by command after IMAGE name.
 
 
-        TO run script:
+    - TO run script:
 
         We can create a script file, and ask sh to execute that file within CMD command.
 
@@ -212,6 +215,8 @@ docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresq
 
         exec "$@"
         ```
+
+    - the exec "$@" part will tell docker to continue run CMD on ***different process***
 
 
 
