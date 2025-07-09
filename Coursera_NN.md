@@ -40,3 +40,59 @@
     - and their output will be input for another final neuron that decide what are the probability of being top seller, which is another single neuroned layer, and also output layer.
     - so deep learning, the middle layer/hidden layer 's feature is not decided manually, but refined/ polished by machine itself.
     - in total, this is also called multiple perceptron.
+
+
+- Training Details(Neural Networks)
+    1. Specify how to compute output given input x and parameters w, b
+    ```py
+    # for linear regression
+    z = np.dot(w, x) + b
+    # for logistic regression
+    f_x = 1/(1+np.exp(-z))
+
+    # for numpy if you have 1d array, as long as length matches you can do np.dot()
+    a = np.array([1, 2, 3])
+    b = np.array([4, 5, 6])
+    np.dot(a, b) == np.dot(b, a)
+
+    # but if it's 2d array, you can only do dot product if 1st array column match 2nd array rows
+    v1 = np.array([[1, 2, 3]])      # Shape: (1, 3) — row vector
+    v2 = np.array([[4], [5], [6]])
+
+    np.dot(v1, v2)  # → (1,3)·(3,1) = (1,1) → scalar
+    np.dot(v2, v1)  # → (3,1)·(1,3) = (3,3) → matrix
+    ```
+
+    2. specify loss and cost function
+
+    $z = np.dot(w,x) + b$
+
+    $f_x = \frac{1}{(1+np.exp(-z))}$
+    
+    $L(f_{\vec{w},b}(\vec{x}^{(i)}), y^{(i)}) = -y * np.log(f_x) - (1-y) * np.log(1-f_x)$
+    
+    cost = $\frac{1}{m}\sum_{i=1}^mL(f_{\vec{w},b}(\vec{x}^{(i)}), y^{(i)})$
+
+    3. train
+    $$
+    w = w - alpha * dj_dw
+    $$
+    $$
+    b = b - alpha * dj_db
+    $$
+
+    Please see ML notes for this equation
+
+    but in tensorflow the code is:
+    ```py
+    import tensorflow as tf
+    from tensorflow.keras import Sequential
+    from tensorflow.keras.layers import Dense
+    from tensorflow.keras.losses import BinaryCrossentropy
+
+    model = Sequential([Dense(units=25, activation='sigmoid'), 
+                        Dense(units=15, activation='sigmoid'), 
+                        Dense(units=1, activation='sigmoid')])
+    model.compile(loss=BinaryCrossentropy())
+    model.fit(X, Y, epochs=100)
+    ```
