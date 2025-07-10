@@ -302,3 +302,32 @@ $$
         $$
         b = b - \sigma[\frac{1}{m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
         $$
+
+- Address overfitting
+    1. Collect more data
+    2. Select features
+        - Feature selection, eliminate unrelated and unimportant features, so that polynomial function will reduce dimension, but this might eliminate useful feature effect
+    3. Regularization
+        1. when compute cost function:
+        $$
+        min\frac{1}{2m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x^{(i)}}-y^{(i)})^2) + verybignumber * {w_3} + verybignumber * {w_4}
+        $$
+        we are penalyze w_j to make sure they are close to 0
+        
+        so we can get:
+        $$
+        min\frac{1}{2m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x^{(i)}}-y^{(i)})^2) + \frac{\lambda}{2m}\sum_{j=1}^n(w_j^2)
+        $$
+
+        So if lambda is very very big, all the w will be nearly zero, so the polynomial becomes f_x = b, if lambda is 0, then the model is overfitting.
+
+        - and for linear regression
+        the gradient descent becomes
+        $$
+        w_j = w_j - \alpha[\frac{1}{m}\sum_{i=1}^m[(f_{\vec{w},b}(\vec{x}^{(i)}-y^{(i)})x_j^{(i)})] + \frac{\lambda}{m}w_j]
+        $$
+        - for logistic regression
+        $$
+         J(\vec{w}, b) = \frac{1}{m}\sum_{i=1}^m[y^{(i)}log(f_{\vec{w}, b}(\vec{x}^{(i)}))+(1-y^{(i)})log(1-f_{\vec{w}, b}(\vec{x}^{(i)}))] + \frac{\lambda}{2m}\sum_{j=1}^n(w_j^2)
+        $$
+    
