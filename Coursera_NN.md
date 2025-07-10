@@ -75,10 +75,10 @@
 
     3. train
     $$
-    w = w - alpha * dj_dw
+    w = w - alpha * dj\_dw
     $$
     $$
-    b = b - alpha * dj_db
+    b = b - alpha * dj\_db
     $$
 
     Please see ML notes for this equation
@@ -95,4 +95,104 @@
                         Dense(units=1, activation='sigmoid')])
     model.compile(loss=BinaryCrossentropy())
     model.fit(X, Y, epochs=100)
+    ```
+- ReLU function
+    $$
+    g(z) = max(0, z), where,  z = wx+b
+    $$
+
+- Multiclass Classification Problem
+    - when we want y is not any number like linear regression or polynomial regression, but y might be multiple discrete values. For example, we expect y could be 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
+    - So we have Softmax algorithm
+        - suppose we have logistic regression that produce 2 possible output
+            then output layer, we have
+            $$
+            a_1 = g(z) = \frac{1}{1+e^{-z}} = P(y=1|\vec{x})
+            $$
+            if this is the probability of y expect to be True/1
+            then 
+            $$
+            a_2 = 1 - a_1 = P(y=0|\vec{x})
+            $$
+        - so from this, we can expect if we want label y be 4 values, 1, 2, 3, 4, we will have
+        $$
+        z_1 = \vec{w_1}\vec{x} + b_1, \  \  a_1 = \frac{e^{z_1}}{e^{z_1}+e^{z_2}+e^{z_3}+e^{z_4}} = P(y=1|\vec{x})
+        $$
+        $$
+        z_2 = \vec{w_2}\vec{x} + b_2, \  \  a_2 = \frac{e^{z_2}}{e^{z_1}+e^{z_2}+e^{z_3}+e^{z_4}} = P(y=2|\vec{x})
+        $$
+        $$
+        z_3 = \vec{w_3}\vec{x} + b_3, \  \  a_3 = \frac{e^{z_3}}{e^{z_1}+e^{z_2}+e^{z_3}+e^{z_4}} = P(y=3|\vec{x})
+        $$
+        $$
+        z_4 = \vec{w_4}\vec{x} + b_4, \  \  a_4 = \frac{e^{z_4}}{e^{z_1}+e^{z_2}+e^{z_3}+e^{z_4}} = P(y=4|\vec{x})
+        $$
+    - Softmax loss vs. cost:
+        $$
+        loss = \begin{cases} 
+            -loga_1,\ if\ y = 1\\
+            -loga_2,\ if\ y = 2\\
+            ...\\
+            -loga_n,\ if\ y = n
+        \end{cases}
+        $$
+    - Softmax implementation with tensorflow
+    ```py
+    import tensorflow as tf
+    from tensorflow.keras import Sequential
+    from tensorflow.keras.layers import Dense
+
+    model = Sequential(
+        [
+            Dense(units=25, activation='relu')
+            Dense(units=15, activation='relu')
+            Dense(units=10, activation='softmax')
+        ]
+    )
+
+    from tensorflow.keras.losses import SparseCategoricalCrossentropy
+
+    model.compile(loss=SparseCategoricalCrossentropy())
+    model.fit(X,Y, epochs=100)
+    ```
+    > IMPORTANT: this is not the final version due to computer calculation accuracy
+
+    ```py   
+    # original version of logistic
+    model = Sequential([
+        Dense(units=25, activation='relu'),
+        Dense(units=15, activation='relu'),
+        Dense(units=1, activation='sigmoid')
+    ])
+    model.compile(loss=BinaryCrossEntropy())
+
+    # updated version of logistic
+    model = Sequential([
+        Dense(units=25, activation='relu'),
+        Dense(units=15, activation='relu'),
+        Dense(units=1, activation='linear')
+    ])
+    model.compile(loss=BinaryCrossEntropy(from_logits=True))
+    model.fit(X,Y,epochs=100)
+    logits = model(X) # here instead of a_1...a_n is z_1....z_n, z = wx + b
+    f_x = tf.nn.sigmoid(logits)
+
+    # original version of softmax
+    model = Sequential([
+        Dense(units=25, activation='relu'),
+        Dense(units=15, activation='relu'),
+        Dense(units=10, activation='softmax')
+    ])
+    model.compile(loss=SparseCategoricalCrossEntropy())
+
+    # updated version of softmax
+    model = Sequential([
+        Dense(units=25, activation='relu'),
+        Dense(units=15, activation='relu'),
+        Dense(units=10, activation='linear')
+    ])
+    model.compile(loss=SparseCategoricalCrossEntropy(from_logits=True))
+    model.fit(X,Y,epochs=100)
+    logits = model(X) # here instead of a_1...a_n is z_1....z_n, z = wx + b
+    f_x = tf.nn.softmax(logits)
     ```
