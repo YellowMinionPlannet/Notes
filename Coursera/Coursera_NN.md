@@ -43,3 +43,24 @@
 
 
 ![layer](./NeuralNetwork_layer.png)
+
+- Cross Validation set
+    - Usually there must be train set and test set data when training models. 
+    - Cross Validation set is another set independent from these two set, so the original entire data set is splitted into 3 parts. 
+        1. Use train set to build your models
+        2. Different built models will test and compare based on the Cross Validation set data, means each model will measure bias and variance seperately on the same cvs data.
+        3. choose one of the best model and test is on final test set data.
+
+- Bias vs. Variance
+    - bias means our error between prediction and tain data, is very high, means the prediction is not accurate
+    - variance means our error between train data and prediction, is very low, and error between new data and prediction is high. Means model only works for Known data(train data), but lost accuracy in new data prediction.
+
+    - bias is caused by limit of ML model, for example, linear regression model is lack of ability to predict polynomial pattern data. This is underfitting condition.
+    - variance is caused by overfitting condition, usually we need to decrease degree of features and number of features.
+
+    - when we have low bias but high variance model, when we increase data size, it will decrease the error of new data and prediction, and decrease variance resulting low biase variance model.
+    - when we have high biased model, where increasing training size does not help, we must make our model more complex, by increase degree or number of features.
+
+    - regularization will limit the effect of overfitting parameters, since lambda goes up, parameters is pursuing to the value of 0. (become linear with constant b)
+
+    - when judging if the model is high biased, we also need to consider the base level of error, like how human's accuracy on this task, or how other competitive models on this task. 
