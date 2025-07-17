@@ -40,3 +40,6 @@
     - and their output will be input for another final neuron that decide what are the probability of being top seller, which is another single neuroned layer, and also output layer.
     - so deep learning, the middle layer/hidden layer 's feature is not decided manually, but refined/ polished by machine itself.
     - in total, this is also called multiple perceptron.
+
+
+![layer](./NeuralNetwork_layer.png)
