@@ -1,3 +1,5 @@
+# Neural Networks
+
 - Brief about Neural Network (Deep Learning)
     - start at 1950s trying  to mimic human brain(biological brain)
     - gain traction at 1980s to 1990s for the handwritten recognition, post code, cheque numbers
@@ -19,7 +21,7 @@
 - To demo, let's consider a simple example, we are selling t-shirt, and we want to predict if this t-shirt gonna be the top seller.
     - input is price
     - output is yes/no
-    - and using logistic regression, we know that predict value is sigmoid function of $-(wx+b)$, and we call this activation. 
+    - and using logistic regression, we know that predict value is sigmoid function of $(wx+b)$, and we call this activation. 
         - why calling activation? 'cause this word is also used in neural science to express how strong the output is passed to the next neuron, here since the prediction is between 0 and 1, it's more likely a probability to express yes. Just as strength to say yes.
     - this logistic regression model could be a single neuron in the network.
 
@@ -42,7 +44,71 @@
     - in total, this is also called multiple perceptron.
 
 
+## Linear and logistics regression in neural networks
+- For linear regression or logistics and sigmoid activation
 ![layer](./NeuralNetwork_layer.png)
+![layer2](NeuralNetwork_layer2.png)
+
+- Activation value of layer l
+$$
+a_j^{[l]} = g(\vec{w}_j^{[l]}\cdot\vec{a}^{[l-1]}+b_j^{[l]})
+$$
+where j is number of neuron at layer l
+$$
+\vec{a} = [a_1, a_2, ..., a_j]
+$$
+$$
+\vec{x} = \vec{a}^{[0]}
+$$
+$$
+g(z), where\ g = \frac{1} {1+e^{-z}}
+$$
+
+- For logistic regression and ReLu activation
+$$
+g(z) = max(0, z)
+$$
+![3activation](./ReLU_Sigmoid_Linear.png)
+## Multiclass classification using softmax activation function
+- activation
+$$
+\begin{gather}
+    z_1 = \vec{w_1} \cdot \vec{x} + b_1,\ where\ a_1 = \frac {e^{z_1}} {e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}}\\
+    z_2 = \vec{w_2} \cdot \vec{x} + b_2,\ where\ a_2 = \frac {e^{z_2}} {e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}}\\
+    z_3 = \vec{w_3} \cdot \vec{x} + b_3,\ where\ a_3 = \frac {e^{z_3}} {e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}}\\
+    z_4 = \vec{w_4} \cdot \vec{x} + b_4,\ where\ a_4 = \frac {e^{z_4}} {e^{z_1} + e^{z_2} + e^{z_3} + e^{z_4}}\\
+    where\ a_1 + a_2 + a_3 + a_4 = 1
+\end{gather}
+$$
+
+- loss
+$$
+loss(a_1,...,a_N) = \begin{cases}
+ -loga_1, \\
+ -loga_2, \\
+ ... \\
+ -loga_N
+\end{cases}
+$$
+
+## Code in Python for Neural Networks
+```python
+# logistic regression
+model = Sequential([Dense(units=25, activation="relu"),
+                    Dense(units=15, activation="relu"),
+                    Dense(units=1, activation="linear"),])
+model.compile(loss=BinaryCrossEntropy(from_logits=True))
+# softmax regression
+model = Sequential([Dense(units=25, activation="relu"),
+                    Dense(units=15, activation="relu"),
+                    Dense(units=1, activation="linear"),])
+model.compile(loss=SparseCategoricalCrossEntropy(from_logits=True))
+# fit
+model.fit(X,Y, epochs=100)
+# predict
+logits = model(X)
+f_x = tf.nn.softmax(logits)
+```
 
 - Cross Validation set
     - Usually there must be train set and test set data when training models. 

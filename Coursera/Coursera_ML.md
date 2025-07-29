@@ -78,10 +78,10 @@ plt.plot(x_train, y_train, c="b")
 - Gradient Descent
     - the principle is, each step, adjust w and b simultaneously, and always find the steepest change(decrease) on J to the next step, where J is the cost, or difference of training example y and estimated y, until we reach the bottom of the valley. (where J is minimized)
     $$ 
-        tmp\_w = w - \alpha \frac{d}{dw}J(w,b)
+        tmp\_w = w - \alpha \frac{d} {dw} J(w,b)
     $$
     $$
-        tmp\_b = b - \alpha \frac{d}{db}J(w,b)
+        tmp\_b = b - \alpha \frac{d} {db} J(w,b)
     $$
     $$
         w = tmp\_w, b = tmp\_b 
@@ -228,15 +228,15 @@ $$
 f_{\vec{w}, b}(\vec{x}) = w_1x_1 + w_2x_2 + ... + w_nx_x + b, where\ \vec{w} = [w_1, w_2, w_3, ...., w_n], and\ \vec{x} = [x_1, x_2, x_3, ..., x_n]
 $$
 $$
-    w_1 = w_1 - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})x_1^{(i)}
+    w_1 = w_1 - \alpha \frac{1} {m} \sum_{i=1}^m (f_{\vec{w},b} (\vec{x}^{(i)}) - y^{(i)}) x_1^{(i)}
 $$
 
 $$
-    w_n = w_n - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})x_n^{(i)}
+    w_n = w_n - \alpha \frac{1} {m} \sum_{i=1}^m (f_{\vec{w},b} (\vec{x}^{(i)}) - y^{(i)}) x_n^{(i)}
 $$
 
 $$
-    b = b - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})
+    b = b - \alpha \frac{1} {m} \sum_{i=1}^m (f_{\vec{w},b} (\vec{x}^{(i)}) - y^{(i)})
 $$
 
 - for Python Code:
@@ -285,7 +285,7 @@ f = np.dot(w, x) + b
     just rescale the features that range very differently from other features, and basically keep range between -1 and 1.
 
     -standard deviation:
-        $$\sigma = \sqrt{\frac{1}{N}\sum^{N}_{i=1}(x_i - \mu)^2}$$
+        $$\sigma = \sqrt {\frac{1} {N}\sum^{N}_{i=1} (x_i - \mu)^2 }$$
 
     for example: if we have 
     |feature and range|treatment|
@@ -309,7 +309,7 @@ try 3 times learning rate when picking the learning rate, for example, first cho
 
     
 $$
-f_{\vec{w}, b} = \frac{1}{1+e^{-(\vec{w}\vec{x} + b)}}
+f_{\vec{w}, b} = \frac{1} {1+e^{-(\vec{w} \vec{x} + b)}}
 $$
 
 if threshold needs to be 0.5, then $-(\vec{w}\vec{x} + b)$ needs to be 0, so when $\vec{w}\vec{x} + b = 0$ is called the decision boundry line.
