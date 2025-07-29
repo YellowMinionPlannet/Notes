@@ -12,6 +12,7 @@
     - we need to find patterns, or structures, or relations from the data ourselves
     - for example, cluster algorithm, we find the data point is clustered into 2 different groups
 
+# Linear Regression
 - Training set
     - train model to learn training set
     - $x$, as house size, is input feature, and called input variable too
@@ -215,14 +216,17 @@ print(f"NumPy 1-D np.dot(b, a) = {c}, np.dot(a, b).shape = {c.shape} ")
 
 
 # equivalent code
-a = np.arange(6).reshape(-1, 2)
+a = np.arange(6).reshape(-1, 2) # where -1 means automatically figure out the column/row
 a = np.arange(6).reshape(3, 2)
 ```
 
 - Matrix
     - is a 2 dimensional arrays, where m is the row length and n is the column length.
     
-- n features Gradient descent
+# Multiple Features of Linear Regression
+$$
+f_{\vec{w}, b}(\vec{x}) = w_1x_1 + w_2x_2 + ... + w_nx_x + b, where\ \vec{w} = [w_1, w_2, w_3, ...., w_n], and\ \vec{x} = [x_1, x_2, x_3, ..., x_n]
+$$
 $$
     w_1 = w_1 - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})x_1^{(i)}
 $$
@@ -235,6 +239,26 @@ $$
     b = b - \alpha \frac{1}{m} \sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})- y^{(i)})
 $$
 
+- for Python Code:
+```python
+w = np.array([1.0, 2.5, 3.3])
+b = 4
+x = np.array([10, 20, 30])
+
+# unhappy way:
+f = w[0] * x[0] + w[1] * x[1] + w[2] * x[2] + b
+
+# Ok way
+f = 0
+for j in range(0, n):
+    f = f + w[j] * x[j]
+f = f + b
+
+# happy way
+f = np.dot(w, x) + b
+```
+
+
 - Normal Equation
 
 - Feature Scaling
@@ -242,31 +266,53 @@ $$
 
     - the solution is feature scaling, for example, if the area range `300 < area < 2000`, then we can devide the area by 2000, so that teh area range `0.15 < area < 1` and # of bed room devide the max, becomes `0.2 < room < 1`. the contour map will shape more like circle this way, so that it's faster to get to the lowest cost function point.
 
-    - Or, by mean normalization method, we calculate the mean value.
+    - mean normalization method, we calculate the mean value.
         room = r - M / 5 - 1  =>   -0.46 <= r <= 0.54
         area = a - M / 2000-300    -0.18 <= a <= 0.82
+    $$
+    x_2 = \frac{x_2 - \mu_2}{max(x_2) - min(x_2)}
+    $$
+    $$
+    $$
 
     - z-score normalization
+    $$
         room = r - M / standard deviation
+    $$
+    $$
         area = a - M / standard deviation
-
+    $$
     just rescale the features that range very differently from other features, and basically keep range between -1 and 1.
 
     -standard deviation:
         $$\sigma = \sqrt{\frac{1}{N}\sum^{N}_{i=1}(x_i - \mu)^2}$$
 
+    for example: if we have 
+    |feature and range|treatment|
+    |-|-|
+    |0<=$x_1$<=3|OK|
+    |-2<=$x_2$<=0.5|OK|
+    |-100<=$x_3$<=100|rescale, too big|
+    |-0.001<=$x_4$<=0.001|rescale, too small|
+
+    **our goal is** for each feature, range from -1 to 1 or -3 to 3 or -0.3 to 0.3 are OKs
+
 - Decide if Gradient Descent is converging(working well)
+
+try 3 times learning rate when picking the learning rate, for example, first choose 0.001, and then 0.003, and then 0.01, and then 0.03 etc.
 
 - Classification
     - Binary classification where there are only two class/category possible
     - false, 0, are called negative class, and true, 1 are called positive class
 
-- Logistic regression model
-    $$
-    f_{\vec{w}, b} = \frac{1}{1+e^{-(\vec{w}\vec{x} + b)}}
-    $$
+# Logistic regression model
 
-    if threshold needs to be 0.5, then $-(\vec{w}\vec{x} + b)$ needs to be 0, so when $\vec{w}\vec{x} + b = 0$ is called the decision boundry line.
+    
+$$
+f_{\vec{w}, b} = \frac{1}{1+e^{-(\vec{w}\vec{x} + b)}}
+$$
+
+if threshold needs to be 0.5, then $-(\vec{w}\vec{x} + b)$ needs to be 0, so when $\vec{w}\vec{x} + b = 0$ is called the decision boundry line.
 
 - Logistic Loss Function
     - if we use square error which is used in the linear/polynomial regression model, we will never able to use gradient descent since the error function is not convex. Meaning there are so many local minimum point on the graph, and gradient descent will be trapped in local, and not get to the global minimum.
@@ -302,3 +348,35 @@ $$
         $$
         b = b - \sigma[\frac{1}{m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
         $$
+
+# Regularization, do this when there's a overfitting
+
+## linear regression
+- cost function
+$$
+J(\vec{w}, b) = \frac{1}{2m}\sum^m_{i=1}((\vec{w}\cdot\vec{x}+b) - y^{(i)})^2 + \frac{\lambda}{2m}\sum^n_{j=1}w_j^2
+$$
+- Derivative
+$$
+\begin{gather}
+\frac{\partial}{\partial w_j}J(\vec{w}, b) = \frac{\partial}{\partial w_j}[\frac{1}{2m}\sum^m_{i=1}((\vec{w}\cdot\vec{x}+b) - y^{(i)})^2 + \frac{\lambda}{2m}\sum^n_{j=1}w_j^2] \\
+= \frac{1}{2m}\sum^m_{i=1}[(\vec{w}\cdot\vec{x}^{(i)} + b - y^{(i)})2x_j^{(i)}] + \frac{\lambda}{2m}2w_j\\
+= \frac{1}{m}\sum^m_{i=1}[(\vec{w}\cdot\vec{x}^{(i)} + b - y^{(i)})x_j^{(i)}] + \frac{\lambda}{m}w_j
+\end{gather}
+$$
+
+- Gradient Descent
+$$
+w_j = w_j - \alpha[\frac{1}{m}\sum^m_{i=1}[f_{\vec{x},b}(\vec{x}^{(i)}-y^{(i)})x_j^{(i)}] + \frac{\lambda}{m}w_j]
+$$
+$$
+b = b - \sigma[\frac{1}{m}\sum_{i=1}^m(f_{\vec{w},b}(\vec{x}^{(i)})-y^{(i)})]
+$$
+
+## logistics
+$$
+J(\vec{w}, b) = - \frac{1}{m}\sum^m_{i=1}[y^{(i)}log(f_{\vec{w}, b}(\vec{x}^{(i)})) + (1-y^{(i)})log(1-f_{\vec{w},b}(\vec{x}^{(i)}))] + \frac{\lambda}{2m}\sum^n_{j=1}w_j^2
+$$
+$$
+w_j = w_j - \alpha[\frac{1}{m}\sum^m_{i=1}[f_{\vec{x},b}(\vec{x}^{(i)}-y^{(i)})x_j^{(i)}] + \frac{\lambda}{m}w_j]
+$$
