@@ -98,6 +98,14 @@ model = Sequential([Dense(units=25, activation="relu"),
                     Dense(units=15, activation="relu"),
                     Dense(units=1, activation="linear"),])
 model.compile(loss=BinaryCrossEntropy(from_logits=True))
+# fit
+model.fit(X,Y, epochs=100)
+# predict
+logits = model(X) # here we got function z, but not function a
+f_x = tf.nn.sigmoid(logits)
+
+
+
 # softmax regression
 model = Sequential([Dense(units=25, activation="relu"),
                     Dense(units=15, activation="relu"),
@@ -106,11 +114,53 @@ model.compile(loss=SparseCategoricalCrossEntropy(from_logits=True))
 # fit
 model.fit(X,Y, epochs=100)
 # predict
-logits = model(X)
+logits = model(X) # here we got function z, but not function a
 f_x = tf.nn.softmax(logits)
 ```
 
-- Cross Validation set
+## Multiclass vs. Classification with multiple outputs
+the main difference is the labeld $\vec{y}$'s values is composed of 1, 2, 3, 4, 5, 7 or composed of 1 and 0
+for example:
+y = [1, 2, 3, 4, 5, 6, 7]
+or 
+y = [0, 1, 0, 0, 0, 0, 0] 
+
+if it's classification with multiple outputs, the last layer(output layer)'s activation function is sigmoid instead of softmax
+
+## Optimization, decide learning rate for each activation
+
+**Adam algorithm Intuition**
+Adam stands for "Adaptive Moment estimation"
+
+when there are multiple neurons, so multiple activation function, there should be multiple alpha(learning rate) instead of one.
+$$
+\begin{gather}
+w_1 = w_1 - \alpha_1 \frac {\partial}{\partial w_1} J(\vec{w}, b)\\
+w_2 = w_2 - \alpha_2 \frac {\partial}{\partial w_2} J(\vec{w}, b)\\
+...\\
+w_10 = w_10 - \alpha_10 \frac {\partial}{\partial w_10} J(\vec{w}, b)\\
+b = b - \alpha_11 \frac {\partial}{\partial b} J(\vec{w}, b)
+\end{gather}
+$$
+
+```python
+# softmax regression
+model = Sequential([Dense(units=25, activation="relu"),
+                    Dense(units=15, activation="relu"),
+                    Dense(units=1, activation="linear"),])
+model.compile(optimizer = Adam(learning_rate=1e-3),  # add optimizer
+    loss=SparseCategoricalCrossEntropy(from_logits=True))
+# fit
+model.fit(X,Y, epochs=100)
+# predict
+logits = model(X) # here we got function z, but not function a
+f_x = tf.nn.softmax(logits)
+```
+
+## Convolutional Neural Network
+*Skipped*
+
+## Cross Validation set
     - Usually there must be train set and test set data when training models. 
     - Cross Validation set is another set independent from these two set, so the original entire data set is splitted into 3 parts. 
         1. Use train set to build your models
