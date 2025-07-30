@@ -138,7 +138,7 @@ $$
 w_1 = w_1 - \alpha_1 \frac {\partial}{\partial w_1} J(\vec{w}, b)\\
 w_2 = w_2 - \alpha_2 \frac {\partial}{\partial w_2} J(\vec{w}, b)\\
 ...\\
-w_10 = w_10 - \alpha_10 \frac {\partial}{\partial w_10} J(\vec{w}, b)\\
+w_{10} = w_{10} - \alpha_{10} \frac {\partial}{\partial w_10} J(\vec{w}, b)\\
 b = b - \alpha_11 \frac {\partial}{\partial b} J(\vec{w}, b)
 \end{gather}
 $$
@@ -180,3 +180,4 @@ f_x = tf.nn.softmax(logits)
     - regularization will limit the effect of overfitting parameters, since lambda goes up, parameters is pursuing to the value of 0. (become linear with constant b)
 
     - when judging if the model is high biased, we also need to consider the base level of error, like how human's accuracy on this task, or how other competitive models on this task. 
+# Decision Tree
