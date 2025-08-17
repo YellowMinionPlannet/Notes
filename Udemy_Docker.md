@@ -218,5 +218,21 @@ docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresq
 
     - the exec "$@" part will tell docker to continue run CMD on ***different process***
 
+11. Kubernetes
+- Terminology:
+    - Node, single server in Kubernetes cluster
+    - Kubelet: Kubernetes agent running on node, so that each node can talk to Kubernetes master node
+    - Control Plane: Where the master nodes are, to control or manage the whole cluster
+    - Within each master node:
+        - API server, scheduler, controller manager, etcd(database), core dns
+        - API, 
+        - Scheduler decide how and where to place the node
+        - Controller Manager, compare current state and your command
+        - Core DNS,
+    - Within each node:
+        - Kuberlet
+        - Kube-proxy
 
-
+    To play with K8s in browser:
+        - http://play-with-k8s.com
+        - katacoda.com
