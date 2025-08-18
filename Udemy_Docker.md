@@ -236,3 +236,50 @@ docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresq
     To play with K8s in browser:
         - http://play-with-k8s.com
         - katacoda.com
+
+- Commands:
+```bash
+kubectl version
+# full version of Kubernetes
+kubectl version --short
+# shor version of Kubernetes
+kubectl run my-nginx --image nginx
+# create image from nginx named my-nginx
+# run command is for testing purpose, not for production
+
+kubectl get pods
+# get only pod resource type
+
+kubectl get all
+# get all common types of objects
+
+kubectl create deployment my-nginx --image nginx
+# production purpose, to create deployment
+
+kubectl delete pod my-nginx
+kubectl delete deployment my-nginx
+
+kubectl create deployment my-apache --image httpd
+kubectl scale deploy/my-apache --replicas 2
+kubectl scale deploy my-apache --replicas 2
+# deploy=deployment=deployments
+# will create the second one, totaled 2
+
+kubectl get deploy/my-apache
+# get deployment named my-apache
+
+kubectl get all -o wide
+kubectl get all -o yaml
+# use wide or yaml for output format
+```
+
+- Pod
+    - Kubernetes only create pods, it does NOT create container directly,
+    - What it does is, it tells the kubelet which is an agent in that created pod, and create container.
+    - The whole flow would be, I type a kube command, and API sents to etcd, c-m, scheduler, then kubelet
+- What happens when `kubectl scale deploymenet/my-apache --replicas 2`
+    1. request sends to API and stored in etcd database,
+    2. c-m sees in that deployment, only replicas count changes,
+    3. c-m will only add number of pod in that replica set specification
+    4. Scheduler see a new pod is requested, assign a node
+    5. kubelet will take care the rest.
