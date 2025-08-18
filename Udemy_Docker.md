@@ -363,6 +363,6 @@ kubectl expose
 - yaml
     - when you type in create expose run command there is a specification template corresponding to these command and be translated by resource generator into some yaml files.
 ```bash
- kubectl create deployment sample --image nginx --dry-run client -o yaml
- # we use --dry-run flag to demo the whole template, and output as yaml file with -o flag
+kubectl create deployment sample --image nginx --dry-run client -o yaml
+# we use --dry-run flag to demo the whole template, and output as yaml file with -o flag
 ```
