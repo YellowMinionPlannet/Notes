@@ -285,6 +285,26 @@ kubectl get pods -w
 kubectl get events --watch-only
 # events is another type of resource
 # --watch-only will show reason of status updates
+
+# Logs
+kubectl logs deployment my-apache
+kubectl logs deployment my-apache --follow --tail 1
+# will follow new log entries, and starts with the latest log line
+
+kubectl logs pod my-apache-xxx-yyy -c httpd
+# get specific container's log in a specific pod
+
+kubectl logs pod my-apache-xxx-yyy --all-containers=true
+# get all logs in all containers in a specified pod
+
+# lable-search
+kubectl logs -l app=my-appache
+# use -l flag to search in that label, label could be found with describe of that resource
+# checkout log tools github.com/stern/stern
+
+# Services
+# Exposing Containers
+kubectl expose
 ```
 
 - Pod
@@ -297,3 +317,43 @@ kubectl get events --watch-only
     3. c-m will only add number of pod in that replica set specification
     4. Scheduler see a new pod is requested, assign a node
     5. kubelet will take care the rest.
+
+- Exposing Containers
+    - `kubectl expose` is to create a service for existing pods
+    - A service is a stable address for pod
+    - If we want to connect to pod, we need a service
+    - CoreDNS allows us to resolve services by name
+    - Other types of services
+        1. ClusterIP, default, internal in cluster(Pod talk to pod), no firewall 
+        2. NodePort, for outside of cluster to talk to pod, Port is open on every node's IP, anyone can connect
+        3. LoadBalancer, Controls a LB endpoint external to the cluster, create clusterIP and nodePort automatically, Only available when infrastructure provider gives you LB
+        4. ExternalName, Less often, 
+
+        5. Ingress, http traffic
+    - Creating a ClusterIP Service
+```bash
+    kubectl get pods -w
+
+    kubectl create deployment httpenv --image=bretfisher/httpenv
+
+    kubectl scale deployment httpenv --replicas=5
+
+    kubectl expose deployment httpenv --port 8888
+
+    kubectl get services
+
+    kubectl run tmp-shell --rm -it --image bretfisher/netshoot -- bash
+    # -- tell container to run bash
+    curl httpenv:8888
+```
+    - Creating a NodePort and LoadBalancer Service
+```bash
+    kubectl expose deployment httpenv --port 8888 --name httpenv-np --type NodePort
+    kubectl get services
+    # port range should be 30000 - 32767 to avoid conflict
+    curl localhost:32334
+
+    kubectl expose deployment httpenv --port 8888 --name httpenv-lb --type loadbanlancer
+    kubectl delete service httpenv service httpenv-np
+    kubectl delete service httpenv-lb deployment httpenv
+```
