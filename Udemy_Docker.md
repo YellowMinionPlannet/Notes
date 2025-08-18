@@ -268,9 +268,23 @@ kubectl scale deploy my-apache --replicas 2
 kubectl get deploy/my-apache
 # get deployment named my-apache
 
-kubectl get all -o wide
-kubectl get all -o yaml
-# use wide or yaml for output format
+kubectl get replicaset.apps/my-nginx-578794b -o wide
+kubectl get service/kubernetes -o yaml
+# use wide or yaml for output format, targeting different resource type, service, deployment, replicaset et.
+
+kubectl describe deployment my-apache
+# more human readable format of specification
+kubectl describe pod my-apache-86c695c9b6-2vv9f
+
+kubectl get node docker-desktop -o wide
+kubectl describe node docker-desktop
+
+kubectl get pods -w
+# with -w flag, it returns current status and reflects status updates
+
+kubectl get events --watch-only
+# events is another type of resource
+# --watch-only will show reason of status updates
 ```
 
 - Pod
