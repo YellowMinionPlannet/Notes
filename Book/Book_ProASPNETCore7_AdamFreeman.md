@@ -58,3 +58,73 @@ dotnet watch
 ```
 This will reflect static content only, but not code in the RT(I guess).
 
+## 4.4 Managing Packages
+```bash
+# MySolution\MyProject
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 7.0.0
+```
+`.csproject` is to track packages.
+
+```bash
+# use this to list packages
+dotnet list package
+
+# to remove package
+dotnet remove package Microsoft.EntityframeworkCore.SqlServer
+
+# to manage tool package
+dotnet tool uninstall --global dotnet-ef
+dotnet tool install --global dotnet-ef --version 7.0.0
+
+dotnet tool install --global Microsoft.Web.LibraryManager.Cli --version 2.1.175
+libman init -p cdnjs
+libman install bootstrap@5.2.3 -d wwwroot/lib/bootstrap
+```
+
+```html
+<!-- wwwroot\demo.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h3 class="bg-primary text-white text-center p-2">New Message</h3>
+</body>
+</html>
+```
+
+# 4.5 Debugging projects
+[visual studio debugger documentation](https://docs.microsoft.com/en-us/visualstudio/debugger)
+[visual studio code debugger documentation](https://code.visualstudio.com/docs/editor/debugging)
+
+# 5 Essential C# Features
+```C#
+// to use anonymous type object property
+var products = new []{
+    new { Name = "Kayak", Price = 275M},
+    new { Name = "Lifejacket", Price = 48.95M},
+}
+
+products.Select(p => p.GetType().Name);
+
+// to use extension methods
+public static class MyExtensionMethods{
+    public static decimal TotalPrices(this ShoppingCart cart){
+        decimal total = 0;
+        if (cart.Products != null){
+            foreach(Product? prod in cart.Products){
+                total += prod?.Price ?? 0;
+            }
+        }
+        return total;
+    }
+}
+
+var shoppingCart = new ShoppingCart();
+decimal total = shoppingCart.TotalPrices();
+```
+
+## 5.13 Using asynchronous methods

@@ -22,3 +22,7 @@ Azure DevOps can also run on Azure DevOps Server, which can be hosted on your ow
 - Stage: contains multiple jobs
 [Full Version of Offical Documentation](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
 
+
+# Readings, [Official Documentation](https://learn.microsoft.com/en-us/azure/devops/pipelines/get-started/key-pipelines-concepts?view=azure-devops)
+## Pipeline basics
+### Key concepts
