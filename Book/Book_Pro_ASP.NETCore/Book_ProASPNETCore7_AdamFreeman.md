@@ -429,3 +429,249 @@ We can use custom middleware to go through consistent logic of checking path and
 
 we have two concept here, the logic of dealing with real business logic, these parts could be in a type of middleware called ***endpoints***. And checking the URL path and map them to the endpoints, could be in a type of middleware called ***routing***.
 
+#### Adding the routing middleware and defining an endpoint
+Routing middleware is added using 2 separate methods: `UseRouting` and `UseEndpoints`.
+
+`UseRouting` process the requests to the pipeline, `UseEndpoints` match URL to the endpoints.
+
+sample code as follow:
+```cs
+using Platform;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var app = builder.Build();
+
+//app.UseMiddleware<Population>();
+//app.UseMiddleware<Capital>();
+
+app.UseRouting();
+
+#pragma warning disable ASP0014
+
+app.UseEndpoints(endpoints => {
+    endpoints.MapGet("routing", async context => {
+        await context.Response.WriteAsync("Request Was Routed");
+    });
+    endpoints.MapGet("capital/uk", new Capital().Invoke);
+    endpoints.MapGet("population/paris", new Population().Invoke);
+});
+
+app.Run(async (context) => {
+    await context.Response.WriteAsync("Terminal Middleware Reached");
+});
+
+app.Run();
+```
+
+Using URL patterns and Segment Variables for more generic match of URLs.
+
+URL Patterns are like `/Capital/uk`, so that the routing middleware only match 2 segment route, which also specific to Capital and uk.
+
+URL segment variable are like `{first}/{second}/{third}`, this allow middle ware to match 3 segment URL, where first, second, third, are variable name instead of specific value.
+
+When we use segment variables, the `HttpRequest` object provides a `RouteValues` property, that is `RouteValuesDictionary` typed. That object can be used to visit URL path that matches the segment variables. For example, `/apples/oranges/cherries` will be populated to the dictionary as {first: apples, second: oranges, third: cherries}.
+
+
+1. `context.Response.Redirect($"/population/second/{country}")` will go through the middleware from the first again.
+2. `app.MapGet("size/{city}", Population.Endpoint)
+    .WithMetadata(new RouteNameMetadata("population/second"));` will make Population.Endpoint has a identity key as "population/second", this can be paired with code like `LinkGenerator? generator =
+                      context.RequestServices.GetService<LinkGenerator>();
+                    string? url = generator?.GetPathByRouteValues(context,
+                        "population/second", new { city = country }); context.Response.Redirect(url);`
+The complete code is followed:
+```cs
+// Capital.cs
+namespace Platform {
+    public class Capital {
+        private RequestDelegate? next;
+                
+        public Capital() { }
+                
+        public Capital(RequestDelegate nextDelegate) {
+            next = nextDelegate;
+        }
+                
+        public static async Task Endpoint(HttpContext context) {
+            string? capital = null;
+            string? country 
+                = context.Request.RouteValues["country"] as string;
+            switch ((country ?? "").ToLower()) {
+                case "uk":
+                    capital = "London";
+                    break;
+                case "france":
+                    capital = "Paris";
+                    break;
+                case "monaco":
+                    LinkGenerator? generator =
+                      context.RequestServices.GetService<LinkGenerator>();
+                    string? url = generator?.GetPathByRouteValues(context,
+                        "population/second", new { city = country });
+                    if (url != null) {
+                        context.Response.Redirect(url);
+                    }
+                    return;
+            }
+            if (capital != null) {
+                await context.Response
+                    .WriteAsync($"{capital} is the capital of {country}");
+            } else {
+                context.Response.StatusCode 
+                    = StatusCodes.Status404NotFound;
+            }
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            string[] parts = context.Request.Path.ToString()
+                .Split("/", StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 2 && parts[0] == "capital")
+            {
+                string? capital = null;
+                string country = parts[1];
+                switch (country.ToLower())
+                {
+                    case "uk":
+                        capital = "London";
+                        break;
+                    case "france":
+                        capital = "Paris";
+                        break;
+                    case "monaco":
+                        context.Response.Redirect(
+                            $"/population/{country}");
+                        return;
+                }
+                if (capital != null)
+                {
+                    await context.Response.WriteAsync(
+                        $"{capital} is the capital of {country}");
+                    return;
+                }
+            }
+            if (next != null)
+            {
+                await next(context);
+            }
+        }
+    }
+}
+// Program.cs
+using Platform;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var app = builder.Build();
+
+app.MapGet("{first}/{second}/{third}", async context => {
+    await context.Response.WriteAsync("Request Was Routed\n");
+    foreach (var kvp in context.Request.RouteValues) {
+        await context.Response
+            .WriteAsync($"{kvp.Key}: {kvp.Value}\n");
+    }
+});
+
+app.MapGet("capital/{country}", Capital.Endpoint);
+app.MapGet("size/{city}", Population.Endpoint)
+    .WithMetadata(new RouteNameMetadata("population/second"));
+        
+app.Run();
+// Population.cs
+namespace Platform
+{
+    public class Population
+    {
+        private RequestDelegate? next;
+
+        public Population()
+        {
+
+        }
+
+        public Population(RequestDelegate nextDelegate)
+        {
+            next = nextDelegate;
+        }
+
+        public static async Task Endpoint(HttpContext context) {
+            string? city = context.Request.RouteValues["city"] as string;
+            int? pop = null;
+            switch ((city ?? "").ToLower()) {
+                case "london":
+                    pop = 8_136_000;
+                    break;
+                case "paris":
+                    pop = 2_141_000;
+                    break;
+                case "monaco":
+                    pop = 39_000;
+                    break;
+            }
+            if (pop.HasValue) {
+                await context.Response
+                    .WriteAsync($"City: {city}, Population: {pop}");
+            } else {
+                context.Response.StatusCode 
+                    = StatusCodes.Status404NotFound;
+            }
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            string[] parts = context.Request.Path.ToString().Split("/", StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 2 && parts[0] == "population")
+            {
+                string city = parts[1];
+                int? pop = null;
+                switch (city.ToLower())
+                {
+                    case "london":
+                        pop = 8_136_000;
+                        break;
+                    case "paris":
+                        pop = 2_141_000;
+                        break;
+                    case "monaco":
+                        pop = 39_000;
+                        break;
+                }
+                if (pop.HasValue)
+                {
+                    await context.Response.WriteAsync($"City: {city}, Population: {pop}");
+                    return;
+                }
+            }
+            if (next != null)
+            {
+                await next(context);
+            }
+        }
+    }
+}
+
+// output: localhost:5000/size/monaco
+// City: monaco, Population: 39000
+```
+
+- Constraints on segment variables
+- Default Value
+    `app.MapGet("capital/{country=France}")`
+- Optional Value
+    `app.MapGet("size/{city?}")`
+- catchall value
+    `app.MapGet("{first}/{second}/{*catchall}")`
+- value typed
+    `app.MapGet("{first:int}/{second:bool}")`
+- value length contraint
+    `app.MapGet("{first:alpha:length(3)}/{second:bool}")`
+- RegEx pattern
+    `app.MapGet("capital/{country:regex(^uk|france|monaco$)}")`
+- fallback page/endpoint
+    `app.MapFallback(async context => { await context.Response.WriteAsync("Routed to fallback endpoint")})`
+
+### 13.3 Advanced routing features
+
+- We can add custom contraint to the segment variable,
+- We can solve ambiguous route with order
+- We can change the selected route using middleware between useRouting and useEndpoints
