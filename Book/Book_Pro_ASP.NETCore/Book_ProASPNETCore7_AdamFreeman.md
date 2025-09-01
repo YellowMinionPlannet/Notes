@@ -432,7 +432,11 @@ we have two concept here, the logic of dealing with real business logic, these p
 #### Adding the routing middleware and defining an endpoint
 Routing middleware is added using 2 separate methods: `UseRouting` and `UseEndpoints`.
 
-`UseRouting` process the requests to the pipeline, `UseEndpoints` match URL to the endpoints.
+`UseRouting` match the incomming request to the registered route, and forward that request to the endpoints.
+
+`UseEndpoints` register the routes, and define manipulation of response logic to the route.
+
+`UseEndpoints` now integrated into MapXXX methods, we don't need this method anymore.
 
 sample code as follow:
 ```cs
@@ -445,6 +449,8 @@ var app = builder.Build();
 //app.UseMiddleware<Population>();
 //app.UseMiddleware<Capital>();
 
+//Now we use UseRouting to match the request URL to the registered route, and 
+//UseEndpoint define the rest logic. 
 app.UseRouting();
 
 #pragma warning disable ASP0014
