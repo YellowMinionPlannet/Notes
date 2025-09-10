@@ -40,4 +40,14 @@ cd -
 # list content with long format
 ls -l
 ```
+# HardLink
+- it's more like reference to the real file bytes bulk. When all references(hard links) are deleted, the file bytes are removed and reallocated.
+- Hardlink cannot reference a file outside its own filesystem
+- Hardlink cannot reference a directory 
 
+# Symbolic Links
+- It can points to file or directory
+- when file is deleted, the symbolic link remains but remains as broken
+- when write to symbolic link, file also synced
+
+# Commands
