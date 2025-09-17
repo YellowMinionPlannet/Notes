@@ -50,6 +50,21 @@ ls -l
 - when file is deleted, the symbolic link remains but remains as broken
 - when write to symbolic link, file also synced
 
+```bash
+# create hard link
+ln fun fun-hard
+ln fun dir1/fun-hard
+
+ls -l
+# drwxrwxr-x   directory
+# -rw-r--r--   original file / hard link
+# lrwxrwxrwx   symbolic link
+
+# create symbolic link
+ln -s fun fun-sym
+ln -s ../fun dire1/fun-sym
+```
+
 # Commands
 The categories of commands:
 1. Executable program, files in `usr/bin`. Compiled binaries, like program written in C, C++, or Shell, Perl, Python, Rubby
