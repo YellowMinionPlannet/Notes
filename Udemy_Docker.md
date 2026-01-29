@@ -72,6 +72,39 @@ docker container start -ai ubuntu
 docker container port containername
 # to give you ports info on that container
 
+dcoker container exec -it --rm CONTAINER bash
+# when exit the interactive terminal, clear the container and volume
+
+
+# NetWork
+
+docker network ls
+
+docker network inspect
+
+docker network create --driver
+
+docker network connect
+
+docker network disconnect
+
+docker container run --link
+# connect container that created at default bridge network, so that the specified container can have DNS link with the created one.
+# Usually, we just create a new network, and create container in that new network, so that by default, the containers in the same network will have DNS identified by container name.
+
+docker image tag ORIGINALIMAGENAME:TAG NEWIMAGENAME:TAG
+
+docker image ls
+
+docker image pull 
+
+docker image push
+
+docker build -f some-dockerfile
+# use specific some-dockerfile instead of default Dockerfile
+
+docker container run -d --name todolist-psql -v todolist-data:/var/lib/postgresql/data -p 5432:5432 postgres:17
+# use the same volume with a named volume
 ```
 
 3. Original Docker command format is like `docker <command> <options>`, now `docker <management command> <sub command> <options>`
@@ -90,3 +123,246 @@ docker container port containername
     5. gives it a virtual IP on private network inside docker engine
     6. opens up 80 on host and forwards to port 80 inside
     7. starts container by using CMD in the DOCKERFILE
+
+
+6. Concept of Docker Image
+    - Image has a Image ID, which is sha, like github
+    - each image is built on layers, we can show this by `docker image history` command
+    - these layers is built on uppon each other like a stack
+    - so different image with partially same layers will share these identical partial layers, for example, Image A with top 2 layers same with Image B, will not store the whole Image A and B, it will only store, one copy of top 2 layers, and other different layers seperately corresponding to A and B.
+    - Image has 2 parts:
+        1. Binaries of the application and dependencies
+        2. Metadata
+    - We can use `docker image inspect` to show metadata of an image
+    - When we create containers by the same layer, the containers shares the same part of that image, until some container change something perticularly itself. But this won't cause the changed container got whole new stack of image, but only cause COW to the changed part/file. COW means, copy on write, it means only copy the written part to the different container.
+
+7. ATTENTION: about `docker login`
+    - ALWAYS remember to logout using `docker logout` on a shared machine, it might store a credential on the .docker/config/json file, you can use `cat .docker/config.json` to find out
+
+8. Image Building Concept:
+    1. Every Dockerfile requires a `FROM` command to specify the minimum distribution of the image, this will be the base of your image
+    2. Use `ENV` to inject key/value which will work on every OS and config
+    3. USe `RUN` for running command at shell inside container at build time
+    4. Use `RUN` and `ln -sf/dev/stdout/ /var/log/nginx/access.log`  and  `ln - sf- /dev/stder /var/log/nginx/error.log` to forward log to container
+    5. use `EXPOSE` to expose ports to the newly created virtual network
+    6. use `CMD` to run command after container is launced.
+    7. Mind your order of lines of code in Dockerfile, because one line is changed, all lines after that would be not benefits of using cache, if all lines are the same, it should be built all based on cache.
+        - Best practice, put the lease possibility of changes lines at top, and things change the most at bottom
+
+    8. Use `WORKDIR` to change root directory to a specified path, this is preferred over `RUN cd ....`
+    
+9. To master how image is built, we'd better recognize there are categories of statment that used in the Dockerfile. These categories include:
+    1. Runtime vs. Buildtime:
+        CMD vs. RUN
+    2. Overwritten vs. Addictive:
+        CMD vs. EXPOSE
+
+10. ENTRYPOINT vs. CMD
+
+    Entrypoint and cmd will only execute once.
+    
+    1. CMD could be overwritten through `docker container run [options] IMAGE [command][arguments]`
+    2. ENTRYPOINT could be oeverwritten by `docker container run --entrypoint CMD IMAGE`
+    3. ENTRYPOINT is supposed to be a complementary statemen to the CMD.
+    4. ENTRYPOINT and CMD can be used together, where these two statement shine, to achieve:
+        1. use container as a CLI tool
+        2. run a start script
+
+        ```dockerfile
+        FROM ubuntu:latest
+        RUN apt-get update && \
+            apt-get install -y --no-install-recommends \
+            curl \
+            && rm -rf /var/lib/apt/lists/*
+
+        ENTRYPOINT ["curl"]
+
+        CMD ["--help"]
+        ```
+
+        so we coud use something like
+
+        `docker container run passengerjia/curl www.google.com`
+
+    - because with these 2 statements, the command becomes: ENTRYPOINT + " " + CMD
+        
+        - and remember that CMD part can be easily replaced by command after IMAGE name.
+
+
+    - TO run script:
+
+        We can create a script file, and ask sh to execute that file within CMD command.
+
+        But this will end up with your startuped app being run as a sub-process, which will lead to kill process when shutting down. This inappropriate shutdown operation will cause data breakage.
+
+        INSTEAD:
+
+        ```dockerfile
+        FROM python:slim
+        USER www-data
+        COPY requirement.txt .
+        RUN pip install --no-cache-dir -r requirement.txt
+        COPY . .
+        ENTRYPOINT ["./startup.sh"]
+        CMD ["python", "app.py"]
+        
+        ```
+        ```bash
+        -- startup.sh
+        echo ""
+        mkdir -p /var/www/html/upload
+        chown -R www-data:www-data /var/www/html/upload
+
+        exec "$@"
+        ```
+
+    - the exec "$@" part will tell docker to continue run CMD on ***different process***
+
+11. Kubernetes
+- Terminology:
+    - Node, single server in Kubernetes cluster
+    - Kubelet: Kubernetes agent running on node, so that each node can talk to Kubernetes master node
+    - Control Plane: Where the master nodes are, to control or manage the whole cluster
+    - Within each master node:
+        - API server, scheduler, controller manager, etcd(database), core dns
+        - API, 
+        - Scheduler decide how and where to place the node
+        - Controller Manager, compare current state and your command
+        - Core DNS,
+    - Within each node:
+        - Kuberlet
+        - Kube-proxy
+
+    To play with K8s in browser:
+        - http://play-with-k8s.com
+        - katacoda.com
+
+- Commands:
+```bash
+kubectl version
+# full version of Kubernetes
+kubectl version --short
+# shor version of Kubernetes
+kubectl run my-nginx --image nginx
+# create image from nginx named my-nginx
+# run command is for testing purpose, not for production
+
+kubectl get pods
+# get only pod resource type
+
+kubectl get all
+# get all common types of objects
+
+kubectl create deployment my-nginx --image nginx
+# production purpose, to create deployment
+
+kubectl delete pod my-nginx
+kubectl delete deployment my-nginx
+
+kubectl create deployment my-apache --image httpd
+kubectl scale deploy/my-apache --replicas 2
+kubectl scale deploy my-apache --replicas 2
+# deploy=deployment=deployments
+# will create the second one, totaled 2
+
+kubectl get deploy/my-apache
+# get deployment named my-apache
+
+kubectl get replicaset.apps/my-nginx-578794b -o wide
+kubectl get service/kubernetes -o yaml
+# use wide or yaml for output format, targeting different resource type, service, deployment, replicaset et.
+
+kubectl describe deployment my-apache
+# more human readable format of specification
+kubectl describe pod my-apache-86c695c9b6-2vv9f
+
+kubectl get node docker-desktop -o wide
+kubectl describe node docker-desktop
+
+kubectl get pods -w
+# with -w flag, it returns current status and reflects status updates
+
+kubectl get events --watch-only
+# events is another type of resource
+# --watch-only will show reason of status updates
+
+# Logs
+kubectl logs deployment my-apache
+kubectl logs deployment my-apache --follow --tail 1
+# will follow new log entries, and starts with the latest log line
+
+kubectl logs pod my-apache-xxx-yyy -c httpd
+# get specific container's log in a specific pod
+
+kubectl logs pod my-apache-xxx-yyy --all-containers=true
+# get all logs in all containers in a specified pod
+
+# lable-search
+kubectl logs -l app=my-appache
+# use -l flag to search in that label, label could be found with describe of that resource
+# checkout log tools github.com/stern/stern
+
+# Services
+# Exposing Containers
+kubectl expose
+```
+
+- Pod
+    - Kubernetes only create pods, it does NOT create container directly,
+    - What it does is, it tells the kubelet which is an agent in that created pod, and create container.
+    - The whole flow would be, I type a kube command, and API sents to etcd, c-m, scheduler, then kubelet
+- What happens when `kubectl scale deploymenet/my-apache --replicas 2`
+    1. request sends to API and stored in etcd database,
+    2. c-m sees in that deployment, only replicas count changes,
+    3. c-m will only add number of pod in that replica set specification
+    4. Scheduler see a new pod is requested, assign a node
+    5. kubelet will take care the rest.
+
+- Exposing Containers
+    - `kubectl expose` is to create a service for existing pods
+    - A service is a stable address for pod
+    - If we want to connect to pod, we need a service
+    - CoreDNS allows us to resolve services by name
+    - Other types of services
+        1. ClusterIP, default, internal in cluster(Pod talk to pod), no firewall 
+        2. NodePort, for outside of cluster to talk to pod, Port is open on every node's IP, anyone can connect
+        3. LoadBalancer, Controls a LB endpoint external to the cluster, create clusterIP and nodePort automatically, Only available when infrastructure provider gives you LB
+        4. ExternalName, Less often, 
+
+        5. Ingress, http traffic
+    - Creating a ClusterIP Service
+```bash
+    kubectl get pods -w
+
+    kubectl create deployment httpenv --image=bretfisher/httpenv
+
+    kubectl scale deployment httpenv --replicas=5
+
+    kubectl expose deployment httpenv --port 8888
+
+    kubectl get services
+
+    kubectl run tmp-shell --rm -it --image bretfisher/netshoot -- bash
+    # -- tell container to run bash
+    curl httpenv:8888
+```
+    - Creating a NodePort and LoadBalancer Service
+```bash
+    kubectl expose deployment httpenv --port 8888 --name httpenv-np --type NodePort
+    kubectl get services
+    # port range should be 30000 - 32767 to avoid conflict
+    curl localhost:32334
+
+    kubectl expose deployment httpenv --port 8888 --name httpenv-lb --type loadbanlancer
+    kubectl delete service httpenv service httpenv-np
+    kubectl delete service httpenv-lb deployment httpenv
+```
+
+<hostname>.<namespace>.svc.cluster.local (internal cluster only)
+
+- yaml
+    - when you type in create expose run command there is a specification template corresponding to these command and be translated by resource generator into some yaml files.
+```bash
+kubectl create deployment sample --image nginx --dry-run client -o yaml
+# we use --dry-run flag to demo the whole template, and output as yaml file with -o flag
+```
