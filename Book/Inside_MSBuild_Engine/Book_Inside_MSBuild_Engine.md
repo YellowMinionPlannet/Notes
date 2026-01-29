@@ -5,7 +5,7 @@
 A MSBuild file (MSBuild project file) is just a XML file. These XML files are described by two XML Schma Definition (XSD) documents:
 
 - Microsoft.Build.Commontypes.xsd (Elements commonly found in Visual Studio)
-- Microsoft.Build.Core.xsd (Fixed elements in an MSBuild project file)
+- Microsoft.Build.Core.xsd (Common elements in an MSBuild project file)
 
 They are located at %WINDIR%\Microsoft.NET\Framework\vNNNN\MSBuild
 
@@ -29,10 +29,11 @@ Properties are key-value pairs, where Key is the name which is element tag name,
     </PropertyGroup>
 </Project>
 ```
+Syntax `\\sayHi` will conduct `\sayHi` in string.
 
 ### Tragets and tasks
 
-Task is the smallest unit of work and a target is a sequential set of tasks.
+Task is the smallest unit of work and a target is a sequential set of tasks. We must wrap tasks in target.
 
 ```xml
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -42,8 +43,28 @@ Task is the smallest unit of work and a target is a sequential set of tasks.
 </Project>
 ```
 
+There are predefined Tasks in the the Microsoft Documentation:
+[Microsoft_MSBuild_Documentaion](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2015/msbuild/msbuild-task-reference?view=vs-2015)
+
+Please check the documentation for attributes that each task can use. These attributes will vary from task to task. 
+
 `msbuild HelloWorld.proj /nologo`
 `/nologo` will tell MSBuild NOT to show the version information and save some space in console.
+
+`dotnet msbuild HelloWorld.proj` will be the current version of command.
+we can pass a `-v:detailed` to the command to make sure every message is printed.
+`dotnet msbuild HelloWorld.proj -v:detailed -t:HelloWorld`, and `/t:` with target name attribute value, will specify which target will be executed.
+
+Check -v or Verbosity level options as following:
+
+| Verbosity             | Shows                                |
+| --------------------- | ------------------------------------ |
+| `q` / `quiet`         | ❌ **Errors only**                    |
+| `m` / `minimal`       | Errors + warnings + minimal messages |
+| `n` / `normal`        | Default                              |
+| `d` / `detailed`      | Lots of task logs                    |
+| `diag` / `diagnostic` | Everything (firehose 🚒)             |
+
 
 We can refer property with `$(PropertyName)` in another Property.
 
@@ -59,6 +80,15 @@ We can refer property with `$(PropertyName)` in another Property.
 </Project>
 <!-- output: http://localhost:5000/sayHi -->
 ```
+
+There are Reserved properties:
+
+Please check [Microsoft_MSBuild_Documentation_Reserved_Properties](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2015/msbuild/msbuild-reserved-and-well-known-properties?view=vs-2015)
+
+For example:
+`$(MSBuildProjectFile)`
+
+
 
 ## Items
 
