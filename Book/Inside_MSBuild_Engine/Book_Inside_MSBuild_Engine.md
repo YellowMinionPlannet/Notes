@@ -182,6 +182,10 @@ Following ItemGroup Syntax will have the same output as previous example:
 
 ## Item Metadata
 
+Each Item Element is a full-fledged .Net Object.
+
+When use a Item's Metadata, we write syntax like `@(ItemName -> '%(MetadataName)')`
+
 ```xml
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
     <ItemGroup>
@@ -225,7 +229,7 @@ Almost any element could be attributed with Condition, and this element and all 
     </PropertyGroup>
     <ItemGroup>
         <Content Include="script.js"/>
-        <Content Include="script.debug.js" Condition="$(Configuration)=='Debug'" />
+        <Content Include="script.debug.js" Condition="$(Configuration)=='Debug' | Exists('@(SomeItem)')" />
     </ItemGroup>
     <Target Name="PrintContent">
         <Message Text="Configuration: $(Configuration)" />
@@ -237,6 +241,21 @@ Almost any element could be attributed with Condition, and this element and all 
 ```
 
 ## Default/Initial Targets
+
+Every build file should have a default target, if not set, the first target will treat as default target. If we run `dotnet msbuild somebuildfile.proj` without specified target, then default target will be executed.
+
+To set default target:
+```xml
+<Project DefaultTargets="Build1;Build2"
+xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+</Project>
+```
+- Target only run once
+- InitialTargets, defined in Project tag, run before DefaultTargets
+- DefaultTargets, defined in Project tag, run before other targets that are defined in Target tag
+- DefaultTargets will not be aggregated when the project file is imported by other project files.
+- DependentOnTargets, defined in Target tag, will run before current Target tag
+- BeforeTargets, AfterTargets, defined in Target tag
 
 Please see following link.
 [Target build order](https://learn.microsoft.com/en-us/visualstudio/msbuild/target-build-order?view=vs-2022)
