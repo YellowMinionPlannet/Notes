@@ -85,18 +85,19 @@ There are Reserved properties:
 
 Please check [Microsoft_MSBuild_Documentation_Reserved_Properties](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2015/msbuild/msbuild-reserved-and-well-known-properties?view=vs-2015)
 
-For example:
-`$(MSBuildProjectFile)`
+When you use a property, you write syntax like `$(MSBuildProjectFile)`
 
 
 
 ## Items
 
-Where Property is a key-value pair of a Name and Named Variable, items is a key-value pair that represents a ItemType and Array.
+Usually, Items are file-based references. But sometimes can be used for other purposes.
+
+Where Property is a key-value pair of a Name and Named Variable, items is a key-value pair that represents a Name and Array.
 
 ```xml
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-       <ItemGroup>
+    <ItemGroup>
         <SolutionFile Include=".\Book_Inside_MSBuild_Engine.md" />
     </ItemGroup>
     <Target Name="PrintSolutionInfo">
@@ -106,13 +107,66 @@ Where Property is a key-value pair of a Name and Named Variable, items is a key-
 <!-- output: .\Book_Inside_MSBuild_Engine.md -->
 ```
 
-In this example, SolutionFile has a attribute Include. Include can contain:
+In this example, SolutionFile has a attribute Include. Include attribute can contain:
 
-1. one distinct value
+1. one single value
 2. a list of values delimited with semicolons
 3. a value with wildcards
 
 In this example, since the SolutionFile is a single value, it acts like a property.
+
+When you use a Item, you write syntax like `@(SolutionFile)`
+
+Previous example is the Item with single value, now an example with list of values:
+
+```xml
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <SolutionFile Include="..\InsideMSBuild.sln" />
+    </ItemGroup>
+    <Target Name="PrintSolutionInfo">
+        <Message Text="SolutionFile: @(SolutionFile)" Importance="High" />
+    </Target>
+
+    <ItemGroup>
+        <Compile Include="Form1.cs;Form1.Designer.cs;Program.cs;Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <Target Name="PrintCompile">
+        <Message Text="Compile: @(Compile)" Importance="High" />
+    </Target>
+</Project>
+
+```
+
+```bash
+dotnet msbuild .\MSBuild\HelloWorld.proj -d:detailed -t:PrintCompile
+>   HelloWorld succeeded (0.0s)
+>   Compile: Form1.cs;Form1.Designer.cs;Program.cs;Properties\AssemblyInfo.cs
+```
+Here, the array is actually implicitly converted in to a string when it was taken by input of Message task, Text Attribute which only accepts string typed vavlue. This is a behavior of convention, we can customize this behavior later.
+
+Following ItemGroup Syntax will have the same output as previous example:
+```xml
+<ItemGroup>
+    <Compile Include="Form1.cs"/>
+    <Compile Include="Form1.Designer.cs"/>
+    <Compile Include="Program.cs" />
+    <COmpile Include="Properties\AssemblyInfo.cs" />
+</ItemGroup>
+
+<ItemGroup>
+    <Compile Include="Form1.cs" />
+</ItemGroup>
+    <Compile Include="Form1.Designer.cs" />
+<ItemGroup>
+    <Compile Include="Program.cs" />
+</ItemGroup>
+<ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+</ItemGroup>
+
+
+```
 
 - Items are ordered list, the order is preserved.
 - Later property will overwrite the previous one, items are different. Items simply appends later items into the list instead of overwrite the previous one.
@@ -120,11 +174,17 @@ In this example, since the SolutionFile is a single value, it acts like a proper
 ### Using wildcards
 
 - ? means 1 letter
+    - `b?t.cs`, bat.cs, bot.cs, bet.cs
 - \* means 0 to many letters excluding /
-- \\\*\*\ means any letters
-  For example, `Include="src\**\*.cs"` will include all .cs files within src folder.
+    - `b*t.cs`, bat.cs, bot.cs, best.cs, bt.cs, et.
+- \*\*\ means any letters
+    - `src\**\*.cs`, anything under src folder and with .cs extension
 
 ## Item Metadata
+
+Each Item Element is a full-fledged .Net Object.
+
+When use a Item's Metadata, we write syntax like `@(ItemName -> '%(MetadataName)')`
 
 ```xml
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
@@ -169,7 +229,7 @@ Almost any element could be attributed with Condition, and this element and all 
     </PropertyGroup>
     <ItemGroup>
         <Content Include="script.js"/>
-        <Content Include="script.debug.js" Condition="$(Configuration)=='Debug'" />
+        <Content Include="script.debug.js" Condition="$(Configuration)=='Debug' | Exists('@(SomeItem)')" />
     </ItemGroup>
     <Target Name="PrintContent">
         <Message Text="Configuration: $(Configuration)" />
@@ -181,6 +241,21 @@ Almost any element could be attributed with Condition, and this element and all 
 ```
 
 ## Default/Initial Targets
+
+Every build file should have a default target, if not set, the first target will treat as default target. If we run `dotnet msbuild somebuildfile.proj` without specified target, then default target will be executed.
+
+To set default target:
+```xml
+<Project DefaultTargets="Build1;Build2"
+xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+</Project>
+```
+- Target only run once
+- InitialTargets, defined in Project tag, run before DefaultTargets
+- DefaultTargets, defined in Project tag, run before other targets that are defined in Target tag
+- DefaultTargets will not be aggregated when the project file is imported by other project files.
+- DependentOnTargets, defined in Target tag, will run before current Target tag
+- BeforeTargets, AfterTargets, defined in Target tag
 
 Please see following link.
 [Target build order](https://learn.microsoft.com/en-us/visualstudio/msbuild/target-build-order?view=vs-2022)
