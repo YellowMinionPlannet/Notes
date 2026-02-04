@@ -64,7 +64,7 @@ There are several settings to make these things work, [visit here for more info]
 
 YAML Pipeline only not supporting Azure Repos TFVC and Subversion
 
-# Azure Repos Git
+## Azure Repos Git
 
 Create a pipeline by selecting repository and a YAML file in that repo, the repo contains the YAML file is the `self` repos to the YAML file.
 
@@ -164,7 +164,14 @@ skip-checks:true
 ***NO_CI***
 ```
 
-- Add following condition to exclude it from PR trigger
+Add following condition to exclude it from PR trigger
 
 `condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))`
 
+- PR trigger will trigger when PR is created, or push is made to that PR
+
+- Merge will always run even if there are special syntax
+- Changes on the PR will not run if special syntax is included.
+- Draft pull request will not trigger pr trigger
+
+### Authorization
