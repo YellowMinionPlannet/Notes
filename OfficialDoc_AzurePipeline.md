@@ -175,3 +175,41 @@ Add following condition to exclude it from PR trigger
 - Draft pull request will not trigger pr trigger
 
 ### Authorization
+
+If 
+1. your repo and pipeline are in different projects
+2. and **Limit job authorization scope** settings is enabled
+
+then,
+you must grant permission to build service identity of your pipeline to the second project, plesae see the [link for more info](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/access-tokens?view=azure-devops&tabs=yaml#manage-build-service-account-permissions)
+
+#### Protect access to repository in YAML pipelines
+Without **Protect access to repositories in YAML pipelines** is enabled, pipelines are able to access any repos.
+
+Organization/Project settings could configure this, and this setting is enabled by default.
+
+To use repos code, you need to have `checkout` step first.
+
+- If no checkout step is specified, then `checkout: self` is implicitly included.
+- If only read-only operations needs to be operated, you don't need checkout step
+- If script has PAT, no checkout step needed
+
+default checkout step is actually executing following:
+```bash
+git -c fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1
+```
+
+### Preffered version of Git
+For Windows agent, the git comes with agent default tool set. If you have other version to use:
+
+set `System.PreferGitFromPath` to `true`,
+
+For Windows-less agent, this setting is always true
+
+#### Checkout path
+
+By default your checked out content will put in `s` folder, `$(Agent.BuildDirectory)\s`, if multiple repos named tools and code, then `$(Agent.BuildDirectory)\s\tools` and `$(Agent.BuildDirectory)\s\code`
+
+You can customized this by `path` property in `checkout`.
+
+# Specify jobs in your pipeline
