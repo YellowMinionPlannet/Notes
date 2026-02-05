@@ -388,5 +388,403 @@ jobs:
   cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
 ```
 
-
 ## Multi-job configuration
+
+Following syntax will dispatch 3 jobs, and 2 of them will run concurrently.
+```yaml
+jobs:
+- job: Test
+  strategy:
+    maxParallel: 2
+    matrix: 
+      US_IE:
+        Location: US
+        Browser: IE
+      US_Chrome:
+        Location: US
+        Browser: Chrome
+      Europe_Chrome:
+        Location: Europe
+        Browser: Chrome
+```
+
+for this matrix, it's also achievable through output variable, with a stringified JSON object format.
+
+```yaml
+jobs:
+- job: generator
+  steps:
+  - bash: echo "##vso[task.setVariable variable=legs;isOutput=true]{'a':{'myvar':'A'}, 'b':{'myvar':'B'}}"
+    name: mtrx
+  # This expands to the matrix
+  #   a:
+  #     myvar: A
+  #   b:
+  #     myvar: B
+- job: runner
+  dependsOn: generator
+  strategy:
+    matrix: $[ dependencies.generator.outputs['mtrx.legs'] ]
+  steps:
+  - script: echo $(myvar) # echos A or B depending on which leg is running
+
+```
+
+## Slicing
+
+## Job variables
+Here is the sample of how to reference variables.
+
+```yaml
+variables:
+  mySimpleVar: simple var value
+  "my.dotted.var": dotted var value
+  "my var with spaces": var with spaces value
+
+steps:
+- script: echo Input macro = $(mySimpleVar). Env var = %MYSIMPLEVAR%
+  condition: eq(variables['agent.os'], 'Windows_NT')
+- script: echo Input macro = $(mySimpleVar). Env var = $MYSIMPLEVAR
+  condition: in(variables['agent.os'], 'Darwin', 'Linux')
+- bash: echo Input macro = $(my.dotted.var). Env var = $MY_DOTTED_VAR
+- powershell: Write-Host "Input macro = $(my var with spaces). Env var = $env:MY_VAR_WITH_SPACES"
+```
+
+## Workspace
+In agent job, here is the well-known variables:
+
+- `Pipeline.Workspace` to reference pipeline workspace.
+- `Build.SourceDirectory` tasks download the application's source code
+- `Build.ArtifactStagingDirectory` tasks download artifacts needed / upload artifacts before they're published
+- `Build.BinariesDirectory` tasks write their output
+- `Common.TestResultsDirectory` upload their test results
+
+`Build.ArtifactStagingDirectory` and `Common.TestResultsDirectory` are always deleted and recreated before every build. These directories even is cleaned in self-hosted agent.
+
+Jobs are always run on a new agent with Microsoft-hosted agents
+
+
+
+```yaml
+- job: myJob
+  workspace:
+    clean: outputs | resources | all # what to clean up before the job runs
+
+    # outputs, Delete `Build.BinariesDirectory` before running a new job
+    # resources, Delete `Build.SourcesDirectory` before running a new job
+    # all, Delete `Pipeline.Workspace` before running a new job
+```
+
+## Artifact download
+```yaml
+# test and upload my code as an artifact named Website
+jobs:
+- job: Build
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - script: npm test
+  - task: PublishPipelineArtifact@1
+    inputs:
+      artifactName: Website
+      targetPath: '$(System.DefaultWorkingDirectory)'
+
+# download the artifact and deploy it only if the build job succeeded
+- job: Deploy
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - checkout: none #skip checking out the default repository resource
+  - task: DownloadPipelineArtifact@2
+    displayName: 'Download Pipeline Artifact'
+    inputs:
+      artifactName: Website
+      targetPath: '$(Pipeline.Workspace)'
+  dependsOn: Build
+  condition: succeeded()
+```
+
+## Access to OAuth token
+```yaml
+steps:
+- powershell: |
+    $url = "$($env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI)$env:SYSTEM_TEAMPROJECTID/_apis/build/definitions/$($env:SYSTEM_DEFINITIONID)?api-version=4.1-preview"
+    Write-Host "URL: $url"
+    $pipeline = Invoke-RestMethod -Uri $url -Headers @{
+      Authorization = "Bearer $env:SYSTEM_ACCESSTOKEN"
+    }
+    Write-Host "Pipeline = $($pipeline | ConvertTo-Json -Depth 100)"
+  env:
+    SYSTEM_ACCESSTOKEN: $(system.accesstoken)
+
+```
+
+# Define container jobs
+
+For container jobs, steps is executed in container by default, you can customize this behavior using step targets, to choose container or host for the current step.
+
+To define a windows host container job:
+```yaml
+pool:
+  vmImage: 'windows-2019'
+
+container: mcr.microsoft.com/windows/servercore:ltsc2019
+
+steps:
+- script: set
+```
+To define a Linux host container job:
+```yaml
+pool:
+  vmImage: 'ubuntu-latest'
+
+container: ubuntu:18.04
+
+steps:
+- script: printenv
+```
+
+Use matrix strategy to run same step in different containers
+```yaml
+pool:
+  vmImage: 'ubuntu-latest'
+
+strategy:
+  matrix:
+    ubuntu16:
+      containerImage: ubuntu:16.04
+    ubuntu18:
+      containerImage: ubuntu:18.04
+    ubuntu20:
+      containerImage: ubuntu:20.04
+
+container: $[ variables['containerImage'] ]
+
+steps:
+- script: printenv
+```
+
+## Multiple jobs on a single agent host
+Because jobs run in parallel, each job might sign out Docker configuration file at end of the job, so u will encounter deny if multiple jobs are pulling images and sign out. The solution is to set a `DOCKER_CONFIG` enviroment variable for each agent pool.
+
+```bash
+export DOCKER_CONFIG=./.docker
+```
+## Startup options
+You can use `options` property to specify options for contanier startup
+```yaml
+container:
+  image: ubuntu:18.04
+  options: --hostname container-test --ip 192.168.0.1
+
+steps:
+- script: echo hello
+```
+***resources.containers.container*** for definition of schema
+***docker container create*** for command reference of `options`
+
+
+put image in to resources, to make them reusable.
+```yaml
+resources:
+  containers:
+  - container: u16
+    image: ubuntu:16.04
+
+  - container: u18
+    image: ubuntu:18.04
+
+  - container: u20
+    image: ubuntu:20.04
+
+jobs:
+- job: RunInContainer
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  strategy:
+    matrix:
+      ubuntu16:
+        containerResource: u16
+      ubuntu18:
+        containerResource: u18
+      ubuntu20:
+        containerResource: u20
+
+  container: $[ variables['containerResource'] ]
+
+  steps:
+  - script: printenv
+```
+
+Use `endpoint` to specify private docker hub registry
+```yaml
+# Docker HUB Private
+container:
+  image: registry:ubuntu1804
+  endpoint: private_dockerhub_connection
+
+# ACR
+container:
+  image: myprivate.azurecr.io/windowsservercore:1803
+  endpoint: my_acr_connection
+```
+
+For using non-standar Node.js Runtime (other than `glibc`), [see here](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#software)
+
+For customized packages in node container, build image with sample snippet
+```dockerfile
+FROM node:18-alpine
+
+RUN apk add --no-cache --virtual .pipeline-deps readline linux-pam \
+  && apk add bash sudo shadow \
+  && apk del .pipeline-deps
+
+LABEL "com.azure.dev.pipelines.agent.handler.node.path"="/usr/local/bin/node"
+# LABEL only add descriptive meta data
+CMD [ "node" ]
+```
+
+# Use service containers
+
+
+
+# Add stages, dependencies, and conditions
+By default stages run in sequence.
+
+If only one stage, there is no need to specify stages keyword.
+
+Following sample shows parallel stages by using dependsOn keyword.
+```yaml
+stages:
+- stage: FunctionalTest
+  displayName: "Functional Test Stage"
+  jobs:
+  - job: FunctionalTestJob
+    steps:
+    - script: echo "Running functional tests"
+      displayName: "Run Functional Tests"
+
+- stage: AcceptanceTest
+  displayName: "Acceptance Test Stage"
+  dependsOn: [] # Runs in parallel with FunctionalTest
+  jobs:
+  - job: AcceptanceTestJob
+    steps:
+    - script: echo "Running acceptance tests"
+      displayName: "Run Acceptance Tests"
+```
+
+Also, please notice the order of following stages:
+```yaml
+stages:
+- stage: Test
+
+- stage: DeployUS1
+  dependsOn: Test    #  stage runs after Test
+
+- stage: DeployUS2
+  dependsOn: Test    # stage runs in parallel with DeployUS1, after Test
+
+- stage: DeployEurope
+  dependsOn:         # stage runs after DeployUS1 and DeployUS2
+  - DeployUS1
+  - DeployUS2
+
+```
+
+You can manually control when a stage to run by **Approvals**, also you can add a manual trigger to a stage, so that the specified stage won't run automatically.
+
+```yaml
+stages:
+- stage: Development
+  displayName: Deploy to development
+  jobs:
+  - job: DeployJob
+    steps:
+    - script: echo 'hello, world'
+      displayName: 'Run script'
+- stage: Production
+  displayName: Deploy to production
+  trigger: manual
+  jobs:
+  - job: DeployJob
+    steps:
+    - script: echo 'hello, world'
+      displayName: 'Run script'
+```
+
+You can mark a stage that is unskipable by using `isSkippable: false`
+```yaml
+- stage: malware_detection
+  displayName: Malware detection
+  isSkippable: false
+  jobs:
+  - job: check_job
+    ...
+```
+this way, this stage cannot be check off in the configuration panel.
+
+
+# Deployment jobs
+
+Deployment job's step is executed in sequence, by default, the source code is not checked out, you can check out source code by using `checkout: self`.
+
+To achieve following deployment results:
+- Enable Initialization
+- Deploy the update version of application
+- Route traffic to the updated version of application
+- Test the updated version of application using routed traffic
+- Revert to the last known version if fail
+
+Deployment job has lifecyle hooks.
+
+`preDeploy`: Used to run steps that initialize resources before deployment 
+`deploy`: Used to run steps that deploy your application. Download artifact task is auto injected in deploy hook, to stop this, use `- download: none`
+`routeTraffic`: Used to run steps that serve the traffic to the updated version
+`postRouteTraffic`: Used to run steps after the traffic is routed. Monitor the health of updated version of application
+`on: failure`/`on: success`: Used to run steps for rollback actions or clean-up
+
+There are also strategy to combine these hooks:
+1. RunONce deployment strategy
+```yaml
+strategy: 
+    runOnce:
+      preDeploy:        
+        pool: [ server | pool ] # See pool schema.        
+        steps:
+        - script: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+      deploy:          
+        pool: [ server | pool ] # See pool schema.        
+        steps:
+        ...
+      routeTraffic:         
+        pool: [ server | pool ]         
+        steps:
+        ...        
+      postRouteTraffic:          
+        pool: [ server | pool ]        
+        steps:
+        ...
+      on:
+        failure:         
+          pool: [ server | pool ]           
+          steps:
+          ...
+        success:          
+          pool: [ server | pool ]           
+          steps:
+          ...
+
+```
+
+Remember to clean your deployment workspace:
+```yaml
+jobs:
+  - deployment: MyDeploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    workspace:
+      clean: all
+    environment: staging
+```
