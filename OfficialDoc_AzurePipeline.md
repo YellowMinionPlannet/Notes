@@ -213,3 +213,180 @@ By default your checked out content will put in `s` folder, `$(Agent.BuildDirect
 You can customized this by `path` property in `checkout`.
 
 # Specify jobs in your pipeline
+
+User can use conditions and dependencies to manage priority of jobs.
+
+In smallest case, a pipeline has a single job. So that it is not necessary to use job in your YAML file, but specify steps directly.
+
+```yaml
+pool:
+    vmImage: 'ubuntu-latest'
+steps:
+- bash: echo 'Hello world'
+```
+
+The full syntax of job:
+
+```yaml
+- job: string  # name of the job, A-Z, a-z, 0-9, and underscore
+  displayName: string  # friendly name to display in the UI
+  dependsOn: string | [ string ]
+  condition: string
+  strategy:
+    parallel: # parallel strategy
+    matrix: # matrix strategy
+    maxParallel: number # maximum number simultaneous matrix legs to run
+    # note: `parallel` and `matrix` are mutually exclusive
+    # you may specify one or the other; including both is an error
+    # `maxParallel` is only valid with `matrix`
+  continueOnError: boolean  # 'true' if future jobs should run even if this job fails; defaults to 'false'
+  pool: pool # agent pool
+  workspace:
+    clean: outputs | resources | all # what to clean up before the job runs
+  container: containerReference # container to run this job inside
+  timeoutInMinutes: number # how long to run the job before automatically cancelling
+  cancelTimeoutInMinutes: number # how much time to give 'run always even if cancelled tasks' before killing them
+  variables: ### { string: string } | [ variable | variableReference ] 
+  steps: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+  services: { string: string | container } # container resources to run as a service container
+  uses: # Any resources (repos or pools) required by this job that are not already referenced
+    repositories: [ string ] # Repository references to Azure Git repositories
+    pools: [ string ] # Pool names, typically when using a matrix strategy for the job
+```
+
+If primary intent of your job is to deploy, u can use special type of job called deployment job
+
+```yaml
+- deployment: string        # instead of job keyword, use deployment keyword
+  pool:
+    name: string
+    demands: string | [ string ]
+  environment: string
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - script: echo Hi!
+
+```
+
+## Types of jobs
+1. Agent pool jobs
+2. Server jobs
+3. Container jobs
+
+### Agent pool jobs
+
+- When you are using Micorosft-hosted agents, each job has a fresh agent
+- When you are using self-hosted agents, you can use demands to specify capabilities an agent must have
+
+```yaml
+# demo of demands and capabilities
+pool:
+  name: myPrivateAgents    # your job runs on an agent in this pool
+  demands: 
+  - agent.os -equals Windows_NT    # the agent must have this capability to run the job
+  - anotherCapability -equals somethingElse
+steps:
+- script: echo hello world
+```
+
+### Agentless jobs (server job) supported tasks
+
+- Delay task
+- Invoke REST API task
+- Invoke Azure Function task
+- Manual Validation task
+- Publish to Azure Service Bus task
+- Query Azure Monitor Alrerts task
+- Query Work Items task
+
+The full syntax to specify a server job:
+```yaml
+jobs:
+- job: string
+  timeoutInMinutes: number
+  cancelTimeoutInMinutes: number
+  strategy:
+    maxParallel: number
+    matrix: { string: { string: string } }
+
+  pool: server # note: the value 'server' is a reserved keyword which indicates this is an agentless job
+```
+
+## Dependencies
+Pipeline must contain at least one job with no dependencies, by default, the pipelines should run in parallel unless the `dependsOn` value is set
+
+```yaml
+jobs:
+- job: string
+  dependsOn: string
+  condition: string
+```
+
+Sequential sample:
+```yaml
+jobs:
+- job: Debug
+  steps:
+  - script: echo hello from the Debug build
+- job: Release
+  dependsOn: Debug
+  steps:
+  - script: echo hello from the Release build
+
+```
+
+## Conditions
+
+```yaml
+jobs:
+- job: A
+  steps:
+  - script: exit 1
+
+- job: B
+  dependsOn: A
+  condition: failed()
+  steps:
+  - script: echo this will run when A fails
+
+- job: C
+  dependsOn:
+  - A
+  - B
+  condition: succeeded('B')
+  steps:
+  - script: echo this will run when B runs and succeeds
+```
+
+sample of using output of dependency job:
+```yaml
+jobs:
+- job: A
+  steps:
+  - script: "echo '##vso[task.setvariable variable=skipsubsequent;isOutput=true]false'" # set variable skipsubsequent to true, and isOutput = true give this variable, skipsubsequent, ability to be read in subsequent jobs.
+    name: printvar # job A has a name of printvar
+
+- job: B
+  condition: and(succeeded(), ne(dependencies.A.outputs['printvar.skipsubsequent'], 'true')) # make sure A run succeeded and A's output variable printvar.skipsubsequent is not true. We can only use output variable by jobname.variablename
+  dependsOn: A
+  steps:
+  - script: echo hello from B
+```
+
+## Timeouts
+By default:
+- Self-hosted agent run forever
+- Microsoft-hosted agent run 360 mins for public repos and project
+- Microsoft-hosted agent run 60 mins for private repos or private project
+
+```yaml
+jobs:
+- job: Test
+  timeoutInMinutes: 10 # how long to run the job before automatically cancelling
+  cancelTimeoutInMinutes: 2 # how much time to give 'run always even if cancelled tasks' before stopping them
+```
+
+
+## Multi-job configuration
