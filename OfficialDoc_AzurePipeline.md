@@ -646,8 +646,155 @@ CMD [ "node" ]
 ```
 
 # Use service containers
+Following script shows how a job container and service container work together:
+```yaml
+resources:
+  containers:
+  - container: my_container
+    image: buildpack-deps:focal
+  - container: nginx
+    image: nginx
+# pre-declared container and image, 
 
+pool:
+  vmImage: 'ubuntu-latest'
+# define host agent, which is VM running ubuntu system, where docker is pre-installed
 
+container: my_container
+# define job container which is my_container with iamge of buildpack-deps:focal
+services:
+  nginx: nginx
+# define service container which is nginx, lef nginx is host service name, right nginx is the pre-defined nginx container
+
+steps:
+- script: |
+    curl nginx
+  displayName: Show that nginx is running
+# these steps run in the job container, form my_container curl nginx.
+```
+
+Following snippet illustrate noncontainer job:
+```yaml
+resources:
+  containers:
+  - container: nginx
+    image: nginx
+    ports:
+    - 8080:80
+    # hostport: containerport
+    env:
+      NGINX_PORT: 80
+    # make sure docker has config of NGINX_PORT = 80
+  - container: redis
+    image: redis
+    ports:
+    - 6379
+    # route a random host port to container port 6379
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+services:
+  nginx: nginx
+  redis: redis
+
+steps:
+- script: |
+    curl localhost:8080
+    echo $AGENT_SERVICES_REDIS_PORTS_6379
+
+# $AGENT_SERVICES_REDIS_PORTS_6379 is a reserved variable format of $AGENT_SERVICES_<SERVCIENAME>_PORTS_<PORTNUMBER>, it will print the random host port assign to this container port.
+```
+
+Use Matrix:
+
+```yaml
+resources:
+  containers:
+  - container: my_container
+    image: ubuntu:22.04
+  - container: pg15
+    image: postgres:15
+  - container: pg14
+    image: postgres:14
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+strategy:
+  matrix:
+    postgres15:
+      postgresService: pg15
+    postgres14:
+      postgresService: pg14
+
+container: my_container
+
+services:
+  postgres: $[ variables['postgresService'] ]
+steps:
+- script: printenv
+```
+
+## Volumes
+```yaml
+services:
+  my_service:
+    image: myservice:latest
+    volumes:
+    - mydockervolume:/data/dir
+    # named volume
+    - /data/dir
+    # anonymous volume
+    - /src/dir:/dst/dir
+    # bind mounts
+```
+
+Final sample:
+```yaml
+resources:
+  containers:
+    - container: db
+      image: postgres
+      volumes:
+          - '/data/db:/var/lib/postgresql/data'
+      env:
+        POSTGRES_DB: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+    - container: mysql
+      image: 'mysql:5.7'
+      ports:
+         - '3306:3306'
+      env:
+        MYSQL_DATABASE: users
+        MYSQL_USER: mysql
+        MYSQL_PASSWORD: mysql
+        MYSQL_ROOT_PASSWORD: mysql
+    - container: web
+      image: python
+      volumes:
+      - '/code'
+      ports:
+        - '8000:8000'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+container: web
+services:
+  db: db
+  mysql: mysql
+
+steps:
+    - script: |
+        pip install django
+        pip install psycopg2
+        pip install mysqlclient
+      displayName: set up django
+    - script: |
+          python /__w/1/s/manage.py test
+```
 
 # Add stages, dependencies, and conditions
 By default stages run in sequence.
