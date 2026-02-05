@@ -935,3 +935,230 @@ jobs:
       clean: all
     environment: staging
 ```
+
+
+# Author a custom pipeline decorator
+
+Pipeline decorators let you add steps to the beginning and end of every job. It applies to all pipelines in an organization.
+
+> Here we need to be familiar with concept of **Contribution model**, so from here we inject notes from [Contribution model page](https://learn.microsoft.com/en-us/azure/devops/extend/develop/contributions-overview?view=azure-devops).
+
+A contribution type defined the properties and rules that contributions of that type must follow. A contribution type can extend another contribution type, inheriting its properties.
+
+Common contirbution types:
+`hub`, `action`, `build-task`
+
+A property definition includes:
+- property type, string or boolean
+- whether the property is required
+- an optional default value
+
+So, a contribution type sample:
+```json
+{
+  "contributionTypes": [
+    {
+      "id": "hub",
+      "name": "Web Access Hub",
+      "description": "A hub that appears in the hubs menu at the top of web pages.",
+      "properties": {
+        "name": {
+          "description": "The text to display for the hub",
+          "type": "string",
+          "required": true
+        },
+        "uri": {
+          "description": "URI of the contents of the hub page",
+          "type": "string",
+          "required": true
+        },
+        "order": {
+          "description": "Optional ordering value indicating the hub's position within the hub group",
+          "type": "integer"
+        }
+      }
+    }
+  ]
+}
+```
+
+So once we have definition of contribution type, we can have a contribution instance, which looks like:
+```json
+{
+    "contributions": [
+        {
+            "id": "build-explorer-hub",
+            "type": "ms.vss-web.hub",
+            "targets": [
+                ".build-hub-group"
+            ],
+            "properties": {
+                "name": "Explorer",
+                "uri": "/_build",
+                "order": 22
+            }
+        }
+    ]
+}
+```
+
+Target contributions, means contribution can bind target on one or more other contributions, following example shows a `hub` contribution targeting a `hub-group` contribution. So when hub group renders, the runtime will query for all hub contributions that targeting hub group to know which hub to render.
+
+```json
+{
+    "id": "build-explorer-hub",
+    "type": "ms.vss-web.hub",
+    "targets": [
+        ".build-hub-group"
+    ]
+}
+```
+
+The identity of contribution type, is seperated by `.`, and `ms.vss-web.hub` means:
+- Publisher ID, `ms`
+- Extension ID, `vss-web`
+- Contribution/type ID, `hub`
+
+> Back to our decorator notes
+
+Oud decorator is an instance of `ms.azure-pipelines.pipeline-decorator` contribution type.
+
+```json
+
+{
+    "manifestVersion": 1,
+    "contributions": [
+        {
+            "id": "my-required-task",
+            "type": "ms.azure-pipelines.pipeline-decorator",
+            "targets": [
+                "ms.azure-pipelines-agent-job.post-job-tasks"
+            ],
+            "properties": {
+                "template": "my-decorator.yml"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "my-decorator.yml",
+            "addressable": true,
+            "contentType": "text/plain"
+        }
+    ]
+}
+```
+
+So it declares this decorator is targeting all post-job-tasks. As definition requires a `my-decorator.yml`, here it is:
+```yaml
+steps:
+- task: CmdLine@2
+  displayName: 'Run my script (injected from decorator)'
+  inputs:
+    script: dir
+```
+
+In order to make pipeline decorators take effect on every pipeline in Org, Org Admin needs to intall the extension, and you can check which extension is installed at Org level, Org settings.
+
+# Pipeline decorator context
+
+This part introduces how to make your customized decorator interact with current task, this is optional material, please read [here](https://learn.microsoft.com/en-us/azure/devops/extend/develop/pipeline-decorator-context?toc=%2Fazure%2Fdevops%2Fpipelines%2Ftoc.json&view=azure-devops)
+
+
+# Specify conditions
+***Importance***
+job, stage will run:
+1. no dependOn settings
+2. or, all its dependencies completed or succeeded
+
+step will run:
+1. nothing fail in its job
+2. and, preceeding step is completed
+
+Common conditions:
+- Succeeded: Run only all previous dependencies succeed, `condition: succeeded()`
+- Succeeded or failed: Run even fails, but don't run when canceled, `condition: succeededOrFailed()`
+- Always: Run even canceled, `condition: always()`
+- Failed: Run only when previous dependencies fails, `condition: failed()`
+
+Variables are all treated as string, so empty string is `null`.
+
+```yaml
+variables:
+  isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+
+stages:
+- stage: A
+  jobs:
+  - job: A1
+    steps:
+      - script: echo Hello Stage A!
+- stage: B
+  condition: and(succeeded(), eq(variables.isMain, true))
+  jobs:
+  - job: B1
+    steps:
+      - script: echo Hello Stage B!
+      - script: echo $(isMain)
+
+variables:
+- name: testEmpty
+  value: ''
+
+jobs:
+  - job: A
+    steps:
+    - script: echo testEmpty is blank
+    condition: eq(variables.testEmpty, '')
+```
+
+To make a output variable that can be used by other jobs in same stage:
+
+```yaml
+jobs:
+- job: A
+  steps:
+  - bash: |
+      echo "This is job A."
+      echo "##vso[task.setvariable variable=doThing;isOutput=true]Yes" #set variable doThing to Yes
+    name: DetermineResult
+- job: B
+  dependsOn: A
+  condition: eq(dependencies.A.outputs['DetermineResult.doThing'], 'Yes') #map doThing and check the value
+  steps:
+  - script: echo "Job A ran and doThing is Yes."
+```
+
+Variables created by steps:
+- Scoped to the steps in same job
+- Available by subsequent steps as Environment variables
+- Can't be used in step where created
+
+```yaml
+steps:
+
+# This step creates a new pipeline variable: doThing. This variable is available to subsequent steps.
+- bash: |
+    echo "##vso[task.setvariable variable=doThing]Yes"
+  displayName: Step 1
+
+# This step uses doThing in its condition
+- script: |
+    # Access the variable from Step 1 as an environment variable.
+    echo "Value of doThing (as DOTHING env var): $DOTHING."
+  displayName: Step 2
+  condition: and(succeeded(), eq(variables['doThing'], 'Yes')) # or and(succeeded(), eq(variables.doThing, 'Yes'))
+```
+
+Parameters need to use syntax `${{ parameters.name}}` to evaluate
+
+```yaml
+parameters:
+- name: doThing
+  default: true
+  type: boolean
+
+steps:
+- script: echo I did a thing
+  condition: and(succeeded(), ${{ eq(parameters.doThing, true) }})
+```
