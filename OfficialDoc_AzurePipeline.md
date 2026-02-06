@@ -1262,3 +1262,119 @@ This is really good reference about function we can use in YAML, [see details](h
 
 ***Importance***
 Please take a look at all available task list [here](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops).
+
+
+# Task types and usage
+
+A step could be one of these, a task or a script.
+
+A task is a predefined script or procedure. Please see schema ***step.task***.
+
+Steps in a job by default run in sequence. Use target to exchange context of the step, and use strategy to make steps execute concurrently.
+
+Predefined special tasks towards a Organization are pre-installed at organization-level. If Marketplace tasks(Common task) and built-in task(Org's special task) are all disabled in Organizaiton Settings, then there won't be anything to use other than Node CLI tasks.
+
+Custom tasks, will be overriden if the custom task name collide with built-in task name. BUilt-in task will be executed when you call, unless you emphasis custom task with GUID when you create.
+
+Task Version needs to be specified when using task. 
+
+In YAML, you use @ version number to express
+```yaml
+- task: onebranch.pipeline.nugetpush@1
+```
+
+Conditions can specify if task need to run, by default, a step runs if nothing in this job fails. You can customize condtion by using **expression**.
+
+`continueOnError` property tells the task should continue running, and downstream steps also treat previous dependency as succeeded.
+
+`retryCountOnTaskFailure` retry task if it fails.
+- max of this property is 10
+- wait time will increase for each increment retry
+- round of retry is not provided to the current retry step
+- Failure of retried task will be warning
+
+## Environment variables
+`env` under step could used with script or task to set environment variables. Using syntax `$ENV_VARIABLE_NAME` to reference environment variables.
+
+```yaml
+- task: Bash@3
+  inputs:
+    script: echo "This is " $ENV_VARIABLE_NAME
+  env:
+    ENV_VARIABLE_NAME: value
+  displayName: 'echo environment variable'
+```
+
+# Run a PowerShell script
+powershell script in Azure Pipeline could access resources in **Azure DevOps REST API**.
+
+## PowerShell script task
+PowerShell script task could be achieved through inline or file. The script task also has access to current code repos branch defined in pipeline settings.
+
+```yaml
+# inline mode
+steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: Write-Host "Hello world!"
+
+# file mode
+steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'filePath'
+    filePath: 'test.ps1'
+```
+
+Shortcut version:
+
+```yaml
+steps:
+- pwsh: test.ps1
+
+steps:
+- pwsh: Write-Host Hello
+```
+
+# Run Git commands in pipeline scripts
+
+
+# Cross-platform scripts
+```yaml
+steps:
+# Linux
+- bash: |
+    export IPADDR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+    echo "##vso[task.setvariable variable=IP_ADDR]$IPADDR"
+  condition: eq( variables['Agent.OS'], 'Linux' )
+  displayName: Get IP on Linux
+# macOS
+- bash: |
+    export IPADDR=$(ifconfig | grep 'en0' -A3 | grep inet | tail -n1 | awk '{print $2}')
+    echo "##vso[task.setvariable variable=IP_ADDR]$IPADDR"
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  displayName: Get IP on macOS
+# Windows
+- powershell: |
+    Set-Variable -Name IPADDR -Value ((Get-NetIPAddress | ?{ $_.AddressFamily -eq "IPv4" -and !($_.IPAddress -match "169") -and !($_.IPaddress -match "127") } | Select-Object -First 1).IPAddress)
+    Write-Host "##vso[task.setvariable variable=IP_ADDR]$IPADDR"
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Get IP on Windows
+
+# use the value
+- script: |
+    echo The IP address is $(IP_ADDR)
+```
+
+# Logging commands
+This is a reference of `echo '##vso[]'`. [link](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash)
+
+# File matching patterns
+This is a reference of wildcards. [link](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=azure-devops)
+
+# Cache NuGet Packages
+This is a way to cache NuGet packages to shorten process of restore before build.
+
+# Templates, parameters, & expressions
+
