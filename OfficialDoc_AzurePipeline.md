@@ -1378,3 +1378,460 @@ This is a way to cache NuGet packages to shorten process of restore before build
 
 # Templates, parameters, & expressions
 
+Templates will able you re-usable content, logic, and parameters in YAML pipelines. 
+
+There are two main types of templates:
+- Includes templates, if only include contents, just like include directive  
+- Extends templates, if aim to control and define a schema for what is allowed in a pipeline. It defines logic and structure a pipeline must follow. This is useful for enforcing security, compliance, or organizational standards.
+
+There are two main tools/features to make templates work as expected:
+- template expression
+- template parameters
+
+Example of Include template, reuse steps across multiple jobs:
+```yaml
+# File: templates/insert-npm-steps.yml
+
+steps:
+- script: npm install
+- script: yarn install
+- script: npm run compile
+
+
+# File: azure-pipelines.yml
+
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - template: templates/insert-npm-steps.yml  # Template reference
+
+- job: macOS
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+  - template: templates/insert-npm-steps.yml  # Template reference
+
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: echo This script runs before the template's steps, only on Windows.
+  - template: templates/insert-npm-steps.yml  # Template reference
+  - script: echo This step runs after the template's steps.
+```
+
+Reuse jobs across multiple templates:
+```yaml
+# File: templates/insert-jobs.yml
+jobs:
+- job: Ubuntu
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - bash: echo "Hello Ubuntu"
+
+- job: Windows
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - bash: echo "Hello Windows"
+
+
+# File: azure-pipelines.yml
+jobs:
+- template: templates/insert-jobs.yml  # Template reference
+```
+
+Reuse stages across multiple templates:
+```yaml
+# File: templates/insert-stage1.yml
+stages:
+- stage: Angular
+  jobs:
+  - job: angularinstall
+    steps:
+    - script: npm install angular
+
+# File: templates/insert-stage2.yml
+stages:
+- stage: Build
+  jobs:
+  - job: build
+    steps:
+    - script: npm run build
+
+# File: azure-pipelines.yml
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Install
+  jobs: 
+  - job: npminstall
+    steps:
+    - task: Npm@1
+      inputs:
+        command: 'install'
+- template: templates/insert-stage1.yml # Template reference
+- template: templates/insert-stage2.yml # Template reference
+```
+
+Add parameters to job, stage, and stemp templates
+```yaml
+# File: templates/npm-with-params.yml
+
+parameters:
+- name: name  # defaults for any parameters that aren't specified
+  default: ''
+- name: vmImage
+  default: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  - script: npm install
+  - script: npm test
+
+# File: azure-pipelines.yml
+
+jobs:
+- template: templates/npm-with-params.yml  # Template reference
+  parameters:
+    name: Linux
+    vmImage: 'ubuntu-latest'
+
+- template: templates/npm-with-params.yml  # Template reference
+  parameters:
+    name: macOS
+    vmImage: 'macOS-latest'
+
+- template: templates/npm-with-params.yml  # Template reference
+  parameters:
+    name: Windows
+    vmImage: 'windows-latest'
+```
+
+With parameters
+```yaml
+# stage-template.yml
+
+parameters:
+  - name: stageName
+    type: string
+  - name: jobName
+    type: string
+  - name: vmImage
+    type: string
+  - name: scriptPath
+    type: string
+
+stages:
+  - stage: ${{ parameters.stageName }}
+    jobs:
+      - job: ${{ parameters.jobName }}
+        pool:
+          vmImage: ${{ parameters.vmImage }}
+        steps:
+          - script: ./${{ parameters.scriptPath }}
+
+# azure-pipelines.yml
+trigger:
+- main
+
+stages:
+- template: stage-template.yml
+  parameters:
+    stageName: 'BuildStage'
+    jobName: 'BuildJob'
+    scriptPath: 'build-script.sh' # replace with script in your repository
+    vmImage: 'ubuntu-latest'
+```
+
+```yaml
+# azure-pipelines.yml
+jobs:
+- template: process.yml
+  parameters:
+    pool:   # this parameter is called `pool`
+      vmImage: ubuntu-latest  # and it's a mapping rather than a string
+
+# process.yml
+parameters:
+- name: 'pool'
+  type: object
+  default: {}
+
+jobs:
+- job: build
+  pool: ${{ parameters.pool }}
+```
+
+## Variable reuse
+```yaml
+# File: insert-vars.yml
+variables:
+  favoriteVeggie: 'brussels sprouts'
+
+# File: azure-pipelines.yml
+
+variables:
+- template: insert-vars.yml  # Template reference
+
+steps:
+- script: echo My favorite vegetable is ${{ variables.favoriteVeggie }}.
+```
+
+```yaml
+# File: templates/package-release-with-params.yml
+
+parameters:
+- name: DIRECTORY 
+  type: string
+  default: "." # defaults for any parameters that specified with "." (current directory)
+
+variables:
+- name: RELEASE_COMMAND
+  value: grep version ${{ parameters.DIRECTORY }}/package.json | awk -F \" '{print $4}'
+
+# File: azure-pipelines.yml
+
+variables: # Global variables
+  - template: package-release-with-params.yml # Template reference
+    parameters:
+      DIRECTORY: "azure/checker"
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Release_Stage 
+  displayName: Release Version
+  variables: # Stage variables
+  - template: package-release-with-params.yml  # Template reference
+    parameters:
+      DIRECTORY: "azure/todo-list"
+  jobs: 
+  - job: A
+    steps: 
+    - bash: $(RELEASE_COMMAND) #output release command
+```
+
+## Extend from a template and use an include template with variables
+
+A common scenario is to share variables in differnt stages, like dev, test, production.
+
+```yaml
+# variables-template.yml
+
+variables:
+- name: devVmImage
+  value: 'ubuntu-latest'
+- name: testVmImage
+  value: 'ubuntu-latest'
+- name: prodVmImage
+  value: 'ubuntu-latest'
+
+# stage-template.yml
+parameters:
+- name: name
+  type: string
+  default: ''
+- name: vmImage
+  type: string
+  default: ''
+- name: steps
+  type: stepList
+  default: []
+
+stages:
+- stage: ${{ parameters.name }}
+  jobs:
+  - job: Build
+    pool:
+      vmImage: ${{ parameters.vmImage }}
+    steps: ${{ parameters.steps }}
+
+# azure-pipelines.yml
+trigger:
+- main
+
+variables:
+- template: variables-template.yml
+
+stages:
+- template: stage-template.yml
+  parameters:
+    name: Dev
+    vmImage: ${{ variables.devVmImage }}
+    steps:
+      - script: echo "Building in Dev"
+- template: stage-template.yml
+  parameters:
+    name: Test
+    vmImage: ${{ variables.testVmImage }}
+    steps:
+      - script: echo "Testing in Test"
+- template: stage-template.yml
+  parameters:
+    name: Prod
+    vmImage: ${{ variables.prodVmImage }}
+    steps:
+      - script: echo "Deploying to Prod"
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+```
+
+## reference template paths
+
+Sometimes the project get complicated in file structure. Here is relative path sample:
+
+```
+|
++-- fileA.yml
+|
++-- dir1/
+     |
+     +-- fileB.yml
+     |
+     +-- dir2/
+          |
+          +-- fileC.yml
+```
+
+```yaml
+# fileA.yml
+
+steps:
+- template: dir1/fileB.yml
+- template: dir1/dir2/fileC.yml
+
+# fileC.yml
+
+steps:
+- template: ../../fileA.yml
+- template: ../fileB.yml
+
+# fileB.yml
+steps:
+- template: ../fileA.yml
+- template: dir2/fileC.yml
+
+# fileB.yml relative path
+steps:
+- template: /fileA.yml
+- template: /dir1/dir2/fileC.yml
+```
+
+## Store templates in other repositories
+
+Share the template across repos,
+
+```yaml
+# Repo: Contoso/BuildTemplates
+# File: common.yml
+parameters:
+- name: 'vmImage'
+  default: 'ubuntu-22.04'
+  type: string
+
+jobs:
+- job: Build
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  - script: npm install
+  - script: npm test
+
+# Repo: Contoso/LinuxProduct
+# File: azure-pipelines.yml
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: Contoso/BuildTemplates
+
+jobs:
+- template: common.yml@templates  # Template reference
+
+
+# Repo: Contoso/WindowsProduct
+# File: azure-pipelines.yml
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: Contoso/BuildTemplates
+      ref: refs/tags/v1.0 # optional ref to pin to
+
+jobs:
+- template: common.yml@templates  # Template reference
+  parameters:
+    vmImage: 'windows-latest'
+```
+
+If the project is in seperate Azure DevOps organization, you need to configure a service connetion.
+```yaml
+resources:
+  repositories:
+  - repository: templates
+    name: Contoso/BuildTemplates
+    endpoint: myServiceConnection # Azure DevOps service connection
+jobs:
+- template: common.yml@templates
+```
+
+The template in other repo, if you want to use a specific version, remember to specify `ref`. Where default value is `refs/heads/main`.
+
+```yaml
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Contoso/BuildTemplates
+      ref: 1234567890abcdef1234567890abcdef12345678
+
+```
+
+Use `@self` to specify the template locate at current default repos rather than shared template from other repos.
+
+```yaml
+# Repo: Contoso/Central
+# File: template.yml
+jobs:
+- job: PreBuild
+  steps: []
+
+  # Template reference to the repo where this template was
+  # included from - consumers of the template are expected
+  # to provide a "BuildJobs.yml"
+- template: BuildJobs.yml@self
+
+- job: PostBuild
+  steps: []
+
+# Repo: Contoso/MyProduct
+# File: azure-pipelines.yml
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Contoso/Central
+
+extends:
+  template: template.yml@templates
+
+# Repo: Contoso/MyProduct
+# File: BuildJobs.yml
+jobs:
+- job: Build
+  steps: []
+```
+
+# Template parameters
