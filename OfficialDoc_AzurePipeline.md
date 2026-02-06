@@ -935,3 +935,76 @@ jobs:
       clean: all
     environment: staging
 ```
+
+
+## Rolling deployment strategy
+
+runOnce normally work with single server and execute single time. Rolling is targeting batch of servers/VMs, it parallely execute batch by batch, can significantly reduce downtime.
+
+`preDeploy`, `deploy`, `routeTraffic`, `postRouteTraffic` are executed once per batch size defined by maxParallel. Then either success or fail.
+
+```yaml
+strategy:
+  rolling:
+    maxParallel: [ number or percentage as x% ]
+    preDeploy:        
+      steps:
+      - script: [ script | bash | pwsh | powershell | checkout | task | templateReference ]
+    deploy:          
+      steps:
+      ...
+    routeTraffic:         
+      steps:
+      ...        
+    postRouteTraffic:          
+      steps:
+      ...
+    on:
+      failure:         
+        steps:
+        ...
+      success:          
+        steps:
+        ...
+```
+
+## Canary deployment strategy
+
+`predeploy` run once, and iterates with the `deploy`, `routeTraffic`, and `postRouteTraffic` hooks, then success or fails.
+
+It has increment number to increase deployment count when you are confidence about previous deployment.
+
+```yaml
+jobs:
+  - deployment: 
+      environment: smarthotel-dev.bookings
+      pool: 
+        name: smarthotel-devPool
+      strategy:                  
+        canary:      
+          increments: [10, 20]  
+          preDeploy:                                     
+            steps:           
+              - script: initialize, cleanup....
+          deploy:             
+            steps: 
+              - script: echo deploy updates...
+              - task: KubernetesManifest@1
+                inputs:
+                  action: $(strategy.action)
+                  namespace: 'default'
+                  strategy: $(strategy.name)
+                  percentage: $(strategy.increment)
+                  manifests: 'manifest.yml'
+          postRouteTraffic: 
+            pool: server 
+            steps:           
+              - script: echo monitor application health...
+          on: 
+            failure: 
+              steps: 
+                - script: echo clean-up, rollback...
+            success: 
+              steps: 
+                - script: echo checks passed, notify...
+```
