@@ -1162,3 +1162,30 @@ steps:
 - script: echo I did a thing
   condition: and(succeeded(), ${{ eq(parameters.doThing, true) }})
 ```
+
+# Specify demands
+Demand is able to check for agent pool specification.
+```yaml
+pool:
+  name: MyPool
+  demands: Agent.Version -equals 2.144.0 # equals check for Agent.Version 2.144.0
+```
+
+Agent variables that can be checked:
+- Agent.Name
+- Agent.Version
+- Agent.ComputerName
+- Agent.HomeDirectory
+- Agent.OS
+- Agent.OSArchitecture
+- Agent.OSVersion
+
+# Expressions
+
+***Importance***
+This is really good reference about function we can use in YAML, [see details](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops).
+
+# Task index
+
+***Importance***
+Please take a look at all available task list [here](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops).
