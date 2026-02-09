@@ -1834,4 +1834,125 @@ jobs:
   steps: []
 ```
 
+Use `extends` keyword to include template
+
+```yaml
+# File: start-extends-template.yml
+parameters:
+- name: buildSteps # the name of the parameter is buildSteps
+  type: stepList # data type is StepList
+  default: [] # default value of buildSteps
+stages:
+- stage: secure_buildstage
+  pool:
+    vmImage: windows-latest
+  jobs:
+  - job: secure_buildjob
+    steps:
+    - script: echo This happens before code 
+      displayName: 'Base: Pre-build'
+    - script: echo Building
+      displayName: 'Base: Build'
+
+    - ${{ each step in parameters.buildSteps }}:
+      - ${{ each pair in step }}:
+          ${{ if ne(pair.value, 'CmdLine@2') }}:
+            ${{ pair.key }}: ${{ pair.value }}       
+          ${{ if eq(pair.value, 'CmdLine@2') }}: 
+            # Step is rejected by raising a YAML syntax error: Unexpected value 'CmdLine@2'
+            '${{ pair.value }}': error         
+
+    - script: echo This happens after code
+      displayName: 'Base: Signing'
+
+
+# File: azure-pipelines.yml
+trigger:
+- main
+
+extends:
+  template: start-extends-template.yml
+  parameters:
+    buildSteps:  
+      - bash: echo Test #Passes
+        displayName: succeed
+      - bash: echo "Test"
+        displayName: succeed
+      # Step is rejected by raising a YAML syntax error: Unexpected value 'CmdLine@2'
+      - task: CmdLine@2
+        inputs:
+          script: echo "Script Test"
+      # Step is rejected by raising a YAML syntax error: Unexpected value 'CmdLine@2'
+      - script: echo "Script Test"
+
+```
+
 # Template parameters
+
+Normal Parameters:
+
+```yaml
+# File: simple-param.yml
+parameters:
+- name: yesNo # name of the parameter; required
+  type: boolean # data type of the parameter; required
+  default: false
+
+steps:
+- script: echo ${{ parameters.yesNo }}
+
+# File: azure-pipelines.yml
+trigger:
+- main
+
+extends:
+  template: simple-param.yml
+  parameters:
+      yesNo: false # set to a non-boolean value to have the build fail
+```
+When using JobList for example, job only accept property that is defined within the schema, but templateContext accept anything.
+`templateContext` keyword sample:
+```yaml
+#testing-template.yml
+
+parameters: 
+- name: testSet
+  type: jobList
+
+jobs:
+- ${{ each testJob in parameters.testSet }}:  # Iterate over each job in the 'testSet' parameter
+  - ${{ if eq(testJob.templateContext.expectedHTTPResponseCode, 200) }}: # Check if the HTTP response is 200
+    - job:
+      steps: 
+      - powershell: 'Invoke-RestMethod -Uri https://blogs.msdn.microsoft.com/powershell/feed/ | Format-Table -Property Title, pubDate'
+      - ${{ testJob.steps }}    
+  - ${{ if eq(testJob.templateContext.expectedHTTPResponseCode, 500) }}: # Check if the HTTP response is 500
+    - job:
+      steps:
+      - powershell: 'Get-ChildItem -Path Env:\' # Run a PowerShell script to list environment variables
+      - ${{ testJob.steps }} # Include additional steps from the 'testJob' object
+
+#azure-pipeline.yml
+
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+extends:
+  template: testing-template.yml 
+  parameters:
+    testSet:  # Define the 'testSet' parameter to pass to the template
+    - job: positive_test # Define a job named 'positive_test'
+      templateContext:
+        expectedHTTPResponseCode: 200 # Set the expected HTTP response code to 200 for this job
+      steps:
+      - script: echo "Run positive test" 
+    - job: negative_test # Define a job named 'negative_test'
+      templateContext:
+        expectedHTTPResponseCode: 500 # Set the expected HTTP response code to 500 for this job
+      steps:
+      - script: echo "Run negative test"
+```
+
+# Variables
