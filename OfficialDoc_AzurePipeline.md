@@ -2455,4 +2455,32 @@ jobs:
       - script: echo This job depends on both Job A and on SomeSpecialTool.
 
 ```
+
+Never use parameters to store secrets.
+
 # Variables
+Variables are all strings, and comparing to parameters which are all immutable, variables are mutable. The value of variable can be changed from run to run, job to job.
+
+When evaluate the variables with same name, the most locally scoped variable wins. A variable set at root level can override variables set in UI.
+
+Variables can be used with expressions. They can be written in a template and be used in multiple pipelines.
+
+## User-defined multi-line variables
+
+Make sure use OS supported format to multi-line variables. For example, the ending format.
+
+## System variables
+
+System variables in YAML pipeline are called predefined varaibles. They are read-only and they are set before the run.
+
+## Environment variables
+`
+Environment variables are specific to the agent system.
+
+# Understand variable syntax
+
+- `${{variables.var}}` is called template expression. It is evaluated before runtime, at compile time. 
+
+- `$[variables.var]` is called runtime expression. It is evaluated at runtime.
+
+- `$(var)` is called macro, it is evaluated before task run.
