@@ -1955,4 +1955,253 @@ extends:
       - script: echo "Run negative test"
 ```
 
+Different data types that allowed for parameters:
+```yaml
+parameters:
+- name: myString  # Define a parameter named 'myString'
+  type: string  # The parameter type is string
+  default: a string  # Default value is 'a string'
+
+- name: myMultiString  # Define a parameter named 'myMultiString'
+  type: string  # The parameter type is string
+  default: default  # Default value is 'default', only one default
+  values:  # Allowed values for 'myMultiString'
+  - default  
+  - ubuntu  
+
+- name: myStringlist # Define a parameter named 'myStringlist'
+  type: stringList # The parameter type is stringList
+  displayName: Regions
+  values: # Allowed values for 'myStringlist'
+    - WUS
+    - CUS
+    - EUS
+  default: # Default values
+    - WUS
+    - CUS
+    
+- name: myNumber  # Define a parameter named 'myNumber'
+  type: number  # The parameter type is number
+  default: 2  # Default value is 2
+  values:  # Allowed values for 'myNumber'
+  - 1  
+  - 2  
+  - 4  
+  - 8  
+  - 16  
+
+- name: myBoolean  # Define a parameter named 'myBoolean'
+  type: boolean  # The parameter type is boolean
+  default: true  # Default value is true
+
+- name: myObject  # Define a parameter named 'myObject'
+  type: object  # The parameter type is object
+  default:  # Default value is an object with nested properties
+    foo: FOO  # Property 'foo' with value 'FOO'
+    bar: BAR  # Property 'bar' with value 'BAR'
+    things:  # Property 'things' is a list
+    - one  
+    - two  
+    - three  
+    nested:  # Property 'nested' is an object
+      one: apple  # Property 'one' with value 'apple'
+      two: pear  # Property 'two' with value 'pear'
+      count: 3  # Property 'count' with value 3
+
+- name: myStep  # Define a parameter named 'myStep'
+  type: step  # The parameter type is step
+  default:  # Default value is a step
+    script: echo my step 
+
+- name: mySteplist  # Define a parameter named 'mySteplist'
+  type: stepList  # The parameter type is stepList
+  default:  # Default value is a list of steps
+    - script: echo step one  
+    - script: echo step two  
+    
+trigger: none  
+
+jobs: 
+- job: stepList  # Define a job named 'stepList'
+  steps: ${{ parameters.mySteplist }}  # Use the steps from the 'mySteplist' parameter
+
+- job: myStep  # Define a job named 'myStep'
+  steps:
+    - ${{ parameters.myStep }}  # Use the step from the 'myStep' parameter
+
+- job: stringList  # Define a job named 'stringList'
+  steps:
+  - ${{ each region in parameters.myStringlist }}:
+      - script: echo ${{region}}
+
+```
+
+Iterate through parameters itself:
+
+```yaml
+# start.yaml
+parameters:
+- name: myStringName
+  type: string
+  default: a string value
+- name: myNumber
+  type: number
+  default: 2
+- name: myBoolean
+  type: boolean
+  default: true
+
+steps: 
+- ${{ each parameter in parameters }}:
+  - script: echo ${{ parameter.Key }} 
+  - script: echo ${{ parameter.Value }}
+```
+
+Iterate through object type:
+```yaml
+# object-keys-template.yml
+
+parameters:
+  - name: myObject
+    type: object
+    default:
+      key1: 'value1'
+      key2: 'value2'
+      key3: 'value3'
+
+jobs:
+- job: ExampleJob
+  displayName: 'Example object parameter job'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - script: |
+      echo "Keys in myObject:"
+      echo "Key1: ${{ parameters.myObject.key1 }}"
+      echo "Key2: ${{ parameters.myObject.key2 }}"
+      echo "Key3: ${{ parameters.myObject.key3 }}"
+    displayName: 'Display object keys and values'
+
+# azure-pipelines.yml
+
+trigger:
+- main
+
+extends:
+  template: object-keys-template.yml
+  parameters:
+    myObject:
+      key1: 'customValue1'
+      key2: 'customValue2'
+      key3: 'customValue3'
+```
+
+Iterate through nested object:
+```yaml
+
+# File: nested-objects-template.yml
+
+parameters:
+- name: listOfFruits
+  type: object
+  default:
+  - fruitName: 'apple'
+    colors: ['red', 'green']
+  - fruitName: 'lemon'
+    colors: ['yellow']
+
+steps:
+- ${{ each fruit in parameters.listOfFruits }}: # Iterate over each fruit in the 'listOfFruits'
+  - ${{ each fruitColor in fruit.colors }}: # Iterate over each color in the current fruit's colors
+    - script: echo ${{ fruit.fruitName }} ${{ fruitColor }} # Echo the current fruit's name and color
+
+
+# File: azure-pipelines.yml
+
+trigger:
+- main
+
+extends:
+  template: nested-objects-template.yml
+  parameters:
+    listOfFruits:
+    - fruitName: 'banana'
+      colors: ['yellow']
+    - fruitName: 'grape'
+      colors: ['purple', 'green']
+```
+
+Using stepList parameter:
+
+```yaml
+#azure-pipelines.yml
+
+trigger:
+- main
+
+jobs:
+  - job: build
+    displayName: 'Build .NET Core Application'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+      - checkout: self
+
+      - template: build.yml
+        parameters:
+          build_tasks:
+            - task: DotNetCoreCLI@2
+              displayName: 'Restore'
+              inputs:
+                command: 'restore'
+                projects: '**/*.csproj'  
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Build'
+              inputs:
+                command: 'build'
+                arguments: '--no-restore'
+                projects: '**/*.csproj' 
+
+  - job: deploy
+    displayName: 'Pack for Azure App Service deployment'
+    dependsOn: build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - download: current
+        artifact: drop
+
+#build.yml
+
+parameters:
+  - name: build_tasks
+    type: stepList
+    default: []
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '8.x'
+
+  - ${{ each step in parameters.build_tasks }}:
+      - ${{ step }}
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish'
+    inputs:
+      command: 'publish'
+      arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+      projects: '**/*.csproj'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+```
+
 # Variables
