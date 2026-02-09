@@ -2204,4 +2204,255 @@ steps:
       ArtifactName: 'drop'
 ```
 
+# Template expression
+
+Expression cannot be evaluated in trigger or a resource, for example, repositories. That's because trigger and resource is processed at early stage of pipeline, without knowing the trigger or repo, the pipeline will not know how to work.
+
+## Context
+the syntax `${{}}` has context of parameters and variables, but runtime variables and predefined variables are excluded, because when pipeline evaluate at early stage, these things do not exist yet.
+
+## Notice
+The pipeline editor and pipeline pane, will behave differently for `coalecs()`
+function, for empty string `''`, Editor will treat `''` null and allow for fallback to next value. But pane will treat `''` as a value, so prevent fallback to next value.
+
+## Insertion
+- For array, it will flatten the inserted automatically
+```yaml
+# File: .vsts.ci.yml
+
+jobs:
+- template: jobs/build.yml
+  parameters:
+    preBuild:
+    - script: echo hello from pre-build
+    preTest:
+    - script: echo hello from pre-test
+
+# File: jobs/build.yml
+
+parameters:
+- name: 'preBuild'
+  type: stepList
+  default: []
+- name: 'preTest'
+  type: stepList
+  default: []
+- name: 'preSign'
+  type: stepList
+  default: []
+
+jobs:
+- job: Build
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: cred-scan
+  - ${{ parameters.preBuild }}
+  - task: VSBuild@1
+  - ${{ parameters.preTest }}
+  - task: VSTest@3
+  - ${{ parameters.preSign }}
+  - script: sign
+```
+
+- For Object, you need to use insert keyword
+```yaml
+jobs:
+- template: jobs/build.yml
+  parameters:
+    additionalVariables:
+      TEST_SUITE: L0,L1
+# Default values
+parameters:
+- name: 'additionalVariables'
+  type: object
+  default: {}
+
+jobs:
+- job: build
+  variables:
+    configuration: debug
+    arch: x86
+    ${{ insert }}: ${{ parameters.additionalVariables }}
+  steps:
+  - task: VSBuild@1
+  - task: VSTest@3
+
+```
+
+Some good examples:
+
+```yaml
+# File: steps/build.yml
+
+parameters:
+- name: 'toolset'
+  default: vsbuild
+  type: string
+  values:
+  - vsbuild
+  - dotnet
+
+steps:
+# msbuild
+- ${{ if eq(parameters.toolset, 'msbuild') }}:
+  - task: VSBuild@1
+  - task: VSTest@3
+
+# dotnet
+- ${{ if eq(parameters.toolset, 'dotnet') }}:
+  - task: UseDotNet@2
+    inputs:
+      command: build
+  - task: UseDotNet@2
+    inputs:
+      command: test
+
+# File: azure-pipelines.yml
+
+steps:
+- template: steps/build.yml
+  parameters:
+    toolset: dotnet
+```
+```yaml
+# File: steps/build.yml
+
+parameters:
+- name: 'debug'
+  type: boolean
+  default: false
+
+steps:
+- script: tool
+  env:
+    ${{ if eq(parameters.debug, true) }}:
+      TOOL_DEBUG: true
+      TOOL_DEBUG_DIR: _dbg
+
+steps:
+- template: steps/build.yml
+  parameters:
+    debug: true
+
+```
+
+```yaml
+trigger:
+- main
+
+pool: 
+   vmImage: 'ubuntu-latest' 
+
+variables:
+  - name: myVar
+    value: 'baz'
+
+  - name: conditionalVar
+    ${{ if eq(variables['myVar'], 'foo') }}:
+      value: 'bar'
+    ${{ elseif eq(variables['myVar'], 'baz') }}:
+      value: 'qux'
+    ${{ else }}:
+      value: 'default'
+
+steps:
+- script: echo "start" # always runs
+- ${{ if eq(variables.conditionalVar, 'bar') }}:
+  - script: echo "the value of myVar is set in the if condition" # runs when myVar=foo
+- ${{ if eq(variables.conditionalVar, 'qux') }}:
+  - script: echo "the value of myVar is set in the elseif condition" # runs when myVar=baz
+```
+
+Iterative example:
+
+```yaml
+# job.yml
+parameters:
+- name: 'jobs'
+  type: jobList
+  default: []
+
+jobs:
+- ${{ each job in parameters.jobs }}: # Each job
+  - ${{ each pair in job }}:          # Insert all properties other than "steps"
+      ${{ if ne(pair.key, 'steps') }}:
+        ${{ pair.key }}: ${{ pair.value }}
+    steps:                            # Wrap the steps
+    - task: SetupMyBuildTools@1       # Pre steps
+    - ${{ job.steps }}                # Users steps
+    - task: PublishMyTelemetry@1      # Post steps
+      condition: always()
+
+# azure-pipelines.yml
+jobs:
+- template: job.yml
+  parameters:
+    jobs:
+    - job: A
+      steps:
+      - script: echo This will get sandwiched between SetupMyBuildTools and PublishMyTelemetry.
+    - job: B
+      steps:
+      - script: echo So will this!
+```
+
+```yaml
+parameters:
+- name: regions
+  type: stringList
+  displayName: Regions
+  values:
+    - WUS
+    - CUS
+    - EUS
+  default: 
+    - WUS
+    - EUS 
+
+stages:
+- ${{ each stage in parameters.regions}}:
+  - stage: ${{stage}}
+    displayName: Deploy to ${{stage}}
+    jobs:
+    - job:
+      steps:
+      - script: ./deploy ${{stage}}
+```
+
+```yaml
+# job.yml
+parameters:
+- name: 'jobs'
+  type: jobList
+  default: []
+
+jobs:
+- job: SomeSpecialTool                # Run your special tool in its own job first
+  steps:
+  - task: RunSpecialTool@1
+- ${{ each job in parameters.jobs }}: # Then do each job
+  - ${{ each pair in job }}:          # Insert all properties other than "dependsOn"
+      ${{ if ne(pair.key, 'dependsOn') }}:
+        ${{ pair.key }}: ${{ pair.value }}
+    dependsOn:                        # Inject dependency
+    - SomeSpecialTool
+    - ${{ if job.dependsOn }}:
+      - ${{ job.dependsOn }}
+
+# azure-pipelines.yml
+jobs:
+- template: job.yml
+  parameters:
+    jobs:
+    - job: A
+      steps:
+      - script: echo This job depends on SomeSpecialTool, even though it's not explicitly shown here.
+    - job: B
+      dependsOn:
+      - A
+      steps:
+      - script: echo This job depends on both Job A and on SomeSpecialTool.
+
+```
 # Variables
