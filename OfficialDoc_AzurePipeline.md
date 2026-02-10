@@ -2896,7 +2896,9 @@ An evironment is a goupf of resources. It provides following benefits:
 - Security
 - Diagnostic resource health
 
-Azure environemnt supports Kubernetes and virtual machine resources environments.
+
+Environment is where you want to deploy your artifact to, it is used in deployment job.
+Deploy environemnt supports Kubernetes and virtual machine resources environments.
 
 # Architectures
 
@@ -2905,3 +2907,46 @@ publish artifact is end of CI
 Dowload and deploy artifact is the process of CD
 
 # Agents & pools
+
+When you have pipeline runs, the system begins one or more jobs. An agent is the computing infrastructure with installed agent software that runs one job at a time.
+
+Agent has a host machine, a VM that has a OS on it. The host machine can also run container on it. You can run jobs on host machine directly or within a container that is run by host machine.
+
+Agent is registered within Org settings, Agent Pool section, you need to have Agent pool Administrator role.
+
+## Microsft-hosted agents
+
+You can use this within Azure DevOps, it means the agent always has the latest version of the VM image. 
+
+Each time you run a pipeline, you get a fresh VM for each job in the pipeline. The VM is discarded after one job. Any change that a job makes to the virtual machine file system, such as checking out code, is unavailable on the next job.
+
+## Self-hosted agents
+You need to manage agent yourself, this feature is provided in Azure DevOps Service and Azure DevOps Server. The machine-level caches and configuration persists from run to run.
+
+
+## Node.js runner versions
+
+## Azure Virtural Machine Scale Sets agents
+
+## Managed DevOps Pools agent
+
+## Parallel jobs
+
+# Communication
+
+## Communication with Azure Piplines
+
+This means the communicaiton between agent and azure pipeline/Azure DevOps Server. The communication is always initiated by agent. The protocal is HTTP/HTTPS.
+
+The communication standard procedure between agent and server:
+
+1. Agent is registered, and got `listener OAuth token`, and uses it to listen to the job queue by HTTP long poll.
+2. When job is available, the agent download the job and got a `job-specific OAuth token`, it uses this token to access or modify resources on the pipeline.
+3. Agent discards the job token, after job is completed, and check new ones.
+
+Asymmetric encryption is used when communicate between the agent and server. Public key for server to encrypt, and private key for agent to decrypt.
+
+## Communication to deploy to target servers
+When deploying the artifact, if your resources run in Azure VN, you can get the Agent IP ranges to tell firewall to allow access by the agent.
+
+When deploying to the on-premises, the on-premises needs to configure self-hosted agents on themselves, and those agents will connect to the Azure Pipeline, and deploy artifact to the on-premises.
