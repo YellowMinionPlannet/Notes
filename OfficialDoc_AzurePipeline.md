@@ -2823,3 +2823,22 @@ steps:
 - script: echo $(myOuter)  # prints "someValue"
   displayName: Variable is $(myOuter)  # display name is "Variable is someValue"
 ```
+
+# Use predefined variables
+
+This is an index of all predefined variables. [See detail](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml)
+
+# Job access token
+
+A job may access resources in Azure DevOps, and it has to perform such job by job access token. The permission of the token is derived from:
+- The job authorization scope, set by admin
+- The permission you set on project or collection build service account
+
+## Job authorization scope
+You can set scope  of job authorization to be collection or project:
+- collection, let pipelines access all repos in the collection or Org
+- project, let pipelines access repos within project
+
+## Protect access to repositories in YAML pipelines
+
+# Library, resource, & secure files
