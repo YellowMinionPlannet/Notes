@@ -2842,3 +2842,66 @@ You can set scope  of job authorization to be collection or project:
 ## Protect access to repositories in YAML pipelines
 
 # Library, resource, & secure files
+
+## Pipeline resources
+A pipeline connects or consumes entities, which is resources. They include:
+- Service connection
+- Agent pool
+- Environment
+- Variable group
+- Secure file
+- Repositories
+- Packages
+
+### Share resources across pipelines
+- use `resources` to access other pipeline's repositories, packages, and pipelines themselves.
+- use pipeline UI to include secure file, variable groups, and service connections.
+
+snippet of variable group:
+```yaml
+# before this, you need to set variable group in Pipelines > Library section
+
+variables:
+- group: my-variable-group
+```
+
+snippet of `resources`:
+```yaml
+resources:
+  pipelines:
+  - pipeline: SmartHotel-resource # identifier for the resource (used in pipeline resource variables)
+    source: SmartHotel-CI # name of the pipeline that produces an artifact
+```
+
+snippet of download step:
+
+```yaml
+resources:
+  pipelines:
+  - pipeline: resources1
+    source: otherPipeline
+
+steps:
+- download: resources1
+  artifact: artifact1.txt
+```
+You can also set trigger within `resources`.
+
+
+## Create and target Azure DevOps environments
+
+An evironment is a goupf of resources. It provides following benefits:
+- Deployment history
+- Taceability of commits and work items
+- Security
+- Diagnostic resource health
+
+Azure environemnt supports Kubernetes and virtual machine resources environments.
+
+# Architectures
+
+## CI/CD
+publish artifact is end of CI
+Dowload and deploy artifact is the process of CD
+
+# Agents & pools
