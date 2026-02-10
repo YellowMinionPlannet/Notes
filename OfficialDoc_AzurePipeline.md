@@ -2474,13 +2474,66 @@ Make sure use OS supported format to multi-line variables. For example, the endi
 System variables in YAML pipeline are called predefined varaibles. They are read-only and they are set before the run.
 
 ## Environment variables
-`
+0
 Environment variables are specific to the agent system.
 
 # Understand variable syntax
 
 - `${{variables.var}}` is called template expression. It is evaluated before runtime, at compile time. 
+  - evaluated as empty string if not provided
 
 - `$[variables.var]` is called runtime expression. It is evaluated at runtime.
+  - interpret as empty string if not provided
+  - cannot be keyname
 
 - `$(var)` is called macro, it is evaluated before task run.
+  - Evaluated after template expression, before task run. 
+  - If no value is provided, `$(foo)` will not be changed into other things.
+  - Macro syntax cannot use for keyname, for example: `key: $(value)` is valid, but `$(key): value` is not valid. If you need dynamic keyname, you use parameter: `${{parameters.varName}}: hello` 
+
+sample of Environment Variables:
+```yaml
+variables:
+  global_variable: value    # this is available to all jobs
+
+jobs:
+- job: job1
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    job_variable1: value1    # this is only available in job1
+  steps:
+  - bash: echo $(global_variable)
+  - bash: echo $(job_variable1)
+  - bash: echo $JOB_VARIABLE1 # variables are available in the script environment too
+
+- job: job2
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    job_variable2: value2    # this is only available in job2
+  steps:
+  - bash: echo $(global_variable)
+  - bash: echo $(job_variable2)
+  - bash: echo $GLOBAL_VARIABLE
+```
+
+Use group variables and variables in a template:
+```yaml
+variables:
+# a regular variable
+- name: myvariable
+  value: myvalue
+# a variable group
+- group: myvariablegroup
+# a reference to a variable template
+- template: myvariabletemplate.yml
+```
+
+## Access environment variables
+- Batch script: `%VARIABLE_NAME%`
+- PowerShell script: `$env:VARIABLE_NAME`
+- Bash scipt 
+
+
+## Set secret variables
