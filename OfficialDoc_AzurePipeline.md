@@ -2537,3 +2537,289 @@ variables:
 
 
 ## Set secret variables
+
+This is a protection way to prevent secret are printed in the log or outputs. The best way of using secret is by storing secret in Azure Key Vault.
+
+Variable Group is a group of variables that is defined using Pipeline WebUI, you can mark some of the variable in group as secret, so that they will be masked when print.
+
+# Share variables across pipelines
+
+## Use outputs in the same job
+
+```yaml
+steps:
+- powershell: echo "##vso[task.setvariable variable=MyVar;isOutput=true]this is the value"
+  name: ProduceVar # because we're going to depend on it, we need to name the step
+- script: echo $(ProduceVar.MyVar) # this step uses the output variable
+```
+
+```yaml
+jobs:
+- job: A
+  steps:
+  # assume that MyTask generates an output variable called "MyVar"
+  # (you would learn that from the task's documentation)
+  - powershell: echo "##vso[task.setvariable variable=MyVar;isOutput=true]this is the value"
+  name: ProduceVar # because we're going to depend on it, we need to name the step
+- job: B
+  dependsOn: A
+  variables:
+    # map the output variable from A into this job
+    varFromA: $[ dependencies.A.outputs['ProduceVar.MyVar'] ]
+  steps:
+  - script: echo $(varFromA) # this step uses the mapped-in variable
+```
+```yaml
+stages:
+- stage: One
+  jobs:
+  - job: A
+    steps:
+    - task: MyTask@1  # this step generates the output variable
+      name: ProduceVar  # because we're going to depend on it, we need to name the step
+
+- stage: Two
+  dependsOn:
+  - One
+  jobs:
+  - job: B
+    variables:
+      # map the output variable from A into this job
+      varFromA: $[ stageDependencies.One.A.outputs['ProduceVar.MyVar'] ]
+    steps:
+    - script: echo $(varFromA) # this step uses the mapped-in variable
+
+- stage: Three
+  dependsOn:
+  - One
+  - Two
+  jobs:
+  - job: C
+    variables:
+      # map the output variable from A into this job
+      varFromA: $[ stageDependencies.One.A.outputs['ProduceVar.MyVar'] ]
+    steps:
+    - script: echo $(varFromA) # this step uses the mapped-in variable
+```
+
+
+```yaml
+## azure-pipelines.yml
+stages:
+
+- stage: one
+  jobs:
+  - job: A
+    steps:
+    - task: Bash@3
+      inputs:
+          filePath: 'script-a.sh'
+      name: setvar
+    - bash: |
+       echo "##vso[task.setvariable variable=skipsubsequent;isOutput=true]true"
+      name: skipstep
+
+- stage: two
+  jobs:
+  - job: B
+    variables:
+      - name: StageSauce
+        value: $[ stageDependencies.one.A.outputs['setvar.sauce'] ]
+      - name: skipMe
+        value: $[ stageDependencies.one.A.outputs['skipstep.skipsubsequent'] ]
+    steps:
+    - task: Bash@3
+      inputs:
+        filePath: 'script-b.sh'
+      name: fileversion
+      env:
+        StageSauce: $(StageSauce) # predefined in variables section
+        skipMe: $(skipMe) # predefined in variables section
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo 'Hello inline version'
+          echo $(skipMe) 
+          echo $(StageSauce)
+
+```
+
+outpus from previous
+```
+Hello inline version
+true
+crushed tomatoes
+```
+
+More snippets about how to set variables:
+
+```yaml
+steps:
+# Create a variable
+# Note that this does not update the environment of the current script.
+- bash: |
+    echo "##vso[task.setvariable variable=sauce]crushed tomatoes"
+
+# An environment variable called `SAUCE` has been added to all downstream steps
+- bash: |
+    echo "my environment variable is $SAUCE"
+- pwsh: |
+    Write-Host "my environment variable is $env:SAUCE"
+```
+```yaml
+jobs:
+# Set an output variable from job A
+- job: A
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - powershell: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the value"
+    name: setvarStep
+  - script: echo $(setvarStep.myOutputVar)
+    name: echovar
+
+# Map the variable into job B
+- job: B
+  dependsOn: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    myVarFromJobA: $[ dependencies.A.outputs['setvarStep.myOutputVar'] ]  # map in the variable
+                                                                          # remember, expressions require single quotes
+  steps:
+  - script: echo $(myVarFromJobA)
+    name: echovar
+
+
+# this is the value 
+# this is the value
+```
+
+```yaml
+stages:
+- stage: A
+  jobs:
+  - job: A1
+    steps:
+     - bash: echo "##vso[task.setvariable variable=myStageOutputVar;isOutput=true]this is a stage output var"
+       name: printvar
+
+- stage: B
+  dependsOn: A
+  variables:
+    myVarfromStageA: $[ stageDependencies.A.A1.outputs['printvar.myStageOutputVar'] ]
+  jobs:
+  - job: B1
+    steps:
+    - script: echo $(myVarfromStageA)
+```
+
+```yaml
+jobs:
+
+# Set an output variable from a job with a matrix
+- job: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    maxParallel: 2
+    matrix:
+      debugJob:
+        configuration: debug
+        platform: x64
+      releaseJob:
+        configuration: release
+        platform: x64
+  steps:
+  - bash: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
+    name: setvarStep
+  - bash: echo $(setvarStep.myOutputVar)
+    name: echovar
+
+# Map the variable from the debug job
+- job: B
+  dependsOn: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    myVarFromJobADebug: $[ dependencies.A.outputs['debugJob.setvarStep.myOutputVar'] ]
+  steps:
+  - script: echo $(myVarFromJobADebug)
+    name: echovar
+```
+
+```yaml
+jobs:
+
+# Set an output variable from a job with slicing
+- job: A
+  pool:
+    vmImage: 'ubuntu-latest'
+    parallel: 2 # Two slices
+  steps:
+  - bash: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the slice $(system.jobPositionInPhase) value"
+    name: setvarStep
+  - script: echo $(setvarStep.myOutputVar)
+    name: echovar
+
+# Map the variable from the job for the first slice
+- job: B
+  dependsOn: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    myVarFromJobsA1: $[ dependencies.A.outputs['job1.setvarStep.myOutputVar'] ]
+  steps:
+  - script: "echo $(myVarFromJobsA1)"
+    name: echovar
+```
+```yaml
+jobs:
+
+# Set an output variable from a deployment
+- deployment: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  environment: staging
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - bash: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the deployment variable value"
+          name: setvarStep
+        - bash: echo $(setvarStep.myOutputVar)
+          name: echovar
+
+# Map the variable from the job for the first slice
+- job: B
+  dependsOn: A
+  pool:
+    vmImage: 'ubuntu-latest'
+  variables:
+    myVarFromDeploymentJob: $[ dependencies.A.outputs['A.setvarStep.myOutputVar'] ]
+  steps:
+  - bash: "echo $(myVarFromDeploymentJob)"
+    name: echovar
+```
+
+## `settableVariables`, a property within a step
+```yaml
+steps:
+- script: echo This is a step
+  target:
+    settableVariables: none
+```
+With this, you are not able to set variables.
+
+
+## Recursive expansion
+```yaml
+variables:
+  myInner: someValue
+  myOuter: $(myInner)
+
+steps:
+- script: echo $(myOuter)  # prints "someValue"
+  displayName: Variable is $(myOuter)  # display name is "Variable is someValue"
+```
