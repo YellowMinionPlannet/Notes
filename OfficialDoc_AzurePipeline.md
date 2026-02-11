@@ -1092,6 +1092,8 @@ The identity of contribution type, is seperated by `.`, and `ms.vss-web.hub` mea
 - Extension ID, `vss-web`
 - Contribution/type ID, `hub`
 
+To [Create a custom pipelines task](https://learn.microsoft.com/en-us/azure/devops/extend/develop/add-build-task?view=azure-devops#extensionmanifest)
+
 > Back to our decorator notes
 
 Oud decorator is an instance of `ms.azure-pipelines.pipeline-decorator` contribution type.
