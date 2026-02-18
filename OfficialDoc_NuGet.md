@@ -48,6 +48,49 @@ Because of sharing codes using source control system. It's not possible to inclu
 
 ## Package installation
 
+Here is what happens when you try to add a package to a project:
+
+1. Try to record the package identifier and version into the project file or package.config file. If it's imcompatible, then add nothing.
+
+2. Acquire Pacakge
+
+    1.Check if the package is in the global-packages folder.
+
+    2 If not specified in global-package folder, then attempt to download from sources list. If `-NoHttpCache` or `--no-http-cache` is specified with `nuget.exe` or `dotnet restore` command. Cache only remains 30 minutes.
+
+    3.If package is specified using a floating version, for example, `1.*`, `(, 2.0.0]`, then NuGet will try to retrieve from all sources to figure out the best match.
+
+    4.If the package is not in Cache, then download it.
+
+    5.If failing to acquire such package from any source, show error.
+
+3. Save a copy of the package and other info in the cache
+4. Install the package into global-package folder.
+5. Install the package into the project.
+6. Update project file and folders:
+    - For packagereference method project, update graph in `obj/project.assets.json`
+    - Update `app.config` or `web.config`
+
+## Package Versioning
+
+A specific version number is from `Major.Minor.Patch[-Suffix]` format. Where 
+    - Major, Breaking change
+    - Minor, New features, backwards compatible
+    - Patch, Backwards compatible bug fixes only
+    - -Suffix(Optional), a hyphen followed by a string to denote a pre-reease version
+
+Examples:
+
+```text
+1.0.1
+6.11.1231
+5.3.1-rc
+2.2.44-beta.1
+```
+
+## Pre-release versions
+
+
 ## Dependency resolution
 
 The process of restore, when install the 1st package, it will install all 1st package's dependencies.
