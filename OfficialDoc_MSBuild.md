@@ -3,7 +3,7 @@
 # MSBuild
 ## Project File
 SDK-style projects
-* You don't see Import of .targets and .props 
+* You don't see Import of .targets and .props in project file
 * Instead you have the format below, so the .props and .targets files are implicitly specified by the SDK.
 ```xml
 <Project Sdk="Microosft.Net.Sdk">
