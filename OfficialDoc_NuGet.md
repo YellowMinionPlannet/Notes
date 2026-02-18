@@ -1,4 +1,4 @@
-[This Documentation URL](https://learn.microsoft.com/en-us/nuget/what-is-nuget)
+<!-- [This Documentation URL](https://learn.microsoft.com/en-us/nuget/what-is-nuget) -->
 
 # What is NuGet?
 
@@ -11,11 +11,13 @@ NuGet Package is ZIP File with `.nupkg` extension, which contains manifest infor
 A "compatible" package means that it contains assemblies built for at least one target .NET framework that's compatible with the consuming project's target framework.
 
 Describe in function is:
-```
+
+```text
 target framework A = target framework B
 , where A is package's assembly's target framework
 , where B is consuming project's target framework
 ```
+
 So if .net framework is involved in consumer project, you better target framework for .NET Standard 2.0, which is compatible for .net framework 4.6.1+ and .NET 5+ inclusively.
 
 ## Managing dependencies
@@ -28,18 +30,19 @@ Because of sharing codes using source control system. It's not possible to inclu
 
 ## how the reference list is maintained?
 
-1. PackageReference: 
-    a. top-level dependency list in .proj file, 
+1. PackageReference:
+    a. top-level dependency list in .proj file,
     b. and with associated file, locate at `obj/project.assets.json`, a overall dependency graph along with all down-level dependencies.
 
 2. packages.config, flat list of all dependencies
 
 ## Other features of NuGet
-1. Global Packages and Cache folder, 
+
+1. Global Packages and Cache folder,
+
     - Global packages share packages among different projects on same device
     - Cache folder ensure packages that has already downloaded won't download again
-2. Resolve out a single version of a package if that package's different versions are referenced by different dependencies. 
-
+2. Resolve out a single version of a package if that package's different versions are referenced by different dependencies.
 
 # Concept
 
