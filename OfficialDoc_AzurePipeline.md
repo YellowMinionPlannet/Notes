@@ -1,6 +1,7 @@
-[Source_Doc](https://learn.microsoft.com/en-us/azure/devops/pipelines/?view=azure-devops)
+<!-- [Official DOC](https://learn.microsoft.com/en-us/azure/devops/pipelines/?view=azure-devops) -->
 
 # pipeline run sequence
+
 1. Expands templates and evaluate template expressions
 2. Evaluates dependencies at the stage-level, and pick the first stage
 3. Each stage:
@@ -18,6 +19,7 @@
             3. each step has isolated enviroments
 
 We can use following syntax to create variable that might be used in other step:
+
 ```bash
 echo '##vso[task.setVariable variable=myVariable]myValue'
 ```
@@ -26,25 +28,26 @@ echo '##vso[task.setVariable variable=myVariable]myValue'
 echo $(myVariable)
 ```
 
-
 Parameters can be used before running each job, however, variables only lives in job running. So we can not use variables in authorization process.
 
 Piepline-level variable might be an exception.
 
 A job always reflect the worst condition of its steps:
+
 - if one step fails, the job fails
 
 # Pipeline default branch
 
 By default, pipeline's default branch is the default branch of the repository.
 
-First make sure your pipeline yml file is validated, and click triggers from the pipeline edit mode to view triggers of the current pipeline. 
+First make sure your pipeline yml file is validated, and click triggers from the pipeline edit mode to view triggers of the current pipeline.
 
 The default branch is displayed in YAML tab and Get sources item.
 
 # Clone or import a pipeline
 
 YAML Pipeline
+
 - Copy current yml file and put it into your new repository, or select existing yml file when create your pipeline
 
 # Manage pipelines with Azure CLI
@@ -71,7 +74,6 @@ Create a pipeline by selecting repository and a YAML file in that repo, the repo
 You can also checkout multiple repos.
 
 If you need to access repos from different project, you need [Job Access Token](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/access-tokens?view=azure-devops&tabs=yaml).
-
 
 By default, YAML pipeline is configured with a CI trigger on all branches. If you turn on the Disable implied YAML CI trigger at project or organization level, unless you have a `trigger` section in YAML file, CI trigger will not be enabled.
 
@@ -126,6 +128,7 @@ trigger:
 ```
 
 You can specify files or folders to trigger the pipeline:
+
 ```yaml
 # specific path build
 trigger:
@@ -140,6 +143,7 @@ trigger:
     exclude:
     - docs/README.md
 ```
+
 - Paths are always specified relative to the root folder of repos
 - If you don't have path filter, it works as there is a wildcard "*" at root folder
 - If you exludes `/tools`, you can only includes child folder like`/tools/trigger-runs-on-these`
@@ -149,10 +153,9 @@ trigger:
 - If you use tag filter and branch filter, it will trigger when branch filter satisfies OR tag trigger satisfies.
 - When you push a change to a branch, the YAML file in that branch is evaluated to determine if a CI run should be started
 
-
 These syntax is included in the message/ description of any of the commits, it won't trigger:
 
-```
+```text
 [skip ci]
 [ci skip]
 skip-checks: true
@@ -176,7 +179,8 @@ Add following condition to exclude it from PR trigger
 
 ### Authorization
 
-If 
+If
+
 1. your repo and pipeline are in different projects
 2. and **Limit job authorization scope** settings is enabled
 
@@ -184,6 +188,7 @@ then,
 you must grant permission to build service identity of your pipeline to the second project, plesae see the [link for more info](https://learn.microsoft.com/en-us/azure/devops/pipelines/process/access-tokens?view=azure-devops&tabs=yaml#manage-build-service-account-permissions)
 
 #### Protect access to repository in YAML pipelines
+
 Without **Protect access to repositories in YAML pipelines** is enabled, pipelines are able to access any repos.
 
 Organization/Project settings could configure this, and this setting is enabled by default.
@@ -195,11 +200,13 @@ To use repos code, you need to have `checkout` step first.
 - If script has PAT, no checkout step needed
 
 default checkout step is actually executing following:
+
 ```bash
 git -c fetch --force --tags --prune --prune-tags --progress --no-recurse-submodules origin --depth=1
 ```
 
 ### Preffered version of Git
+
 For Windows agent, the git comes with agent default tool set. If you have other version to use:
 
 set `System.PreferGitFromPath` to `true`,
@@ -271,6 +278,7 @@ If primary intent of your job is to deploy, u can use special type of job called
 ```
 
 ## Types of jobs
+
 1. Agent pool jobs
 2. Server jobs
 3. Container jobs
@@ -302,6 +310,7 @@ steps:
 - Query Work Items task
 
 The full syntax to specify a server job:
+
 ```yaml
 jobs:
 - job: string
@@ -315,6 +324,7 @@ jobs:
 ```
 
 ## Dependencies
+
 Pipeline must contain at least one job with no dependencies, by default, the pipelines should run in parallel unless the `dependsOn` value is set
 
 ```yaml
@@ -325,6 +335,7 @@ jobs:
 ```
 
 Sequential sample:
+
 ```yaml
 jobs:
 - job: Debug
@@ -361,6 +372,7 @@ jobs:
 ```
 
 sample of using output of dependency job:
+
 ```yaml
 jobs:
 - job: A
@@ -376,7 +388,9 @@ jobs:
 ```
 
 ## Timeouts
+
 By default:
+
 - Self-hosted agent run forever
 - Microsoft-hosted agent run 360 mins for public repos and project
 - Microsoft-hosted agent run 60 mins for private repos or private project
@@ -391,6 +405,7 @@ jobs:
 ## Multi-job configuration
 
 Following syntax will dispatch 3 jobs, and 2 of them will run concurrently.
+
 ```yaml
 jobs:
 - job: Test
@@ -433,6 +448,7 @@ jobs:
 ## Slicing
 
 ## Job variables
+
 Here is the sample of how to reference variables.
 
 ```yaml
@@ -451,6 +467,7 @@ steps:
 ```
 
 ## Workspace
+
 In agent job, here is the well-known variables:
 
 - `Pipeline.Workspace` to reference pipeline workspace.
@@ -463,8 +480,6 @@ In agent job, here is the well-known variables:
 
 Jobs are always run on a new agent with Microsoft-hosted agents
 
-
-
 ```yaml
 - job: myJob
   workspace:
@@ -476,6 +491,7 @@ Jobs are always run on a new agent with Microsoft-hosted agents
 ```
 
 ## Artifact download
+
 ```yaml
 # test and upload my code as an artifact named Website
 jobs:
@@ -505,6 +521,7 @@ jobs:
 ```
 
 ## Access to OAuth token
+
 ```yaml
 steps:
 - powershell: |
@@ -524,6 +541,7 @@ steps:
 For container jobs, steps is executed in container by default, you can customize this behavior using step targets, to choose container or host for the current step.
 
 To define a windows host container job:
+
 ```yaml
 pool:
   vmImage: 'windows-2019'
@@ -533,7 +551,9 @@ container: mcr.microsoft.com/windows/servercore:ltsc2019
 steps:
 - script: set
 ```
+
 To define a Linux host container job:
+
 ```yaml
 pool:
   vmImage: 'ubuntu-latest'
@@ -545,6 +565,7 @@ steps:
 ```
 
 Use matrix strategy to run same step in different containers
+
 ```yaml
 pool:
   vmImage: 'ubuntu-latest'
@@ -565,13 +586,17 @@ steps:
 ```
 
 ## Multiple jobs on a single agent host
+
 Because jobs run in parallel, each job might sign out Docker configuration file at end of the job, so u will encounter deny if multiple jobs are pulling images and sign out. The solution is to set a `DOCKER_CONFIG` enviroment variable for each agent pool.
 
 ```bash
 export DOCKER_CONFIG=./.docker
 ```
+
 ## Startup options
+
 You can use `options` property to specify options for contanier startup
+
 ```yaml
 container:
   image: ubuntu:18.04
@@ -580,11 +605,12 @@ container:
 steps:
 - script: echo hello
 ```
+
 ***resources.containers.container*** for definition of schema
 ***docker container create*** for command reference of `options`
 
-
 put image in to resources, to make them reusable.
+
 ```yaml
 resources:
   containers:
@@ -618,6 +644,7 @@ jobs:
 ```
 
 Use `endpoint` to specify private docker hub registry
+
 ```yaml
 # Docker HUB Private
 container:
@@ -633,6 +660,7 @@ container:
 For using non-standar Node.js Runtime (other than `glibc`), [see here](https://learn.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops#software)
 
 For customized packages in node container, build image with sample snippet
+
 ```dockerfile
 FROM node:18-alpine
 
@@ -646,7 +674,9 @@ CMD [ "node" ]
 ```
 
 # Use service containers
+
 Following script shows how a job container and service container work together:
+
 ```yaml
 resources:
   containers:
@@ -674,6 +704,7 @@ steps:
 ```
 
 Following snippet illustrate noncontainer job:
+
 ```yaml
 resources:
   containers:
@@ -737,6 +768,7 @@ steps:
 ```
 
 ## Volumes
+
 ```yaml
 services:
   my_service:
@@ -751,6 +783,7 @@ services:
 ```
 
 Final sample:
+
 ```yaml
 resources:
   containers:
@@ -797,11 +830,13 @@ steps:
 ```
 
 # Add stages, dependencies, and conditions
+
 By default stages run in sequence.
 
 If only one stage, there is no need to specify stages keyword.
 
 Following sample shows parallel stages by using dependsOn keyword.
+
 ```yaml
 stages:
 - stage: FunctionalTest
@@ -823,6 +858,7 @@ stages:
 ```
 
 Also, please notice the order of following stages:
+
 ```yaml
 stages:
 - stage: Test
@@ -862,6 +898,7 @@ stages:
 ```
 
 You can mark a stage that is unskipable by using `isSkippable: false`
+
 ```yaml
 - stage: malware_detection
   displayName: Malware detection
@@ -870,14 +907,15 @@ You can mark a stage that is unskipable by using `isSkippable: false`
   - job: check_job
     ...
 ```
-this way, this stage cannot be check off in the configuration panel.
 
+this way, this stage cannot be check off in the configuration panel.
 
 # Deployment jobs
 
 Deployment job's step is executed in sequence, by default, the source code is not checked out, you can check out source code by using `checkout: self`.
 
 To achieve following deployment results:
+
 - Enable Initialization
 - Deploy the update version of application
 - Route traffic to the updated version of application
@@ -886,14 +924,16 @@ To achieve following deployment results:
 
 Deployment job has lifecyle hooks.
 
-`preDeploy`: Used to run steps that initialize resources before deployment 
+`preDeploy`: Used to run steps that initialize resources before deployment
 `deploy`: Used to run steps that deploy your application. Download artifact task is auto injected in deploy hook, to stop this, use `- download: none`
 `routeTraffic`: Used to run steps that serve the traffic to the updated version
 `postRouteTraffic`: Used to run steps after the traffic is routed. Monitor the health of updated version of application
 `on: failure`/`on: success`: Used to run steps for rollback actions or clean-up
 
 There are also strategy to combine these hooks:
+
 1. RunONce deployment strategy
+
 ```yaml
 strategy: 
     runOnce:
@@ -926,6 +966,7 @@ strategy:
 ```
 
 Remember to clean your deployment workspace:
+
 ```yaml
 jobs:
   - deployment: MyDeploy
@@ -935,7 +976,6 @@ jobs:
       clean: all
     environment: staging
 ```
-
 
 ## Rolling deployment strategy
 
@@ -1009,7 +1049,6 @@ jobs:
                 - script: echo checks passed, notify...
 ```
 
-
 # Author a custom pipeline decorator
 
 Pipeline decorators let you add steps to the beginning and end of every job. It applies to all pipelines in an organization.
@@ -1022,11 +1061,13 @@ Common contirbution types:
 `hub`, `action`, `build-task`
 
 A property definition includes:
+
 - property type, string or boolean
 - whether the property is required
 - an optional default value
 
 So, a contribution type sample:
+
 ```json
 {
   "contributionTypes": [
@@ -1056,6 +1097,7 @@ So, a contribution type sample:
 ```
 
 So once we have definition of contribution type, we can have a contribution instance, which looks like:
+
 ```json
 {
     "contributions": [
@@ -1088,6 +1130,7 @@ Target contributions, means contribution can bind target on one or more other co
 ```
 
 The identity of contribution type, is seperated by `.`, and `ms.vss-web.hub` means:
+
 - Publisher ID, `ms`
 - Extension ID, `vss-web`
 - Contribution/type ID, `hub`
@@ -1125,6 +1168,7 @@ Oud decorator is an instance of `ms.azure-pipelines.pipeline-decorator` contribu
 ```
 
 So it declares this decorator is targeting all post-job-tasks. As definition requires a `my-decorator.yml`, here it is:
+
 ```yaml
 steps:
 - task: CmdLine@2
@@ -1137,20 +1181,23 @@ In order to make pipeline decorators take effect on every pipeline in Org, Org A
 
 # Pipeline decorator context
 
-This part introduces how to make your customized decorator interact with current task, this is optional material, please read [here](https://learn.microsoft.com/en-us/azure/devops/extend/develop/pipeline-decorator-context?toc=%2Fazure%2Fdevops%2Fpipelines%2Ftoc.json&view=azure-devops)
-
+This part introduces how to make your customized decorator interact with current task, this is optional material, please read [here for more info](https://learn.microsoft.com/en-us/azure/devops/extend/develop/pipeline-decorator-context?toc=%2Fazure%2Fdevops%2Fpipelines%2Ftoc.json&view=azure-devops).
 
 # Specify conditions
+
 ***Importance***
 job, stage will run:
+
 1. no dependOn settings
 2. or, all its dependencies completed or succeeded
 
 step will run:
+
 1. nothing fail in its job
 2. and, preceeding step is completed
 
 Common conditions:
+
 - Succeeded: Run only all previous dependencies succeed, `condition: succeeded()`
 - Succeeded or failed: Run even fails, but don't run when canceled, `condition: succeededOrFailed()`
 - Always: Run even canceled, `condition: always()`
@@ -1205,6 +1252,7 @@ jobs:
 ```
 
 Variables created by steps:
+
 - Scoped to the steps in same job
 - Available by subsequent steps as Environment variables
 - Can't be used in step where created
@@ -1239,7 +1287,9 @@ steps:
 ```
 
 # Specify demands
+
 Demand is able to check for agent pool specification.
+
 ```yaml
 pool:
   name: MyPool
@@ -1247,6 +1297,7 @@ pool:
 ```
 
 Agent variables that can be checked:
+
 - Agent.Name
 - Agent.Version
 - Agent.ComputerName
@@ -1263,8 +1314,7 @@ This is really good reference about function we can use in YAML, [see details](h
 # Task index
 
 ***Importance***
-Please take a look at all available task list [here](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops).
-
+Please take a look at all available task list [here for more info](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/?view=azure-pipelines&viewFallbackFrom=azure-devops).
 
 # Task types and usage
 
@@ -1278,9 +1328,10 @@ Predefined special tasks towards a Organization are pre-installed at organizatio
 
 Custom tasks, will be overriden if the custom task name collide with built-in task name. BUilt-in task will be executed when you call, unless you emphasis custom task with GUID when you create.
 
-Task Version needs to be specified when using task. 
+Task Version needs to be specified when using task.
 
 In YAML, you use @ version number to express
+
 ```yaml
 - task: onebranch.pipeline.nugetpush@1
 ```
@@ -1290,12 +1341,14 @@ Conditions can specify if task need to run, by default, a step runs if nothing i
 `continueOnError` property tells the task should continue running, and downstream steps also treat previous dependency as succeeded.
 
 `retryCountOnTaskFailure` retry task if it fails.
+
 - max of this property is 10
 - wait time will increase for each increment retry
 - round of retry is not provided to the current retry step
 - Failure of retried task will be warning
 
 ## Environment variables
+
 `env` under step could used with script or task to set environment variables. Using syntax `$ENV_VARIABLE_NAME` to reference environment variables.
 
 ```yaml
@@ -1308,9 +1361,11 @@ Conditions can specify if task need to run, by default, a step runs if nothing i
 ```
 
 # Run a PowerShell script
+
 powershell script in Azure Pipeline could access resources in **Azure DevOps REST API**.
 
 ## PowerShell script task
+
 PowerShell script task could be achieved through inline or file. The script task also has access to current code repos branch defined in pipeline settings.
 
 ```yaml
@@ -1341,8 +1396,8 @@ steps:
 
 # Run Git commands in pipeline scripts
 
-
 # Cross-platform scripts
+
 ```yaml
 steps:
 # Linux
@@ -1370,27 +1425,33 @@ steps:
 ```
 
 # Logging commands
-This is a reference of `echo '##vso[]'`. [link](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash)
+
+This is a reference of `echo '##vso[]'`. Please click [here for more info](https://learn.microsoft.com/en-us/azure/devops/pipelines/scripts/logging-commands?view=azure-devops&tabs=bash)
 
 # File matching patterns
-This is a reference of wildcards. [link](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=azure-devops)
+
+This is a reference of wildcards. Please click[here for more info](https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/file-matching-patterns?view=azure-devops)
 
 # Cache NuGet Packages
+
 This is a way to cache NuGet packages to shorten process of restore before build.
 
 # Templates, parameters, & expressions
 
-Templates will able you re-usable content, logic, and parameters in YAML pipelines. 
+Templates will able you re-usable content, logic, and parameters in YAML pipelines.
 
 There are two main types of templates:
+
 - Includes templates, if only include contents, just like include directive  
 - Extends templates, if aim to control and define a schema for what is allowed in a pipeline. It defines logic and structure a pipeline must follow. This is useful for enforcing security, compliance, or organizational standards.
 
 There are two main tools/features to make templates work as expected:
+
 - template expression
 - template parameters
 
 Example of Include template, reuse steps across multiple jobs:
+
 ```yaml
 # File: templates/insert-npm-steps.yml
 
@@ -1425,6 +1486,7 @@ jobs:
 ```
 
 Reuse jobs across multiple templates:
+
 ```yaml
 # File: templates/insert-jobs.yml
 jobs:
@@ -1447,6 +1509,7 @@ jobs:
 ```
 
 Reuse stages across multiple templates:
+
 ```yaml
 # File: templates/insert-stage1.yml
 stages:
@@ -1484,6 +1547,7 @@ stages:
 ```
 
 Add parameters to job, stage, and stemp templates
+
 ```yaml
 # File: templates/npm-with-params.yml
 
@@ -1521,6 +1585,7 @@ jobs:
 ```
 
 With parameters
+
 ```yaml
 # stage-template.yml
 
@@ -1576,6 +1641,7 @@ jobs:
 ```
 
 ## Variable reuse
+
 ```yaml
 # File: insert-vars.yml
 variables:
@@ -1694,7 +1760,7 @@ stages:
 
 Sometimes the project get complicated in file structure. Here is relative path sample:
 
-```
+```text
 |
 +-- fileA.yml
 |
@@ -1779,6 +1845,7 @@ jobs:
 ```
 
 If the project is in seperate Azure DevOps organization, you need to configure a service connetion.
+
 ```yaml
 resources:
   repositories:
@@ -1912,8 +1979,10 @@ extends:
   parameters:
       yesNo: false # set to a non-boolean value to have the build fail
 ```
+
 When using JobList for example, job only accept property that is defined within the schema, but templateContext accept anything.
 `templateContext` keyword sample:
+
 ```yaml
 #testing-template.yml
 
@@ -1958,6 +2027,7 @@ extends:
 ```
 
 Different data types that allowed for parameters:
+
 ```yaml
 parameters:
 - name: myString  # Define a parameter named 'myString'
@@ -2060,6 +2130,7 @@ steps:
 ```
 
 Iterate through object type:
+
 ```yaml
 # object-keys-template.yml
 
@@ -2099,6 +2170,7 @@ extends:
 ```
 
 Iterate through nested object:
+
 ```yaml
 
 # File: nested-objects-template.yml
@@ -2211,14 +2283,18 @@ steps:
 Expression cannot be evaluated in trigger or a resource, for example, repositories. That's because trigger and resource is processed at early stage of pipeline, without knowing the trigger or repo, the pipeline will not know how to work.
 
 ## Context
+
 the syntax `${{}}` has context of parameters and variables, but runtime variables and predefined variables are excluded, because when pipeline evaluate at early stage, these things do not exist yet.
 
 ## Notice
+
 The pipeline editor and pipeline pane, will behave differently for `coalecs()`
 function, for empty string `''`, Editor will treat `''` null and allow for fallback to next value. But pane will treat `''` as a value, so prevent fallback to next value.
 
 ## Insertion
+
 - For array, it will flatten the inserted automatically
+
 ```yaml
 # File: .vsts.ci.yml
 
@@ -2258,6 +2334,7 @@ jobs:
 ```
 
 - For Object, you need to use insert keyword
+
 ```yaml
 jobs:
 - template: jobs/build.yml
@@ -2317,6 +2394,7 @@ steps:
   parameters:
     toolset: dotnet
 ```
+
 ```yaml
 # File: steps/build.yml
 
@@ -2461,6 +2539,7 @@ jobs:
 Never use parameters to store secrets.
 
 # Variables
+
 Variables are all strings, and comparing to parameters which are all immutable, variables are mutable. The value of variable can be changed from run to run, job to job.
 
 When evaluate the variables with same name, the most locally scoped variable wins. A variable set at root level can override variables set in UI.
@@ -2475,13 +2554,13 @@ Make sure use OS supported format to multi-line variables. For example, the endi
 
 System variables in YAML pipeline are called predefined varaibles. They are read-only and they are set before the run.
 
-## Environment variables
-0
+## Environment variable
+
 Environment variables are specific to the agent system.
 
 # Understand variable syntax
 
-- `${{variables.var}}` is called template expression. It is evaluated before runtime, at compile time. 
+- `${{variables.var}}` is called template expression. It is evaluated before runtime, at compile time.
   - evaluated as empty string if not provided
 
 - `$[variables.var]` is called runtime expression. It is evaluated at runtime.
@@ -2489,11 +2568,12 @@ Environment variables are specific to the agent system.
   - cannot be keyname
 
 - `$(var)` is called macro, it is evaluated before task run.
-  - Evaluated after template expression, before task run. 
+  - Evaluated after template expression, before task run.
   - If no value is provided, `$(foo)` will not be changed into other things.
-  - Macro syntax cannot use for keyname, for example: `key: $(value)` is valid, but `$(key): value` is not valid. If you need dynamic keyname, you use parameter: `${{parameters.varName}}: hello` 
+  - Macro syntax cannot use for keyname, for example: `key: $(value)` is valid, but `$(key): value` is not valid. If you need dynamic keyname, you use parameter: `${{parameters.varName}}: hello`
 
 sample of Environment Variables:
+
 ```yaml
 variables:
   global_variable: value    # this is available to all jobs
@@ -2521,6 +2601,7 @@ jobs:
 ```
 
 Use group variables and variables in a template:
+
 ```yaml
 variables:
 # a regular variable
@@ -2533,10 +2614,10 @@ variables:
 ```
 
 ## Access environment variables
+
 - Batch script: `%VARIABLE_NAME%`
 - PowerShell script: `$env:VARIABLE_NAME`
-- Bash scipt 
-
+- Bash scipt
 
 ## Set secret variables
 
@@ -2571,6 +2652,7 @@ jobs:
   steps:
   - script: echo $(varFromA) # this step uses the mapped-in variable
 ```
+
 ```yaml
 stages:
 - stage: One
@@ -2603,7 +2685,6 @@ stages:
     steps:
     - script: echo $(varFromA) # this step uses the mapped-in variable
 ```
-
 
 ```yaml
 ## azure-pipelines.yml
@@ -2648,7 +2729,8 @@ stages:
 ```
 
 outpus from previous
-```
+
+```text
 Hello inline version
 true
 crushed tomatoes
@@ -2669,6 +2751,7 @@ steps:
 - pwsh: |
     Write-Host "my environment variable is $env:SAUCE"
 ```
+
 ```yaml
 jobs:
 # Set an output variable from job A
@@ -2776,6 +2859,7 @@ jobs:
   - script: "echo $(myVarFromJobsA1)"
     name: echovar
 ```
+
 ```yaml
 jobs:
 
@@ -2806,16 +2890,18 @@ jobs:
 ```
 
 ## `settableVariables`, a property within a step
+
 ```yaml
 steps:
 - script: echo This is a step
   target:
     settableVariables: none
 ```
+
 With this, you are not able to set variables.
 
-
 ## Recursive expansion
+
 ```yaml
 variables:
   myInner: someValue
@@ -2833,11 +2919,14 @@ This is an index of all predefined variables. [See detail](https://learn.microso
 # Job access token
 
 A job may access resources in Azure DevOps, and it has to perform such job by job access token. The permission of the token is derived from:
+
 - The job authorization scope, set by admin
 - The permission you set on project or collection build service account
 
 ## Job authorization scope
+
 You can set scope  of job authorization to be collection or project:
+
 - collection, let pipelines access all repos in the collection or Org
 - project, let pipelines access repos within project
 
@@ -2846,7 +2935,9 @@ You can set scope  of job authorization to be collection or project:
 # Library, resource, & secure files
 
 ## Pipeline resources
+
 A pipeline connects or consumes entities, which is resources. They include:
+
 - Service connection
 - Agent pool
 - Environment
@@ -2856,10 +2947,12 @@ A pipeline connects or consumes entities, which is resources. They include:
 - Packages
 
 ### Share resources across pipelines
+
 - use `resources` to access other pipeline's repositories, packages, and pipelines themselves.
 - use pipeline UI to include secure file, variable groups, and service connections.
 
 snippet of variable group:
+
 ```yaml
 # before this, you need to set variable group in Pipelines > Library section
 
@@ -2868,6 +2961,7 @@ variables:
 ```
 
 snippet of `resources`:
+
 ```yaml
 resources:
   pipelines:
@@ -2887,17 +2981,17 @@ steps:
 - download: resources1
   artifact: artifact1.txt
 ```
-You can also set trigger within `resources`.
 
+You can also set trigger within `resources`.
 
 ## Create and target Azure DevOps environments
 
 An evironment is a goupf of resources. It provides following benefits:
+
 - Deployment history
 - Taceability of commits and work items
 - Security
 - Diagnostic resource health
-
 
 Environment is where you want to deploy your artifact to, it is used in deployment job.
 Deploy environemnt supports Kubernetes and virtual machine resources environments.
@@ -2905,6 +2999,7 @@ Deploy environemnt supports Kubernetes and virtual machine resources environment
 # Architectures
 
 ## CI/CD
+
 publish artifact is end of CI
 Dowload and deploy artifact is the process of CD
 
@@ -2918,13 +3013,13 @@ Agent is registered within Org settings, Agent Pool section, you need to have Ag
 
 ## Microsft-hosted agents
 
-You can use this within Azure DevOps, it means the agent always has the latest version of the VM image. 
+You can use this within Azure DevOps, it means the agent always has the latest version of the VM image.
 
 Each time you run a pipeline, you get a fresh VM for each job in the pipeline. The VM is discarded after one job. Any change that a job makes to the virtual machine file system, such as checking out code, is unavailable on the next job.
 
 ## Self-hosted agents
-You need to manage agent yourself, this feature is provided in Azure DevOps Service and Azure DevOps Server. The machine-level caches and configuration persists from run to run.
 
+You need to manage agent yourself, this feature is provided in Azure DevOps Service and Azure DevOps Server. The machine-level caches and configuration persists from run to run.
 
 ## Node.js runner versions
 
@@ -2949,6 +3044,7 @@ The communication standard procedure between agent and server:
 Asymmetric encryption is used when communicate between the agent and server. Public key for server to encrypt, and private key for agent to decrypt.
 
 ## Communication to deploy to target servers
+
 When deploying the artifact, if your resources run in Azure VN, you can get the Agent IP ranges to tell firewall to allow access by the agent.
 
 When deploying to the on-premises, the on-premises needs to configure self-hosted agents on themselves, and those agents will connect to the Azure Pipeline, and deploy artifact to the on-premises.
