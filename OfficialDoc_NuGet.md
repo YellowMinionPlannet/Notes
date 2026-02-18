@@ -6,7 +6,7 @@ Project(Source Code) : Build/Pack -> Package(one or more assemblies) : Publish -
 
 NuGet Package is ZIP File with `.nupkg` extension, which contains manifest information about the content.
 
-# Package targeting compatibility
+## Package targeting compatibility
 
 A "compatible" package means that it contains assemblies built for at least one target .NET framework that's compatible with the consuming project's target framework.
 
@@ -18,11 +18,11 @@ target framework A = target framework B
 ```
 So if .net framework is involved in consumer project, you better target framework for .NET Standard 2.0, which is compatible for .net framework 4.6.1+ and .NET 5+ inclusively.
 
-# Managing dependencies
+## Managing dependencies
 
 You only take cares of top level dependencies, and the down-level dependencies should be taken care of by the NuGet
 
-# Tracking references and restoring packages
+## Tracking references and restoring packages
 
 Because of sharing codes using source control system. It's not possible to include all referenced packages binary content to the source control host, it would be too redundant and space wasted. So NuGet only record reference list, and include this list to the source control mechanism. And when source code is downloaded (shared), use restore process to re-install referenced packages.
 
@@ -35,11 +35,15 @@ Because of sharing codes using source control system. It's not possible to inclu
 2. packages.config, flat list of all dependencies
 
 ## Other features of NuGet
-1. Global Packages and Cache folder
+1. Global Packages and Cache folder, 
+    - Global packages share packages among different projects on same device
+    - Cache folder ensure packages that has already downloaded won't download again
 2. Resolve out a single version of a package if that package's different versions are referenced by different dependencies. 
 
 
 # Concept
+
+## Package installation
 
 ## Dependency resolution
 
