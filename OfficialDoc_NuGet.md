@@ -90,6 +90,46 @@ Examples:
 
 ## Pre-release versions
 
+- Alpha, experimental version
+- Beta, feature complete version
+- rc, Release candidate
+
+So NuGet will pick stable version instead of pre-release ones. If have to pick pre-release ones, will pick rc > Beta> Alpha.
+
+Here is a very good example of version range.
+
+```xml
+<!-- Accepts any version 6.1 and above.
+     Will resolve to the smallest acceptable stable version.-->
+<PackageReference Include="ExamplePackage" Version="6.1" />
+
+<!-- Accepts any 6.x.y version.
+     Will resolve to the highest acceptable stable version.-->
+<PackageReference Include="ExamplePackage" Version="6.*" />
+
+<!-- Accepts only version 6.1.0. -->
+<PackageReference Include="ExamplePackage" Version="[6.1.0]" />
+
+<!-- Accepts any version above, but not including 4.1.3. Could be
+     used to guarantee a dependency with a specific bug fix. 
+     Will resolve to the smallest acceptable stable version.-->
+<PackageReference Include="ExamplePackage" Version="(4.1.3,)" />
+
+<!-- Accepts any version up below 5.x, which might be used to prevent pulling in a later
+     version of a dependency that changed its interface. However, this form is not
+     recommended because it can be difficult to determine the lowest version. 
+     Will resolve to the smallest acceptable stable version.
+     -->
+<PackageReference Include="ExamplePackage" Version="(,5.0)" />
+
+<!-- Accepts any 1.x or 2.x version, but not 0.x or 3.x and higher.
+     Will resolve to the smallest acceptable stable version.-->
+<PackageReference Include="ExamplePackage" Version="[1,3)" />
+
+<!-- Accepts 1.3.2 up to 1.4.x, but not 1.5 and higher.
+     Will resolve to the smallest acceptable stable version. -->
+<PackageReference Include="ExamplePackage" Version="[1.3.2,1.5)" />
+```
 
 ## Dependency resolution
 
