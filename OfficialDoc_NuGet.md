@@ -78,6 +78,11 @@ Because of sharing codes using source control system. It's not possible to inclu
 
   - .net 6.0 and later don't need this because the dependency resolution happens in build time.
 
+- Package Source Mapping
+  - Allow you to control source for a specific pacakge.
+
+- 
+
 # Concept
 
 ## Package installation
