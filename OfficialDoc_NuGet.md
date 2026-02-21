@@ -44,6 +44,40 @@ Because of sharing codes using source control system. It's not possible to inclu
     - Cache folder ensure packages that has already downloaded won't download again
 2. Resolve out a single version of a package if that package's different versions are referenced by different dependencies.
 
+# Consume packages
+
+## Overview and workflow
+
+> NOTE: when you use nuget.exe, it will not manage project file or packages.config file like Visual Studio and dotnet.ext does. You need to manually manage project file and packages.config file yourself.
+> NOTE: To avoid legal issues, you need to check the license term on the nuget.org yourself.
+
+## Configure NuGet
+
+- Binding redirects:
+  - this only happens in .net framework, typically in 4.x, there is a tag in app.config or web.config saying that for Package A of version i to version ii, the runtime use iii instead.
+  - for example:
+
+  ```xml
+  <configuration>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity 
+            name="Newtonsoft.Json"
+            publicKeyToken="30ad4fe6b2a6aeed"
+            culture="neutral" />
+        <bindingRedirect 
+            oldVersion="0.0.0.0-12.0.0.0"
+            newVersion="13.0.0.0" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+  </configuration>
+  <!-- Any request for version 0-12 of Newtonsoft.Json, please use version 13 -->
+  ```
+
+  - .net 6.0 and later don't need this because the dependency resolution happens in build time.
+
 # Concept
 
 ## Package installation
@@ -144,3 +178,16 @@ NuGet restore responsible to write dependency graph into the `obj\project.assets
 `$(MSBUildProjectExtensionPath)` which default value is 'obj', is where asset file locates. DO NOT includes this file in to source control.
 
 ## Dependency resolution rules
+
+- lowest applicable version
+  - unless declared as floating, it follows lowest possible version rule.
+
+- floating versions
+  - use `*` to say use the latest version, for example, `4.*` means use the latest, not lowest,  4.x version.
+
+- direct dependency wins
+  - if you specify a package version at direct dependency level, it overrides transitive package version specification.
+  - watch out for package downgrade, you will receive a warning.
+
+- when a package only appears in in-direct level, it still follow lowest version of the cousin package version specification.
+
