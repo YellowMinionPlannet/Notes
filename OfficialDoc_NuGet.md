@@ -81,7 +81,18 @@ Because of sharing codes using source control system. It's not possible to inclu
 - Package Source Mapping
   - Allow you to control source for a specific pacakge.
 
-- 
+- How to enforce remote package source?
+  - this is very useful if you feel unsafe about current device
+  - clear locals, http-cache, and global folder will make sure you are using packages from remote package source.
+
+  ```cmd
+  dotnet nuget locals all --clear
+  <!-- avoid global folder -->
+  dotnet nuget locals global-packages --clear
+  <!-- avoid http-cache -->
+  dotnet nuget locals http-cache --clear
+  ```
+
 
 # Concept
 
