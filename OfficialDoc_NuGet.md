@@ -93,6 +93,10 @@ Because of sharing codes using source control system. It's not possible to inclu
   dotnet nuget locals http-cache --clear
   ```
 
+## PackageDownload Feature
+
+- Attribute `Version` could be written as `[1.0.0];[2.0.0]`, to specify multiple version for `PackageDownload`
+- PackageDownload packages are not listed by `dotnet list package`
 
 # Concept
 
