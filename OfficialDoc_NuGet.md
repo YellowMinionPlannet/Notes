@@ -98,6 +98,68 @@ Because of sharing codes using source control system. It's not possible to inclu
 - Attribute `Version` could be written as `[1.0.0];[2.0.0]`, to specify multiple version for `PackageDownload`
 - PackageDownload packages are not listed by `dotnet list package`
 
+# Create packages
+
+You can create package from compiled code. Also, you can create special package by including other dependencies only or including `.pdb` file only.
+
+First step to create package is to decide identifier, version number, license, copyright information, and any other necessary content. 
+
+Then, use `pack` command to put everything into `.nupkg` file.
+
+Notes that, `.nupkg` is just `.zip` file, you can change the extension to `.zip` to expand the package and have a peek inside. 
+
+## Create a NuGet package with the dotnet CLI
+
+We need to use command line to create package.
+
+When creating it, there's required properties need to be specified
+
+|Property|Default Value|Description|
+|-|-|-|
+|PackageId|AssemblyName|UniqueID Accross nuget.org and other hosts|
+|Version|1.0.0|Specific version number in the form of Major.Minor.Patch[-Suffix]|
+|Authors|AssemblyName|Authors of the package|
+|Company|Authors|Company Info|
+|Product|AssemblyName|Product Info|
+
+dotnet CLI only works for SDK-Style Project. To set these properties, we can have them in the `.proj` file.
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>UniqueID</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Author Name</Authors>
+    <Company>Company Name</Company>
+    <Product>Product Name</Product>
+  </PropertyGroup>
+</Project>
+```
+
+There are also optional properties, such as Title, PackageDescription, and PackageTags.
+
+The `dotnet pack` command will convert content specified in `.proj` file into dependencies in the created package, we can control what to include by `IncludeAssets` and what to exclude by `ExcludeAssets` and what not to exposed as transitive dependency by `PrivateAssets`
+
+## Notes about IncludeAssets options
+
+|Option|Description|
+|-|-|
+|compile|This for assets that can access at compile time, if you include asset at this level, the consumer project can access your project code type at development(compiler)|
+|runtime|This will allow reflection operation towards your project's asset|
+|build|This will include .props, and .targets files from your project|
+|contentFiles|Will copy your source code into created package|
+|buildMultitargeting||
+|buildTransitive||
+|analyzers||
+|native||
+|all||
+|none||
+
+## Choose a unique package identifier and set the version number
+
+It's recommanded to follow concept of *.NET namespace-like naming convention* by using dot notation. For example, `Contoso.Utility.UsefulStuff`
+
 # Concept
 
 ## Package installation
