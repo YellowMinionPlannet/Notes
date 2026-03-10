@@ -98,6 +98,17 @@ Because of sharing codes using source control system. It's not possible to inclu
 - Attribute `Version` could be written as `[1.0.0];[2.0.0]`, to specify multiple version for `PackageDownload`
 - PackageDownload packages are not listed by `dotnet list package`
 
+## Manage global packages and cache folders
+|Name|Windows|Mac|Linux|Notes|
+|-|-|-|-|-|
+|
+|global-packages|`%userprofile%\.nuget\packages`|`~/.nuget/packages`|Override using *NUGET_PACKAGES* environemnt varaible, or can be configured in `packages.config`, environemnt variables overrides configuration file|
+|http-cache|`%localappdata%\NuGet\v3-cache`|` ~/.local/share/NuGet/v3-cache`|` ~/.local/share/NuGet/v3-cache`|Override using *NUGET_HTTP_CACHE_PATH*|
+|temp|`%temp%\NuGetScratch`|`/tmp/NuGetScratch`|`/tmp/NuGetScratch<username>`|Override using *NUGET_SCRATCH*|
+|plugin-cache|`%localappdata%\NuGet\plugins-cache`|`~/.local/share/NuGet/plugins-cache``|~/.local/share/NuGet/plugins-cache`|Override *NUGET_PLUGINS_CACHE_PATH*|
+
+
+
 # Create packages
 
 You can create package from compiled code. Also, you can create special package by including other dependencies only or including `.pdb` file only.
@@ -138,7 +149,7 @@ dotnet CLI only works for SDK-Style Project. To set these properties, we can hav
 ```
 
 There are also optional properties, such as Title, PackageDescription, and PackageTags.
-
+               
 The `dotnet pack` command will convert content specified in `.proj` file into dependencies in the created package, we can control what to include by `IncludeAssets` and what to exclude by `ExcludeAssets` and what not to exposed as transitive dependency by `PrivateAssets`
 
 ## Notes about IncludeAssets options
