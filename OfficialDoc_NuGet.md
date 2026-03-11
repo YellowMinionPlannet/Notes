@@ -107,6 +107,43 @@ Because of sharing codes using source control system. It's not possible to inclu
 |temp|`%temp%\NuGetScratch`|`/tmp/NuGetScratch`|`/tmp/NuGetScratch<username>`|Override using *NUGET_SCRATCH*|
 |plugin-cache|`%localappdata%\NuGet\plugins-cache`|`~/.local/share/NuGet/plugins-cache``|~/.local/share/NuGet/plugins-cache`|Override *NUGET_PLUGINS_CACHE_PATH*|
 
+- global, NuGet avoid downloading packages that already exist on the computer. it keeps downloaded packages away from project folder
+
+- http-cache, NuGet will cache any remote connection to the package source, unless you specify not using http-cache by flags.
+
+- After checking global, and http-cache folder, if not found, then NuGet reach out for remote package sources.
+
+- use `dotnet nuget locals all --list` to show all local package source and their locations.
+
+- clearing local sources:
+
+```cli
+# Clear the HTTP cache (use either command)
+dotnet nuget locals http-cache --clear
+nuget locals http-cache -clear
+
+# Clear the global packages folder (use either command)
+dotnet nuget locals global-packages --clear
+nuget locals global-packages -clear
+
+# Clear the temporary cache (use either command)
+dotnet nuget locals temp --clear
+nuget locals temp -clear
+
+# Clear the plugins cache (use either command)
+dotnet nuget locals plugins-cache --clear
+nuget locals plugins-cache -clear
+
+# Clear all caches (use either command)
+dotnet nuget locals all --clear
+nuget locals all -clear
+```
+
+## Manage package trust boundaries
+
+Signed package don't require any speciifc action to be installed. However, if the conten has been modified since it was signed, the installation is blocked with NU3008.
+
+You need to purchase a certificate on certificate organization to sign a public production package and publish it onto NuGet.org. It is still using the private key and public key asymetric encryption to encrypt and decrypt the content.
 
 
 # Create packages
